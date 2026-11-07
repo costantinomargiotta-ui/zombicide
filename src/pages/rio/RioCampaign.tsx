@@ -16,6 +16,7 @@ import { EmptyState } from '../../ui/components/EmptyState';
 import { Field, Modal } from '../../ui/components/Modal';
 import { StoredImage } from '../../ui/components/StoredImage';
 import { RioSessionForm } from './RioSessionForm';
+import { defaultPortraitUrl } from '../../domain/portraits';
 import { HeaderScenery } from '../../ui/layout/Scenery';
 import { CAMPAIGN_STATUS_LABEL } from '../../domain/types';
 
@@ -41,7 +42,8 @@ export function Portrait({ c, className = 'size-full' }: { c?: Character; classN
       imageId={c?.portraitImageId}
       alt={c ? `Ritratto di ${c.name}` : ''}
       className={`${className} object-cover object-top`}
-      fallback={<div className={`${className} grid place-items-center bg-gradient-to-b from-[#2a2f36] to-[#0e1013]`}><UserRound className="size-1/2 text-[var(--muted)]" /></div>}
+      fallback={defaultPortraitUrl(c?.id) ? <img src={defaultPortraitUrl(c?.id)} alt={c ? `Ritratto di ${c.name}` : ''} className={`${className} object-cover object-top`} loading="lazy" />
+        : <div className={`${className} grid place-items-center bg-gradient-to-b from-[#2a2f36] to-[#0e1013]`}><UserRound className="size-1/2 text-[var(--muted)]" /></div>}
     />
   );
 }

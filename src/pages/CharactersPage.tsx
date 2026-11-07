@@ -12,6 +12,7 @@ import { formatDate } from '../lib/format';
 import { StoredImage } from '../ui/components/StoredImage';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Badge } from '../ui/components/Badge';
+import { defaultPortraitUrl } from '../domain/portraits';
 
 /** Colori dei livelli di pericolo stampati sulle schede. */
 export const LEVEL_STYLE: Record<string, { color: string; label: string }> = {
@@ -45,11 +46,11 @@ function Portrait({ c, className = '' }: { c: Character; className?: string }) {
       imageId={c.portraitImageId}
       alt={`Ritratto di ${c.name}`}
       className={`size-full object-cover object-top ${className}`}
-      fallback={
+      fallback={defaultPortraitUrl(c.id) ? <img src={defaultPortraitUrl(c.id)} alt={`Ritratto di ${c.name}`} className={`size-full object-cover object-top ${className}`} loading="lazy" /> : (
         <div className="grid size-full place-items-center bg-gradient-to-b from-[#2a2f36] to-[#0e1013] text-[var(--muted)]">
           <UserRound className="size-1/2 opacity-60" aria-hidden />
         </div>
-      }
+      )}
     />
   );
 }
@@ -119,9 +120,9 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(240px,320px)_1fr]">
         {/* Colonna ritratto, come nei mockup */}
         <div className="flex flex-col gap-3">
-          <div className="panel relative aspect-[3/4] overflow-hidden">
+          <div className="panel relative aspect-square overflow-hidden">
             <Portrait c={c} />
-            <div className="absolute inset-x-0 bottom-6 flex justify-center">
+            <div className={`absolute inset-x-0 bottom-6 justify-center ${!c.portraitImageId && defaultPortraitUrl(c.id) ? 'hidden' : 'flex'}`}>
               <span className="brush-banner px-6 py-1 text-4xl sm:text-5xl">{c.name.toUpperCase()}</span>
             </div>
             <label className="btn absolute top-2 right-2 cursor-pointer px-2 py-1 text-xs">

@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ArrowLeft, Check, Minus, Plus, Skull, Star, Swords, Trash2, X } from 'lucide-react';
 import { StoredImage } from '../../ui/components/StoredImage';
+import { defaultPortraitUrl } from '../../domain/portraits';
 import { db } from '../../data/db';
 import { bonusSpent, rioRepo, sheetFor } from '../../data/rioRepository';
 import {
@@ -110,9 +111,9 @@ export function RioSheet() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[230px_1fr] 2xl:grid-cols-[260px_1fr]">
         {/* Ritratto e informazioni */}
         <div className="flex flex-col gap-3">
-          <div className="hazard-frame"><div className="hazard-inner relative aspect-[3/4]">
+          <div className="hazard-frame"><div className="hazard-inner relative aspect-square">
             <Portrait c={c} />
-            <span className="brush-banner absolute inset-x-3 bottom-4 py-0.5 text-center text-4xl">{c?.name.toUpperCase()}</span>
+            {(c?.portraitImageId || !defaultPortraitUrl(c?.id)) && <span className="brush-banner absolute inset-x-3 bottom-4 py-0.5 text-center text-4xl">{c?.name.toUpperCase()}</span>}
           </div></div>
           <dl className="panel grid grid-cols-[auto_1fr] gap-x-2 gap-y-1 p-3 text-sm">
             <dt className="text-[var(--muted)]">Gioco:</dt><dd>{products?.find((p) => p.id === c?.productId)?.name ?? 'Da indicare'}</dd>
