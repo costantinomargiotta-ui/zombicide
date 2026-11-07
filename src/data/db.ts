@@ -4,6 +4,7 @@ import type {
   Player, Product, Scenario, SessionParticipant, StoredImage,
 } from '../domain/types';
 import { seedProducts } from './seed/products';
+import type { QueueEntry } from './sync';
 import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
@@ -26,6 +27,8 @@ export class HubDatabase extends Dexie {
   sessionParticipants!: EntityTable<SessionParticipant, 'id'>;
   activities!: EntityTable<Activity, 'id'>;
   images!: EntityTable<StoredImage, 'id'>;
+  syncQueue!: EntityTable<QueueEntry, 'key'>;
+  syncMeta!: EntityTable<{ key: string; value: unknown }, 'key'>;
 
   constructor(name = 'zombicide-hub') {
     super(name);
@@ -71,6 +74,8 @@ export class HubDatabase extends Dexie {
         if (existing && !existing.productId) await tx.table('characters').update(c.id, { productId: c.productId });
       }
     });
+    // Revisione 5: coda e stato della sincronizzazione con Supabase.
+    this.version(5).stores({ syncQueue: 'key', syncMeta: 'key' });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }

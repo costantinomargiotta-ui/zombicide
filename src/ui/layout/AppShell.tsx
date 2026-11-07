@@ -6,6 +6,7 @@ import { UNIVERSE_IDS } from '../../domain/types';
 import { scopedPath, useScope } from '../../lib/scope';
 import { UniverseEmblem } from '../components/UniverseEmblem';
 import { NAV_ITEMS } from './navigation';
+import { SyncIndicator } from '../components/SyncIndicator';
 
 function Logo() {
   const { universeId } = useScope();
@@ -101,6 +102,7 @@ export function AppShell() {
             <TopNav />
           </nav>
           <div className="ml-auto flex items-center gap-2">
+            <SyncIndicator />
             <NavLink to={path('impostazioni')} className={({ isActive }) => `btn focus-ring px-2.5 ${isActive ? 'btn-accent' : ''}`} aria-label="Impostazioni">
               <Settings className="size-5" />
             </NavLink>

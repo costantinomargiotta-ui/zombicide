@@ -1,5 +1,8 @@
 import { useRef, useState } from 'react';
-import { Database, Download, FlaskConical, HardDrive, Trash2, Upload } from 'lucide-react';
+import { Cloud, Database, Download, FlaskConical, HardDrive, LogOut, RefreshCw, Trash2, Upload } from 'lucide-react';
+import { supabase } from '../data/supabase';
+import { syncNow, useSyncStatus } from '../data/syncController';
+import { formatDate } from '../lib/format';
 import { downloadJson, exportBackup, importBackup } from '../data/backup';
 import { loadDemoData, removeDemoData } from '../data/demo';
 import { useHasDemoData } from '../data/hooks';
@@ -9,6 +12,7 @@ import { Modal } from '../ui/components/Modal';
 
 export function SettingsPage() {
   const hasDemo = useHasDemoData();
+  const sync = useSyncStatus();
   const [message, setMessage] = useState<{ tone: 'ok' | 'err'; text: string } | null>(null);
   const [pending, setPending] = useState<unknown>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -76,10 +80,24 @@ export function SettingsPage() {
         </div>
       </Panel>
 
-      <Panel title="Archiviazione" icon={HardDrive} className="lg:col-span-2">
-        <p className="text-sm text-[var(--muted)]">
-          In questa prima versione i dati sono salvati nel database del browser (IndexedDB) di questo dispositivo. Il collegamento a Supabase, per sincronizzare computer, iPad e smartphone, è predisposto nello schema in <code>supabase/migrations</code>. Fino ad allora esporta regolarmente un backup.
-        </p>
+      <Panel title="Account e sincronizzazione" icon={supabase ? Cloud : HardDrive} className="lg:col-span-2">
+        {supabase ? (
+          <div className="flex flex-col gap-3 text-sm">
+            <p>Accesso come <strong>{sync.email ?? '…'}</strong>. I dati vengono salvati su questo dispositivo e sincronizzati con Supabase: li ritrovi su computer, iPad e smartphone. Senza rete l'app continua a funzionare e invia le modifiche al ritorno della connessione.</p>
+            <p className="text-[var(--muted)]">
+              Stato: {sync.status === 'sincronizzato' ? 'sincronizzato' : sync.status === 'in-corso' ? 'sincronizzazione in corso' : sync.status === 'non-in-linea' ? 'non in linea' : sync.status === 'errore' ? `errore (${sync.error})` : 'in attesa'}
+              {sync.lastSync ? ` · ultima sincronizzazione ${formatDate(sync.lastSync)} alle ${new Date(sync.lastSync).toLocaleTimeString('it-IT')}` : ''}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <button type="button" className="btn btn-accent" onClick={() => void syncNow()}><RefreshCw className="size-4" /> Sincronizza ora</button>
+              <button type="button" className="btn" onClick={() => void supabase!.auth.signOut()}><LogOut className="size-4" /> Esci</button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-[var(--muted)]">
+            Modalità locale: i dati sono salvati solo nel browser di questo dispositivo (IndexedDB). Esporta regolarmente un backup. La sincronizzazione si attiva quando l'app viene collegata a Supabase.
+          </p>
+        )}
       </Panel>
 
       <Modal

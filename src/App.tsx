@@ -10,6 +10,7 @@ import { SettingsPage } from './pages/SettingsPage';
 import { CharactersPage } from './pages/CharactersPage';
 import { RioSheet } from './pages/rio/RioSheet';
 import { isUniverseId } from './domain/universes';
+import { AuthGate } from './ui/auth/AuthGate';
 
 function UniverseIndex() {
   const { universeId } = useParams();
@@ -47,5 +48,5 @@ const routes: RouteObject[] = [
 const router = createBrowserRouter(routes);
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return <AuthGate><RouterProvider router={router} /></AuthGate>;
 }

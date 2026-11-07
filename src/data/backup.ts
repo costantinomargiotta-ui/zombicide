@@ -51,12 +51,13 @@ export async function importBackup(data: unknown, database: HubDatabase = db): P
   })));
   const tables = [...DATA_TABLES.map((n) => database.table(n)), database.images];
   await database.transaction('rw', tables, async () => {
+    // bulkDelete invece di clear: così anche le eliminazioni arrivano alla sincronizzazione.
     for (const name of DATA_TABLES) {
-      await database.table(name).clear();
+      await database.table(name).bulkDelete(await database.table(name).toCollection().primaryKeys());
       const rows = data.tables[name];
       if (Array.isArray(rows)) await database.table(name).bulkAdd(rows);
     }
-    await database.images.clear();
+    await database.images.bulkDelete(await database.images.toCollection().primaryKeys());
     if (images.length) await database.images.bulkAdd(images);
   });
 }

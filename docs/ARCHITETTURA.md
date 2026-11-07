@@ -179,3 +179,13 @@ Fonti: *Rio Z Janeiro – Regole e Missioni* (pag. 4–27) e *Zombicide 2ª Ediz
 - Modulo regole: `src/rules/moderno/rioZJaneiro.ts` (barra dei PEC con Pietre Miliari a 2, 5, 8, 11, 14, 17, 20; 14 Abilità della Campagna; 7 Azioni Bonus; 10 Missioni in ordine; KO e successori).
 - Registro dei progressi: tabella `progress`; correggere una partita rigenera solo le sue righe.
 - Punti aperti: il regolamento non dice cosa succede dopo una Missione persa (l'app la lascia disponibile); i Traguardi delle carte Obiettivo si scrivono a mano; l'equipaggiamento conservato è testo libero finché non avremo le carte.
+
+## Aggiornamento: sincronizzazione con Supabase
+
+Scelta: **prima in locale, poi sincronizzato**. L'app scrive sempre su IndexedDB (funziona anche senza rete, al tavolo da gioco) e sincronizza ogni record nella tabella `zh_records` di Supabase (`supabase/migrations/0002_sincronizzazione.sql`), con immagini nel bucket privato `zh-immagini`.
+
+Perché non subito lo schema relazionale di `0001`: con un solo utente l'integrità è già garantita dall'app e dai suoi test; una tabella di sincronizzazione unica richiede meno codice, regge l'uso senza rete e non obbliga a riscrivere l'app. Lo schema `0001` resta il riferimento se in futuro serviranno interrogazioni SQL sui dati.
+
+- Accesso: email e password Supabase, registrazione pubblica disattivata; senza variabili d'ambiente l'app resta in modalità locale.
+- Variabili su Netlify: `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` (la chiave pubblicabile può stare nel browser: i dati sono protetti dalle regole RLS).
+- Conflitti: vince l'ultima modifica inviata; una modifica locale non ancora inviata non viene sovrascritta.
