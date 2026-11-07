@@ -9,6 +9,9 @@ import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { CharactersPage } from './pages/CharactersPage';
 import { RioSheet } from './pages/rio/RioSheet';
+import { StatisticsPage } from './pages/StatisticsPage';
+import { SessionsPage } from './pages/SessionsPage';
+import { ScenariosPage } from './pages/ScenariosPage';
 import { isUniverseId } from './domain/universes';
 import { AuthGate } from './ui/auth/AuthGate';
 
@@ -23,11 +26,11 @@ const sections: RouteObject[] = [
   { path: 'campagne', element: <CampaignsPage /> },
   { path: 'impostazioni', element: <SettingsPage /> },
   { path: 'personaggi', element: <CharactersPage /> },
-  { path: 'scenari', element: <PlaceholderPage title="Scenari" phase="Fase 3" description="Catalogo degli scenari con obiettivi, condizioni di vittoria e sconfitta, regole speciali e collegamenti. Si comincia con gli scenari di Rio Z Janeiro." /> },
-  { path: 'partite', element: <PlaceholderPage title="Partite" phase="Fase 3" description="Avvio di una partita da uno scenario, registrazione di giocatori, personaggi, obiettivi ed esito, con aggiornamento automatico dei progressi e correzione senza duplicazioni." /> },
+  { path: 'scenari', element: <ScenariosPage /> },
+  { path: 'partite', element: <SessionsPage /> },
   { path: 'equipaggiamento', element: <PlaceholderPage title="Equipaggiamento" phase="Fase 4" description="Catalogo degli oggetti, inventario di campagna, equipaggiamento dei personaggi ed equipaggiamento conservato tra le missioni, solo dove previsto dal gioco." /> },
   { path: 'carte', element: <PlaceholderPage title="Carte" phase="Fase 4" description="Archivio delle carte della collezione con immagini fronte e retro, categorie specifiche per gioco e filtri per universo, prodotto, categoria e testo." /> },
-  { path: 'statistiche', element: <PlaceholderPage title="Statistiche" phase="Fase 5" description="Statistiche globali, per universo, campagna, personaggio e giocatore, con grafici e classifiche calcolati solo dai dati registrati." /> },
+  { path: 'statistiche', element: <StatisticsPage /> },
 ];
 
 const routes: RouteObject[] = [

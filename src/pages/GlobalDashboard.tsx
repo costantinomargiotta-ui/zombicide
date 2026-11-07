@@ -140,7 +140,7 @@ export function GlobalDashboard() {
                 )}
               </div>
             ) : (
-              <EmptyState icon={Dices} title="Nessuna partita registrata">La registrazione delle partite arriva con la Fase 3.</EmptyState>
+              <EmptyState icon={Dices} title="Nessuna partita registrata">Registra una missione da una campagna Rio Z Janeiro o da Partite → Nuova partita.</EmptyState>
             )}
           </Panel>
 

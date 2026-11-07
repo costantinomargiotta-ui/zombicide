@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
   CheckCircle2, ClipboardList, Dices, Flag, Lock, Pencil, Play, Plus, Skull, Star, Trash2, Trophy, UserPlus, UserRound, Users,
@@ -93,7 +93,9 @@ function AddParticipant({ campaign, characters, usedIds, deadParticipants, onClo
 
 export function RioCampaign({ campaign }: { campaign: Campaign }) {
   const data = useRioData(campaign.id);
-  const [form, setForm] = useState<{ sessionId?: string } | null>(null);
+  const [params, setParams] = useSearchParams();
+  const [form, setFormState] = useState<{ sessionId?: string } | null>(params.get('registra') === '1' ? {} : null);
+  const setForm = (v: { sessionId?: string } | null) => { setFormState(v); if (!v && params.get('registra')) setParams({}, { replace: true }); };
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
   const characters = useMemo(() => new Map(data?.characters.map((c) => [c.id, c])), [data?.characters]);
