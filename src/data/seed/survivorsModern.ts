@@ -10,6 +10,7 @@ import { slugify } from '../../lib/ids';
  * - capIcon: la scheda mostra l'icona della faccina col cappellino. Il suo
  *   significato regolamentare non è ancora documentato.
  * - productId assente = scatola di provenienza da indicare.
+ * Trascrizione verificata dall'utente il 07/11/2026 (unica correzione: Ney, abilità gialla).
  */
 interface Row {
   name: string;
@@ -26,7 +27,7 @@ interface Row {
 const R = 'rio-z-janeiro';
 
 const rows: Row[] = [
-  { name: 'Ney', productId: R, woundTrack: 3, blu: 'Scatto', giallo: 'Azione', arancione: ['+1 Dado: Combattimento', '+1 Azione in Mischia gratuita'], rosso: ['Spingere', 'Scarto laterale', 'Inafferrabile'], notes: 'Sulla scheda è stampato "AZIONE" senza "+1": possibile refuso, da confermare.' },
+  { name: 'Ney', productId: R, woundTrack: 3, blu: 'Scatto', giallo: '+1 Azione', arancione: ['+1 Dado: Combattimento', '+1 Azione in Mischia gratuita'], rosso: ['Spingere', 'Scarto laterale', 'Inafferrabile'], notes: 'Sulla scheda è stampato "AZIONE": refuso, confermato dall\'utente come "+1 Azione".' },
   { name: 'Eliete', productId: R, woundTrack: 3, blu: 'Capoeira', giallo: '+1 Azione', arancione: ['Escalation: Mischia', 'Risultato 6: +1 Danno in Mischia'], rosso: ['Risultato 6: +1 Dado in Combattimento', 'Coriaceo', 'Caricare'] },
   { name: 'Vivi', productId: R, woundTrack: 3, blu: 'Vista acuta', giallo: '+1 Azione', arancione: ['+1 al tiro dei dadi: Combattimento', '+1 Azione in Mischia gratuita'], rosso: ['Avido', '2 Cocktail sono meglio di 1', 'Mordi e fuggi'] },
   { name: 'Steven', productId: R, woundTrack: 3, blu: 'Grande pianificatore', giallo: '+1 Azione', arancione: ['Sete di sangue: Combattimento', 'Risultato 6: +1 Dado in Combattimento'], rosso: ['Distributore', 'Salvatore', 'Legame con gli zombie'] },
@@ -72,6 +73,6 @@ export const seedModernSurvivors: Character[] = rows.map((r) => ({
     { level: 'rosso', abilityIds: r.rosso.map(abilityId) },
   ],
   traits: { woundTrack: r.woundTrack, capIcon: !!r.capIcon, transcriptionNotes: r.notes },
-  dataStatus: 'da-verificare',
+  dataStatus: 'verificato',
   origin: 'base',
 }));

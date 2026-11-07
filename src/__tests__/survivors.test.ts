@@ -33,3 +33,41 @@ describe('sopravvissuti Moderno', () => {
     expect((await db.characters.get('moderno-odin'))?.productId).toBe('zombicide-2e');
   });
 });
+
+import Dexie from 'dexie';
+
+describe('correzione di Ney', () => {
+  it('nel catalogo di base l\'abilità gialla è +1 Azione e i dati sono verificati', () => {
+    const ney = seedModernSurvivors.find((c) => c.id === 'moderno-ney')!;
+    expect(ney.abilities[1].abilityIds).toEqual(['moderno-1-azione']);
+    expect(seedModernSurvivors.every((c) => c.dataStatus === 'verificato')).toBe(true);
+    expect(seedModernAbilities.some((a) => a.id === 'moderno-azione')).toBe(false);
+  });
+
+  it('aggiorna i database già esistenti senza perdere il ritratto', async () => {
+    const name = `old-${Math.random()}`;
+    const old = new Dexie(name);
+    old.version(2).stores({
+      products: 'id, universeId, kind, origin', collection: 'productId, owned', players: 'id, name, origin',
+      characters: 'id, universeId, productId, kind, origin', abilities: 'id, universeId, origin',
+      scenarios: 'id, universeId, productId, origin', campaigns: 'id, universeId, productId, status, origin, updatedAt',
+      sessions: 'id, universeId, campaignId, playedOn, outcome, origin', sessionParticipants: 'id, sessionId, playerId, characterId',
+      activities: 'id, at, universeId, origin', images: 'id', characterNotes: 'characterId',
+    });
+    const ney = structuredClone(seedModernSurvivors[0]);
+    ney.abilities[1] = { level: 'giallo', abilityIds: ['moderno-azione'] };
+    ney.dataStatus = 'da-verificare';
+    ney.portraitImageId = 'img_ney';
+    await old.table('characters').put(ney);
+    await old.table('abilities').put({ id: 'moderno-azione', universeId: 'moderno', name: 'Azione', dataStatus: 'verificato', origin: 'base' });
+    old.close();
+
+    const db = new HubDatabase(name);
+    await db.open();
+    const updated = await db.characters.get('moderno-ney');
+    expect(updated?.abilities[1].abilityIds).toEqual(['moderno-1-azione']);
+    expect(updated?.dataStatus).toBe('verificato');
+    expect(updated?.portraitImageId).toBe('img_ney');
+    expect(await db.abilities.get('moderno-azione')).toBeUndefined();
+  });
+});

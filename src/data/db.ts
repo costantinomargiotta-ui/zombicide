@@ -40,6 +40,20 @@ export class HubDatabase extends Dexie {
       images: 'id',
     });
     this.version(2).stores({ characterNotes: 'characterId' });
+    // Revisione 3: trascrizione dei 24 sopravvissuti verificata dall'utente; correzione di Ney.
+    this.version(3).upgrade(async (tx) => {
+      const ney = await tx.table('characters').get('moderno-ney');
+      if (ney) {
+        ney.abilities = ney.abilities.map((g: { level: string; abilityIds: string[] }) =>
+          g.level === 'giallo' ? { ...g, abilityIds: ['moderno-1-azione'] } : g);
+        ney.traits = { ...ney.traits, transcriptionNotes: seedModernSurvivors.find((c) => c.id === 'moderno-ney')?.traits?.transcriptionNotes };
+        await tx.table('characters').put(ney);
+      }
+      await tx.table('abilities').delete('moderno-azione');
+      await tx.table('characters').where('origin').equals('base').modify((c: { universeId: string; dataStatus: string }) => {
+        if (c.universeId === 'moderno') c.dataStatus = 'verificato';
+      });
+    });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }
