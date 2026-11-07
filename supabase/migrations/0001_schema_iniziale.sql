@@ -78,13 +78,21 @@ create table characters (
   id text primary key,
   owner_id uuid not null default auth.uid() references auth.users on delete cascade,
   universe_id text not null references universes,
-  product_id text not null references products,
+  product_id text references products,   -- null = provenienza da indicare
   name text not null,
   kind text not null,                -- definito dal modulo regole: 'sopravvissuto', 'eroe-zombie', 'supereroe', ...
   portrait_image_path text,
   traits jsonb not null default '{}', -- caratteristiche specifiche dell'universo
   data_status data_status not null default 'da-verificare',
   origin record_origin not null default 'utente'
+);
+
+create table character_notes (
+  owner_id uuid not null default auth.uid() references auth.users on delete cascade,
+  character_id text not null references characters on delete cascade,
+  notes text not null default '',
+  updated_at timestamptz not null default now(),
+  primary key (owner_id, character_id)
 );
 
 -- Abilità originali stampate sulla scheda, per livello e posizione.
@@ -314,7 +322,7 @@ create table activities (
 do $$
 declare t text;
 begin
-  foreach t in array array['products','collection_entries','abilities','characters','cards','scenarios','players','campaigns','game_sessions','activities'] loop
+  foreach t in array array['products','collection_entries','abilities','characters','cards','scenarios','players','campaigns','character_notes','game_sessions','activities'] loop
     execute format('alter table %I enable row level security', t);
     execute format('create policy proprietario on %I for all using (owner_id = auth.uid()) with check (owner_id = auth.uid())', t);
   end loop;

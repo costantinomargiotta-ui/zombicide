@@ -7,6 +7,7 @@ import { CampaignsPage } from './pages/CampaignsPage';
 import { CampaignDashboard } from './pages/CampaignDashboard';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { CharactersPage } from './pages/CharactersPage';
 import { isUniverseId } from './domain/universes';
 
 function UniverseIndex() {
@@ -19,7 +20,7 @@ const sections: RouteObject[] = [
   { path: 'collezione', element: <CollectionPage /> },
   { path: 'campagne', element: <CampaignsPage /> },
   { path: 'impostazioni', element: <SettingsPage /> },
-  { path: 'personaggi', element: <PlaceholderPage title="Personaggi" phase="Fase 2" description="Archivio unico dei personaggi dei quattro universi, con schede originali, schede campagna, abilità e ritratti caricabili. Partirà dai 24 sopravvissuti Moderno, appena saranno disponibili le fotografie delle schede." /> },
+  { path: 'personaggi', element: <CharactersPage /> },
   { path: 'scenari', element: <PlaceholderPage title="Scenari" phase="Fase 3" description="Catalogo degli scenari con obiettivi, condizioni di vittoria e sconfitta, regole speciali e collegamenti. Si comincia con gli scenari di Rio Z Janeiro." /> },
   { path: 'partite', element: <PlaceholderPage title="Partite" phase="Fase 3" description="Avvio di una partita da uno scenario, registrazione di giocatori, personaggi, obiettivi ed esito, con aggiornamento automatico dei progressi e correzione senza duplicazioni." /> },
   { path: 'equipaggiamento', element: <PlaceholderPage title="Equipaggiamento" phase="Fase 4" description="Catalogo degli oggetti, inventario di campagna, equipaggiamento dei personaggi ed equipaggiamento conservato tra le missioni, solo dove previsto dal gioco." /> },

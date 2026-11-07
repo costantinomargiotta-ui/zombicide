@@ -1,5 +1,5 @@
 import type {
-  Activity, ActivityKind, Campaign, CampaignStatus, CollectionEntry, Product,
+  Activity, ActivityKind, Campaign, Character, CampaignStatus, CollectionEntry, Product,
   RecordOrigin, UniverseId,
 } from '../domain/types';
 import { CAMPAIGN_STATUS_LABEL } from '../domain/types';
@@ -88,6 +88,20 @@ export function createRepository(database: HubDatabase = db) {
         await database.sessions.bulkDelete(sessionIds);
         await database.campaigns.delete(id);
         await log('campagna', `Campagna eliminata: ${campaign.name}`, { universeId: campaign.universeId });
+      });
+    },
+
+    async setCharacterNotes(characterId: string, notes: string) {
+      await database.characterNotes.put({ characterId, notes, updatedAt: nowIso() });
+    },
+
+    /** Modifiche dell'utente a un personaggio di catalogo (ritratto, provenienza, verifica). */
+    async updateCharacter(id: string, patch: Partial<Pick<Character, 'portraitImageId' | 'productId' | 'dataStatus'>>) {
+      const character = await database.characters.get(id);
+      if (!character) throw new Error(`Personaggio inesistente: ${id}`);
+      await database.transaction('rw', database.characters, database.activities, async () => {
+        await database.characters.update(id, patch);
+        await log('personaggio', `Scheda aggiornata: ${character.name}`, { universeId: character.universeId, refId: id });
       });
     },
 

@@ -1,9 +1,10 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
-  Ability, Activity, Campaign, Character, CollectionEntry, GameSession,
+  Ability, Activity, Campaign, Character, CharacterNote, CollectionEntry, GameSession,
   Player, Product, Scenario, SessionParticipant, StoredImage,
 } from '../domain/types';
 import { seedProducts } from './seed/products';
+import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
  * Database locale (IndexedDB). Le tabelle rispecchiano lo schema SQL in
@@ -14,6 +15,7 @@ export class HubDatabase extends Dexie {
   collection!: EntityTable<CollectionEntry, 'productId'>;
   players!: EntityTable<Player, 'id'>;
   characters!: EntityTable<Character, 'id'>;
+  characterNotes!: EntityTable<CharacterNote, 'characterId'>;
   abilities!: EntityTable<Ability, 'id'>;
   scenarios!: EntityTable<Scenario, 'id'>;
   campaigns!: EntityTable<Campaign, 'id'>;
@@ -37,17 +39,31 @@ export class HubDatabase extends Dexie {
       activities: 'id, at, universeId, origin',
       images: 'id',
     });
-    this.on('populate', (tx) => {
-      tx.table('products').bulkAdd(seedProducts);
-    });
+    this.version(2).stores({ characterNotes: 'characterId' });
+    // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
+    this.on('ready', () => syncBaseCatalog(this));
   }
+}
+
+async function addMissing<T extends { id: string }>(table: EntityTable<T, 'id'>, rows: T[]) {
+  const existing = new Set((await table.bulkGet(rows.map((r) => r.id) as never)).filter(Boolean).map((r) => (r as T).id));
+  const missing = rows.filter((r) => !existing.has(r.id));
+  if (missing.length) await table.bulkAdd(missing as never);
+}
+
+export async function syncBaseCatalog(database: HubDatabase) {
+  await database.transaction('rw', database.products, database.abilities, database.characters, async () => {
+    await addMissing(database.products, seedProducts);
+    await addMissing(database.abilities, seedModernAbilities);
+    await addMissing(database.characters, seedModernSurvivors);
+  });
 }
 
 export const db = new HubDatabase();
 
 /** Tabelle incluse nel backup (le immagini sono gestite a parte). */
 export const DATA_TABLES = [
-  'products', 'collection', 'players', 'characters', 'abilities', 'scenarios',
+  'products', 'collection', 'players', 'characters', 'characterNotes', 'abilities', 'scenarios',
   'campaigns', 'sessions', 'sessionParticipants', 'activities',
 ] as const;
 export type DataTable = (typeof DATA_TABLES)[number];

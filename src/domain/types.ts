@@ -67,7 +67,8 @@ export interface Player {
 export interface Character {
   id: string;
   universeId: UniverseId;
-  productId: string;
+  /** Prodotto di provenienza; assente = da indicare. */
+  productId?: string;
   name: string;
   /** Tipologia definita dal modulo regole (es. 'sopravvissuto', 'eroe-zombie', 'supereroe'). */
   kind: string;
@@ -77,6 +78,13 @@ export interface Character {
   traits?: Record<string, unknown>;
   dataStatus: DataStatus;
   origin: RecordOrigin;
+}
+
+/** Note personali su un personaggio di catalogo (dato utente, separato dal catalogo). */
+export interface CharacterNote {
+  characterId: string;
+  notes: string;
+  updatedAt: string;
 }
 
 export interface Ability {
@@ -172,6 +180,7 @@ export type ActivityKind =
   | 'campagna'
   | 'partita'
   | 'giocatore'
+  | 'personaggio'
   | 'sistema';
 
 export interface Activity {
