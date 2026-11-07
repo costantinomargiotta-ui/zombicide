@@ -11,8 +11,6 @@ const d = (range: string, dice: number, accuracy: string, damage: number, noisy:
 
 type Row = Omit<EquipmentCard, 'universeId' | 'productId' | 'dataStatus' | 'origin' | 'quantity'> & { quantity?: number };
 
-const PIMP_NOTE = 'Valore di Conservazione 6 stampato in rosso sbiadito: da confermare.';
-
 const rows: Row[] = [
   // Equipaggiamento di Partenza Avanzato (retro grigio): nessun valore di Conservazione.
   { id: 'rio-asse-di-legno', deck: 'partenza', category: 'arma', name: 'Asse di legno', maxDice: 1, profiles: [m('0', 2, '3+', 1, true)] },
@@ -25,7 +23,7 @@ const rows: Row[] = [
   { id: 'rio-colt-ar-15', deck: 'arma-pimpata', category: 'arma', name: 'Colt AR-15', maxDice: 2, conservation: 6, surpriseSpawn: true, ammo: 'proiettili', profiles: [d('1-2', 3, '3+', 1, true)] },
   { id: 'rio-amor-de-mae', deck: 'arma-pimpata', category: 'arma', name: 'Amor de Mãe', maxDice: 3, conservation: 6, surpriseSpawn: true, ammo: 'cartucce', text: 'Colpo Doppio. Ricarica.', profiles: [d('0-1', 2, '3+', 2, true), m('0', 1, '3+', 2, false)] },
   { id: 'rio-rpg', deck: 'arma-pimpata', category: 'arma', name: 'RPG', maxDice: 3, conservation: 6, surpriseSpawn: true, text: 'Devi scartare 1 Munizione RPG per ogni Attacco.', profiles: [d('1-3', 3, '2+', 4, true)] },
-  { id: 'rio-gemelle-malvagie', deck: 'arma-pimpata', category: 'arma', name: 'Gemelle malvagie', maxDice: 1, conservation: 6, surpriseSpawn: true, ammo: 'proiettili', profiles: [d('0-1', 2, '3+', 1, true)], transcriptionNotes: 'Non ho visto il simbolo "Doppia" sulla carta: da confermare.' },
+  { id: 'rio-gemelle-malvagie', deck: 'arma-pimpata', category: 'arma', name: 'Gemelle malvagie', maxDice: 1, conservation: 6, surpriseSpawn: true, ammo: 'proiettili', profiles: [d('0-1', 2, '3+', 1, true)] },
   { id: 'rio-fucile-da-cecchino-dell-esercito', deck: 'arma-pimpata', category: 'arma', name: "Fucile da cecchino dell'esercito", maxDice: 1, conservation: 6, surpriseSpawn: true, ammo: 'proiettili', text: 'Cecchino.', profiles: [d('1-4', 2, '3+', 2, true)] },
   { id: 'rio-katana-pregiata', deck: 'arma-pimpata', category: 'arma', name: 'Katana pregiata', maxDice: 2, conservation: 6, surpriseSpawn: true, profiles: [m('0', 2, '3+', 2, false)] },
   { id: 'rio-ak-47-dorato', deck: 'arma-pimpata', category: 'arma', name: 'AK-47 dorato', maxDice: 3, conservation: 6, surpriseSpawn: true, ammo: 'proiettili', profiles: [d('1-2', 3, '4+', 2, true)] },
@@ -36,9 +34,8 @@ const rows: Row[] = [
 export const seedRioCards: EquipmentCard[] = rows.map((r) => ({
   quantity: 1,
   ...r,
-  transcriptionNotes: r.transcriptionNotes ?? (r.conservation ? PIMP_NOTE : undefined),
   universeId: 'moderno',
   productId: 'rio-z-janeiro',
-  dataStatus: 'da-verificare',
+  dataStatus: 'verificato',
   origin: 'base',
 }));

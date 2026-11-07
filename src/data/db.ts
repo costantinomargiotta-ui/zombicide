@@ -80,6 +80,12 @@ export class HubDatabase extends Dexie {
     this.version(5).stores({ syncQueue: 'key', syncMeta: 'key' });
     // Revisione 6: catalogo delle carte Equipaggiamento.
     this.version(6).stores({ cards: 'id, universeId, productId, deck, category' });
+    // Revisione 7: carte di Rio verificate dall'utente.
+    this.version(7).upgrade(async (tx) => {
+      await tx.table('cards').where('origin').equals('base').modify((c: { productId: string; dataStatus: string; transcriptionNotes?: string }) => {
+        if (c.productId === 'rio-z-janeiro') { c.dataStatus = 'verificato'; delete c.transcriptionNotes; }
+      });
+    });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }
