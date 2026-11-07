@@ -172,6 +172,44 @@ export interface SessionParticipant {
   /** Nome libero se il personaggio non è ancora a catalogo. */
   characterName?: string;
   experienceGained?: number;
+  /** Partecipazione alla campagna, se la partita ne fa parte. */
+  participantId?: string;
+  /** Dati di campagna specifici del modulo regole (es. PEC, Traguardi, esito KO). */
+  campaignData?: Record<string, unknown>;
+}
+
+/** Un personaggio in una campagna: ha una propria scheda, indipendente dalle altre campagne. */
+export interface CampaignParticipant {
+  id: string;
+  campaignId: string;
+  characterId: string;
+  playerName?: string;
+  /** Partecipante morto a cui succede (eredita i Traguardi). */
+  successorOf?: string;
+  /** Stato della missione in corso specifico del modulo regole (es. Azioni Bonus spese). */
+  missionState?: Record<string, unknown>;
+  notes?: string;
+  joinedAt: string;
+}
+
+/** Registro dei progressi: ogni riga nasce da una partita (sessionId) o da una scelta sulla scheda. */
+export interface ProgressEntry {
+  id: string;
+  campaignId: string;
+  participantId: string;
+  sessionId?: string;
+  payload: { kind: string; [key: string]: unknown };
+  createdAt: string;
+}
+
+/** Equipaggiamento conservato tra le Missioni. */
+export interface KeptItem {
+  id: string;
+  campaignId: string;
+  participantId: string;
+  name: string;
+  cardId?: string;
+  createdAt: string;
 }
 
 export type ActivityKind =

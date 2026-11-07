@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
-  Ability, Activity, Campaign, Character, CharacterNote, CollectionEntry, GameSession,
+  Ability, Activity, Campaign, CampaignParticipant, Character, CharacterNote, CollectionEntry, KeptItem, ProgressEntry, GameSession,
   Player, Product, Scenario, SessionParticipant, StoredImage,
 } from '../domain/types';
 import { seedProducts } from './seed/products';
@@ -19,6 +19,9 @@ export class HubDatabase extends Dexie {
   abilities!: EntityTable<Ability, 'id'>;
   scenarios!: EntityTable<Scenario, 'id'>;
   campaigns!: EntityTable<Campaign, 'id'>;
+  participants!: EntityTable<CampaignParticipant, 'id'>;
+  progress!: EntityTable<ProgressEntry, 'id'>;
+  keptItems!: EntityTable<KeptItem, 'id'>;
   sessions!: EntityTable<GameSession, 'id'>;
   sessionParticipants!: EntityTable<SessionParticipant, 'id'>;
   activities!: EntityTable<Activity, 'id'>;
@@ -54,6 +57,20 @@ export class HubDatabase extends Dexie {
         if (c.universeId === 'moderno') c.dataStatus = 'verificato';
       });
     });
+    // Revisione 4: campagne con schede (Rio Z Janeiro) e provenienze dal regolamento 2ª edizione.
+    this.version(4).stores({
+      participants: 'id, campaignId, characterId',
+      progress: 'id, campaignId, participantId, sessionId',
+      keptItems: 'id, campaignId, participantId',
+    }).upgrade(async (tx) => {
+      for (const p of seedProducts.filter((x) => x.id === 'rio-z-janeiro' || x.id === 'zombicide-2e')) {
+        await tx.table('products').update(p.id, { kind: p.kind, requires: p.requires, dataStatus: p.dataStatus });
+      }
+      for (const c of seedModernSurvivors.filter((x) => x.productId)) {
+        const existing = await tx.table('characters').get(c.id);
+        if (existing && !existing.productId) await tx.table('characters').update(c.id, { productId: c.productId });
+      }
+    });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }
@@ -78,6 +95,6 @@ export const db = new HubDatabase();
 /** Tabelle incluse nel backup (le immagini sono gestite a parte). */
 export const DATA_TABLES = [
   'products', 'collection', 'players', 'characters', 'characterNotes', 'abilities', 'scenarios',
-  'campaigns', 'sessions', 'sessionParticipants', 'activities',
+  'campaigns', 'participants', 'progress', 'keptItems', 'sessions', 'sessionParticipants', 'activities',
 ] as const;
 export type DataTable = (typeof DATA_TABLES)[number];

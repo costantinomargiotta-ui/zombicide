@@ -17,10 +17,11 @@ describe('sopravvissuti Moderno', () => {
     for (const c of seedModernSurvivors) for (const g of c.abilities) for (const id of g.abilityIds) expect(ids.has(id)).toBe(true);
   });
 
-  it('i sei di Rio Z Janeiro hanno la provenienza, gli altri restano da indicare', () => {
+  it('provenienze: 6 Rio Z Janeiro, 12 Zombicide 2ª edizione, 6 da indicare', () => {
     expect(seedModernSurvivors.filter((c) => c.productId === 'rio-z-janeiro').map((c) => c.name))
       .toEqual(['Ney', 'Eliete', 'Vivi', 'Steven', 'MC Jordim', 'Dona Cacilda']);
-    expect(seedModernSurvivors.filter((c) => !c.productId)).toHaveLength(18);
+    expect(seedModernSurvivors.filter((c) => c.productId === 'zombicide-2e')).toHaveLength(12);
+    expect(seedModernSurvivors.filter((c) => !c.productId).map((c) => c.name)).toEqual(['Angelo', 'Ashley', 'Justin', 'Mindy', 'Tess', 'Anton']);
   });
 
   it('la sincronizzazione del catalogo non sovrascrive le modifiche dell\'utente', async () => {

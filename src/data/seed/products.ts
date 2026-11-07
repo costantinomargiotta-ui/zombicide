@@ -16,10 +16,10 @@ const rows: SeedRow[] = [
   ['white-death', 'fantasy', 'White Death', 'gioco-base', 'da-verificare'],
 
   ['zombicide-1e', 'moderno', 'Zombicide 1ª edizione', 'gioco-base', 'da-verificare'],
-  ['zombicide-2e', 'moderno', 'Zombicide 2ª edizione', 'gioco-base', 'da-verificare'],
+  ['zombicide-2e', 'moderno', 'Zombicide 2ª edizione', 'gioco-base', 'verificato'],
   ['washington-zc', 'moderno', 'Washington Z.C.', 'espansione', 'da-verificare'],
   ['fort-hendrix', 'moderno', 'Fort Hendrix', 'espansione', 'da-verificare'],
-  ['rio-z-janeiro', 'moderno', 'Rio Z Janeiro', 'gioco-base', 'da-verificare'],
+  ['rio-z-janeiro', 'moderno', 'Rio Z Janeiro', 'espansione', 'verificato', ['zombicide-2e']],
 
   ['undead-or-alive', 'western', 'Zombicide: Undead or Alive', 'gioco-base', 'da-verificare'],
   ['gears-and-guns', 'western', 'Gears & Guns', 'espansione', 'da-verificare'],

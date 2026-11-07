@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, BarChart3, BookOpen, CheckCircle2, Dices, Heart, ImagePlus, NotebookPen, Package, Search, ShieldQuestion, UserRound, Users } from 'lucide-react';
 import { db } from '../data/db';
@@ -87,6 +87,11 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
     },
     [c.id],
   );
+  const campaignsOf = useLiveQuery(async () => {
+    const parts = await db.participants.where('characterId').equals(c.id).toArray();
+    const camps = await db.campaigns.bulkGet(parts.map((p) => p.campaignId));
+    return parts.map((p, i) => ({ participant: p, campaign: camps[i] })).filter((x) => x.campaign);
+  }, [c.id]);
   const product = products.find((p) => p.id === c.productId);
   const universeProducts = products.filter((p) => p.universeId === c.universeId);
   const kindLabel = rulesFor(c.universeId).characterKinds.find((k) => k.id === c.kind)?.label ?? c.kind;
@@ -181,9 +186,19 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
             <div className="hazard-frame">
               <div className="hazard-inner paper flex flex-col gap-2 p-4">
                 <h3 className="title-display text-2xl text-black" style={{ textShadow: 'none' }}>Scheda Campagna</h3>
-                <p>
-                  {c.name} non partecipa ancora a nessuna campagna. La scheda di Rio Z Janeiro (PE, abilità della campagna, azioni bonus, equipaggiamento conservato, traguardi) verrà attivata quando avrò la scheda ufficiale e il regolamento della campagna.
-                </p>
+                {campaignsOf?.length ? (
+                  <ul className="flex flex-col gap-2">
+                    {campaignsOf.map(({ participant, campaign }) => (
+                      <li key={participant.id}>
+                        <Link to={`/campagne/${campaign!.id}/scheda/${participant.id}`} className="flex items-center justify-between rounded border border-black/20 bg-white/60 px-3 py-2 font-semibold text-black hover:bg-white">
+                          {campaign!.name}<span className="text-sm font-normal">Apri la scheda →</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>{c.name} non partecipa ancora a nessuna campagna. Aggiungilo a una campagna dalla sua pagina.</p>
+                )}
                 <p className="text-sm text-black/60">Ogni campagna avrà la sua scheda: i progressi non si condividono tra salvataggi diversi.</p>
               </div>
             </div>

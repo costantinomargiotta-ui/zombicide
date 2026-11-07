@@ -18,9 +18,12 @@ describe('moduli regole', () => {
     expect(m.progression?.levels.find((l) => l.id === 'rosso')?.effect).toMatch(/Tutte le Abilità/);
   });
 
-  it('Moderno e Western non ereditano regole non documentate', () => {
-    expect(rulesFor('moderno').progression).toBeNull();
+  it('Moderno usa le soglie della 2ª edizione (pag. 15), Western resta non documentato', () => {
+    const t = rulesFor('moderno').progression!;
+    expect(t.source.page).toBe(15);
+    expect(dangerLevelFor(t, 18).id).toBe('giallo');
+    expect(dangerLevelFor(t, 19).id).toBe('arancione');
     expect(rulesFor('western').progression).toBeNull();
-    expect(rulesFor('moderno').campaignTemplates[0].status).toBe('materiali-mancanti');
+    expect(rulesFor('moderno').campaignTemplates[0].status).toBe('pronto');
   });
 });

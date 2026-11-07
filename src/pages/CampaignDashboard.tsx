@@ -16,6 +16,8 @@ import { ProgressBar } from '../ui/components/ProgressBar';
 import { EmptyState } from '../ui/components/EmptyState';
 import { UniverseEmblem } from '../ui/components/UniverseEmblem';
 import { Modal } from '../ui/components/Modal';
+import { RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
+import { RioCampaign } from './rio/RioCampaign';
 
 const transitions: Record<CampaignStatus, { to: CampaignStatus; label: string; icon: typeof Play }[]> = {
   'da-iniziare': [{ to: 'in-corso', label: 'Avvia', icon: Play }],
@@ -70,14 +72,16 @@ export function CampaignDashboard() {
             <button type="button" className="btn btn-danger" onClick={() => setConfirmDelete(true)} aria-label="Elimina campagna"><Trash2 className="size-4" /></button>
           </div>
         </div>
-        <div className="mt-4">
+        {campaign.templateId !== RIO_TEMPLATE_ID && <div className="mt-4">
           <div className="mb-1 flex justify-between text-sm text-[var(--muted)]">
             <span>Progressi generali</span>
             <span>{progress.completedScenarios}{campaign.plannedScenarioCount ? ` / ${campaign.plannedScenarioCount}` : ''} scenari</span>
           </div>
           <ProgressBar value={progress.ratio} label="Progressi della campagna" />
-        </div>
+        </div>}
       </div>
+
+      {campaign.templateId === RIO_TEMPLATE_ID && <RioCampaign campaign={campaign} />}
 
       {template?.status === 'materiali-mancanti' && (
         <Panel title={`Scheda ${template.name}: materiali mancanti`} icon={AlertTriangle}>
@@ -87,7 +91,7 @@ export function CampaignDashboard() {
       )}
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <Panel title="Registro partite" icon={Dices} className="xl:col-span-2">
+        {campaign.templateId !== RIO_TEMPLATE_ID && <Panel title="Registro partite" icon={Dices} className="xl:col-span-2">
           {sorted.length ? (
             <ul className="flex flex-col divide-y divide-[var(--line)]">
               {sorted.map((s) => (
@@ -100,10 +104,10 @@ export function CampaignDashboard() {
               ))}
             </ul>
           ) : (
-            <EmptyState icon={Dices} title="Nessuna partita registrata">La registrazione delle partite e l'aggiornamento automatico dei progressi arrivano con la Fase 3.</EmptyState>
+            <EmptyState icon={Dices} title="Nessuna partita registrata">La registrazione delle partite per questo tipo di campagna arriverà con il suo modulo regole.</EmptyState>
           )}
-        </Panel>
-        <div className="flex flex-col gap-5">
+        </Panel>}
+        <div className={`flex flex-col gap-5 ${campaign.templateId === RIO_TEMPLATE_ID ? 'xl:col-span-3 md:grid md:grid-cols-2' : ''}`}>
           <Panel title="Descrizione" icon={Trophy}>
             <p className="text-sm text-[var(--muted)]">{campaign.description || 'Nessuna descrizione.'}</p>
           </Panel>

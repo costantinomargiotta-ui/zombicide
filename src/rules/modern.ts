@@ -1,28 +1,35 @@
 import type { UniverseRules } from './types';
+import { RIO_TEMPLATE_ID } from './moderno/rioZJaneiro';
+
+const Z2 = 'Zombicide 2ª Edizione – Regolamento (ITA)';
 
 export const modernRules: UniverseRules = {
   universeId: 'moderno',
   characterKinds: [{ id: 'sopravvissuto', label: 'Sopravvissuto', playable: true }],
-  // Volutamente null: le regole non vengono copiate dal Fantasy.
-  progression: null,
+  // Punti Adrenalina (PA) e Livelli di Pericolo della 2ª edizione.
+  progression: {
+    maxXp: 43,
+    source: { document: Z2, page: 15 },
+    levels: [
+      { id: 'blu', label: 'Blu', color: 'blu', minXp: 0, effect: 'Inizia con 0 Punti Adrenalina e una singola Abilità.' },
+      { id: 'giallo', label: 'Giallo', color: 'giallo', minXp: 7, effect: 'Ottiene una quarta Azione.' },
+      { id: 'arancione', label: 'Arancione', color: 'arancione', minXp: 19, effect: "Sceglie un'Abilità tra le 2 indicate a questo Livello." },
+      { id: 'rosso', label: 'Rosso', color: 'rosso', minXp: 43, effect: "Sceglie un'Abilità tra le 3 indicate a questo Livello." },
+    ],
+  },
   campaignTemplates: [
     {
-      id: 'rio-z-janeiro',
-      name: 'Campagna Rio Z Janeiro',
+      id: RIO_TEMPLATE_ID,
+      name: 'Carnevale dei Morti (Rio Z Janeiro)',
       productId: 'rio-z-janeiro',
-      status: 'materiali-mancanti',
-      missingMaterials: [
-        'Fotografia leggibile della scheda campagna ufficiale (fronte e retro)',
-        'Pagine del regolamento di Rio Z Janeiro con le regole della campagna',
-        'Elenco ufficiale degli scenari della campagna e loro ordine',
-        'Regole di PE, Azioni bonus, Abilità della campagna e Traguardi',
-      ],
+      status: 'pronto',
+      missingMaterials: [],
     },
   ],
   missingMaterials: [
-    'Regolamento di Zombicide 2ª edizione (livelli di pericolo, abilità)',
-    'Regolamento di Rio Z Janeiro e scheda campagna',
-    'Fotografie delle schede dei 24 sopravvissuti',
+    'Regole di campagna di Washington Z.C. e Fort Hendrix',
+    'Carte Equipaggiamento Avanzato di Rio Z Janeiro (per collegare l\'equipaggiamento conservato al catalogo)',
+    'Scatola di provenienza di Angelo, Ashley, Justin, Mindy, Tess e Anton',
   ],
-  sources: [],
+  sources: [{ document: Z2 }, { document: 'Zombicide: Rio Z Janeiro – Regole e Missioni (ITA)' }],
 };

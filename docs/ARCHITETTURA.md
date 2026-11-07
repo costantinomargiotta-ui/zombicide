@@ -133,7 +133,7 @@ Principi:
 |---|---|---|
 | 1 · Fondamenta | Architettura, schema, navigazione, dashboard globale e per universo, collezione, campagne di base, backup | ✅ consegnata |
 | 2 · Personaggi | Archivio, schede originali, abilità, ritratti, importazione dei 24 sopravvissuti, **collegamento a Supabase** | Prossima |
-| 3 · Rio Z Janeiro | Modulo regole, scheda campagna fedele all'originale, scenari, registro partite con correzione, PE, azioni bonus, equipaggiamento conservato, traguardi | |
+| 3 · Rio Z Janeiro | Modulo regole, scheda campagna fedele all'originale, scenari, registro partite con correzione, PE, azioni bonus, equipaggiamento conservato, traguardi | ✅ prima versione |
 | 4 · Carte ed equipaggiamento | Catalogo, inventari, collegamento alle campagne, ricompense | |
 | 5 · Statistiche | Dashboard, classifiche, grafici, storico, giocatori | |
 | 6 · Altri universi | Regole e schede Fantasy, Western, Marvel; altre campagne | |
@@ -171,3 +171,11 @@ Ho segnato come `verificato` solo Black Plague, Marvel Zombies e X-Men Resistanc
 - *Zombicide: Black Plague – Regolamento* (ITA): indice, contenuto, esperienza e livelli di pericolo (pag. 2, 3, 16).
 - *Marvel Zombies – Un gioco Zombicide* (ITA): indice, contenuto, modalità di gioco, esperienza e livelli di pericolo (pag. 2, 3, 5, 11).
 - Sei mockup grafici: riferimento per stile e disposizione, non per le regole.
+
+## Aggiornamento: campagna Rio Z Janeiro
+
+Fonti: *Rio Z Janeiro – Regole e Missioni* (pag. 4–27) e *Zombicide 2ª Edizione – Regolamento* (pag. 3, 15, 35, 63–66).
+
+- Modulo regole: `src/rules/moderno/rioZJaneiro.ts` (barra dei PEC con Pietre Miliari a 2, 5, 8, 11, 14, 17, 20; 14 Abilità della Campagna; 7 Azioni Bonus; 10 Missioni in ordine; KO e successori).
+- Registro dei progressi: tabella `progress`; correggere una partita rigenera solo le sue righe.
+- Punti aperti: il regolamento non dice cosa succede dopo una Missione persa (l'app la lascia disponibile); i Traguardi delle carte Obiettivo si scrivono a mano; l'equipaggiamento conservato è testo libero finché non avremo le carte.

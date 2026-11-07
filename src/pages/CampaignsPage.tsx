@@ -8,6 +8,7 @@ import { useStatsInput } from '../data/hooks';
 import { CAMPAIGN_STATUS_LABEL, UNIVERSE_IDS, type CampaignStatus, type UniverseId } from '../domain/types';
 import { UNIVERSES } from '../domain/universes';
 import { rulesFor } from '../rules';
+import { RIO_MISSIONS, RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
 import { computeStats } from '../services/stats';
 import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
@@ -38,7 +39,7 @@ function NewCampaignForm({ defaultUniverse, onClose }: { defaultUniverse?: Unive
     const c = await repo.createCampaign({
       universeId, productId, name: name.trim(),
       description: description.trim() || undefined,
-      plannedScenarioCount: Number.isFinite(plannedNum) && plannedNum > 0 ? plannedNum : undefined,
+      plannedScenarioCount: Number.isFinite(plannedNum) && plannedNum > 0 ? plannedNum : template?.id === RIO_TEMPLATE_ID ? RIO_MISSIONS.length : undefined,
       templateId: template?.id,
     });
     onClose();
@@ -78,6 +79,11 @@ function NewCampaignForm({ defaultUniverse, onClose }: { defaultUniverse?: Unive
         <div className="sm:col-span-2">
           <Field label="Descrizione"><textarea className="input min-h-16" value={description} onChange={(e) => setDescription(e.target.value)} /></Field>
         </div>
+        {template?.status === 'pronto' && (
+          <p className="rounded-md border border-green-700 bg-green-900/20 p-3 text-sm sm:col-span-2">
+            Verrà usata la campagna ufficiale <strong>{template.name}</strong>, con schede, missioni in ordine e registro dei progressi.
+          </p>
+        )}
         {template?.status === 'materiali-mancanti' && (
           <div className="flex gap-2 rounded-md border border-amber-700 bg-amber-900/20 p-3 text-sm text-amber-200 sm:col-span-2">
             <AlertTriangle className="size-5 shrink-0" aria-hidden />

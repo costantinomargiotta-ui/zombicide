@@ -82,7 +82,10 @@ export function createRepository(database: HubDatabase = db) {
     async deleteCampaign(id: string) {
       const campaign = await database.campaigns.get(id);
       if (!campaign) return;
-      await database.transaction('rw', [database.campaigns, database.sessions, database.sessionParticipants, database.activities], async () => {
+      await database.transaction('rw', [database.campaigns, database.sessions, database.sessionParticipants, database.participants, database.progress, database.keptItems, database.activities], async () => {
+        await database.participants.where('campaignId').equals(id).delete();
+        await database.progress.where('campaignId').equals(id).delete();
+        await database.keptItems.where('campaignId').equals(id).delete();
         const sessionIds = (await database.sessions.where('campaignId').equals(id).toArray()).map((s) => s.id);
         await database.sessionParticipants.where('sessionId').anyOf(sessionIds).delete();
         await database.sessions.bulkDelete(sessionIds);

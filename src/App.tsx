@@ -8,6 +8,7 @@ import { CampaignDashboard } from './pages/CampaignDashboard';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { CharactersPage } from './pages/CharactersPage';
+import { RioSheet } from './pages/rio/RioSheet';
 import { isUniverseId } from './domain/universes';
 
 function UniverseIndex() {
@@ -35,6 +36,7 @@ const routes: RouteObject[] = [
       { path: '/', element: <GlobalDashboard /> },
       ...sections.map((r) => ({ ...r, path: `/${r.path}` })),
       { path: '/campagne/:campaignId', element: <CampaignDashboard /> },
+      { path: '/campagne/:campaignId/scheda/:participantId', element: <RioSheet /> },
       { path: '/u/:universeId', element: <UniverseIndex /> },
       ...sections.map((r) => ({ ...r, path: `/u/:universeId/${r.path}` })),
       { path: '*', element: <Navigate to="/" replace /> },
