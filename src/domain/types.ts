@@ -239,11 +239,12 @@ export interface StoredImage {
 }
 
 export interface WeaponProfile {
-  kind: 'mischia' | 'distanza';
+  kind: 'mischia' | 'distanza' | 'auto';
   range: string;
-  dice: number;
-  accuracy: string;
-  damage: number;
+  /** Assenti quando la carta lascia la casella vuota (es. Molotov). */
+  dice?: number;
+  accuracy?: string;
+  damage?: number;
   noisy: boolean;
 }
 

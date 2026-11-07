@@ -79,6 +79,7 @@ describe('carte di Rio Z Janeiro', () => {
     const count = (deck: string) => seedRioCards.filter((c) => c.deck === deck).reduce((a, c) => a + c.quantity, 0);
     expect(count('partenza')).toBe(6);
     expect(count('arma-pimpata')).toBe(12);
+    expect(seedRioCards.filter((c) => c.deck === 'avanzato')).toHaveLength(20);
     expect(seedRioCards.filter((c) => c.deck === 'partenza').every((c) => c.conservation === undefined)).toBe(true);
   });
 });

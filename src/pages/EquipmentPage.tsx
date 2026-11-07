@@ -60,9 +60,9 @@ export function CardTile({ card }: { card: EquipmentCard }) {
           <div key={i} className="flex flex-wrap items-center gap-1">
             <span className="w-16 text-xs font-semibold text-[var(--muted)] uppercase">{p.kind}</span>
             <Stat label="Gittata" value={p.range} />
-            <Stat label="Dadi" value={p.dice} />
-            <Stat label="Precis." value={p.accuracy} />
-            <Stat label="Danni" value={p.damage} />
+            <Stat label="Dadi" value={p.dice ?? '–'} />
+            <Stat label="Precis." value={p.accuracy ?? '–'} />
+            <Stat label="Danni" value={p.damage ?? '–'} />
             {p.noisy ? <Volume2 className="size-5 text-amber-400" aria-label="Rumorosa" /> : <VolumeX className="size-5 text-sky-400" aria-label="Silenziosa" />}
           </div>
         ))}
