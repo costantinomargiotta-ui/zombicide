@@ -29,7 +29,7 @@ const rows: Row[] = [
   { id: 'rio-katana-pregiata', deck: 'arma-pimpata', category: 'arma', name: 'Katana pregiata', maxDice: 2, conservation: 6, surpriseSpawn: true, profiles: [m('0', 2, '3+', 2, false)] },
   { id: 'rio-ak-47-dorato', deck: 'arma-pimpata', category: 'arma', name: 'AK-47 dorato', maxDice: 3, conservation: 6, surpriseSpawn: true, ammo: 'proiettili', profiles: [d('1-2', 3, '4+', 2, true)] },
   { id: 'rio-shotgun-automatico', deck: 'arma-pimpata', category: 'arma', name: 'Shotgun automatico', maxDice: 3, conservation: 6, surpriseSpawn: true, ammo: 'cartucce', profiles: [d('0-1', 3, '4+', 2, true)] },
-  // Equipaggiamento Avanzato (retro azzurro): prima foto, 20 carte diverse. Copie da indicare.
+  // Equipaggiamento Avanzato (retro azzurro): prima foto, 20 carte diverse, verificate dall'utente. Copie da indicare.
   { id: 'rio-av-tubo-di-ferro', deck: 'avanzato', category: 'arma', name: 'Tubo di ferro', maxDice: 1, conservation: 3, surpriseSpawn: true, profiles: [m('0', 1, '2+', 1, false)] },
   { id: 'rio-av-te-mate', deck: 'avanzato', category: 'oggetto', name: 'Tè mate', text: 'Scarta questa carta per ottenere 2 Azioni extra. Può essere usata nello Zaino.' },
   { id: 'rio-av-molotov', deck: 'avanzato', category: 'arma', name: 'Molotov', conservation: 5, surpriseSpawn: true, profiles: [{ kind: 'distanza', range: '1-1', noisy: true }], text: 'Scarta dalla Mano: Elimina tutti i Personaggi nella Zona bersagliata.' },
@@ -47,7 +47,7 @@ const rows: Row[] = [
   { id: 'rio-av-lama-di-fortuna', deck: 'avanzato', category: 'arma', name: 'Lama di fortuna', maxDice: 1, conservation: 4, profiles: [m('0', 2, '3+', 1, false)] },
   { id: 'rio-av-shotgun', deck: 'avanzato', category: 'arma', name: 'Shotgun', maxDice: 2, conservation: 5, surpriseSpawn: true, ammo: 'cartucce', profiles: [d('0-1', 2, '4+', 2, true)] },
   { id: 'rio-av-fucile-da-cecchino', deck: 'avanzato', category: 'arma', name: 'Fucile da cecchino', maxDice: 1, conservation: 4, surpriseSpawn: true, ammo: 'proiettili', text: 'Cecchino.', profiles: [d('1-3', 1, '3+', 2, true)] },
-  { id: 'rio-av-sub-mg', deck: 'avanzato', category: 'arma', name: 'Sub-MG', maxDice: 3, dual: true, ammo: 'proiettili', profiles: [d('0-1', 3, '5+', 1, true)], transcriptionNotes: 'Carta sbiadita nella foto: il valore di Conservazione non si legge.' },
+  { id: 'rio-av-sub-mg', deck: 'avanzato', category: 'arma', name: 'Sub-MG', maxDice: 3, conservation: 4, dual: true, ammo: 'proiettili', profiles: [d('0-1', 3, '5+', 1, true)] },
   { id: 'rio-av-opala-78', deck: 'avanzato', category: 'oggetto', name: 'Opala 78', profiles: [auto('0', 3, '4+', 2, false)], text: "Azioni con l'Auto: Entrare o Uscire da un'Auto; Cambiare Posto in un'Auto; Guidare Lentamente (1 Zona, nessun Attacco); Guidare Velocemente (2 Zone, Attacco in ogni Zona con Zombie, applicare Fuoco Amico e Priorità dei Bersagli)." },
   { id: 'rio-av-aaahh', deck: 'avanzato', category: 'aaahh', name: 'Aaahh!!', text: 'Colloca 1 Deambulante nella Zona. Poi scarta questa carta.' },
   { id: 'rio-aaahh-pimpata', deck: 'arma-pimpata', category: 'aaahh', name: 'Aaahh!!', quantity: 3, text: 'Colloca 1 Deambulante nella Zona. Poi scarta questa carta.' },
@@ -58,6 +58,6 @@ export const seedRioCards: EquipmentCard[] = rows.map((r) => ({
   ...r,
   universeId: 'moderno',
   productId: 'rio-z-janeiro',
-  dataStatus: r.deck === 'avanzato' ? 'da-verificare' : 'verificato',
+  dataStatus: 'verificato',
   origin: 'base',
 }));

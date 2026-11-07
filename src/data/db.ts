@@ -86,6 +86,15 @@ export class HubDatabase extends Dexie {
         if ((c as { origin?: string }).origin === 'base') { c.dataStatus = 'verificato'; delete c.transcriptionNotes; }
       });
     });
+    // Revisione 8: Equipaggiamento Avanzato verificato (Sub-MG Conservazione 4).
+    this.version(8).upgrade(async (tx) => {
+      await tx.table('cards').where('deck').equals('avanzato').modify((c: { origin?: string; id: string; dataStatus: string; conservation?: number; transcriptionNotes?: string }) => {
+        if (c.origin !== 'base') return;
+        c.dataStatus = 'verificato';
+        delete c.transcriptionNotes;
+        if (c.id === 'rio-av-sub-mg') c.conservation = 4;
+      });
+    });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }
