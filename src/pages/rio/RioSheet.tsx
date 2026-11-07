@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, ArrowLeft, Check, Minus, Plus, Skull, Star, Trash2, X } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Check, Minus, Plus, Skull, Star, Swords, Trash2, X } from 'lucide-react';
+import { StoredImage } from '../../ui/components/StoredImage';
 import { db } from '../../data/db';
 import { bonusSpent, rioRepo, sheetFor } from '../../data/rioRepository';
 import {
@@ -59,6 +60,7 @@ export function RioSheet() {
   const abilityName = useMemo(() => new Map(abilities?.map((a) => [a.id, a.name])), [abilities]);
   const [newItem, setNewItem] = useState('');
   const [newCardId, setNewCardId] = useState('');
+  const [addingItem, setAddingItem] = useState(false);
   const keepable = useLiveQuery(() => db.cards.filter((c) => c.conservation !== undefined).toArray());
   const [newTraguardo, setNewTraguardo] = useState('');
 
@@ -131,120 +133,131 @@ export function RioSheet() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-[1.1fr_1fr_0.7fr_1fr]">
-          {/* Barra dei PEC */}
-          <SheetBox title="PEC" subtitle={`${s.pec} / ${PEC_MAX}`}>
-            <ol className="flex flex-col">
-              {Array.from({ length: PEC_MAX }, (_, i) => i + 1).map((n) => {
-                const milestone = (PEC_MILESTONES as readonly number[]).includes(n);
-                const reached = n <= s.pec;
-                return (
-                  <li key={n} className={`flex items-center gap-2 border-b border-black/10 px-2 ${milestone ? 'py-1' : 'py-0.5'} ${reached ? 'bg-[#f2c418]/40' : ''}`}>
-                    <span className={`grid size-6 shrink-0 place-items-center rounded-sm border text-sm font-bold ${reached ? 'border-black bg-black text-[#f2c418]' : 'border-black/30 bg-white'}`}>{n}</span>
-                    {milestone && <span className={`flex-1 text-[11px] leading-tight ${s.milestonesReached.includes(n as never) ? 'font-semibold' : 'text-black/60'}`}>{REWARD_TEXT}</span>}
-                  </li>
-                );
-              })}
-            </ol>
-            <div className="flex items-center justify-center gap-2 border-t border-black/20 p-2 text-xs text-black/70">
-              Correzione manuale
-              <button type="button" className="grid size-6 place-items-center rounded bg-black text-white" onClick={() => rioRepo.adjustPecManually(participant.id, -1)} aria-label="Togli 1 PEC" disabled={s.pec === 0}><Minus className="size-3" /></button>
-              <button type="button" className="grid size-6 place-items-center rounded bg-black text-white" onClick={() => rioRepo.adjustPecManually(participant.id, 1)} aria-label="Aggiungi 1 PEC" disabled={s.pec >= PEC_MAX}><Plus className="size-3" /></button>
-            </div>
-          </SheetBox>
-
-          {/* Abilità della Campagna */}
-          <SheetBox title="Abilità della Campagna" subtitle="(Livello Blu)">
-            <ul className="flex flex-col">
-              {CAMPAIGN_ABILITIES.map((a) => {
-                const owned = s.campaignAbilityIds.includes(a.id);
-                return (
-                  <li key={a.id} className="flex items-center gap-2 border-b border-black/10 px-3 py-1.5" title={a.description}>
-                    <span className={`flex-1 text-right ${owned ? 'font-bold' : ''}`}>{a.name}{a.note && <span className="block text-[10px] text-black/60">{a.note}</span>}</span>
-                    <span className={`grid size-5 shrink-0 place-items-center border-2 border-black ${owned ? 'bg-white' : 'bg-white/70'}`} aria-label={owned ? 'Acquisita' : 'Non acquisita'}>{owned && <Check className="size-4 text-green-700" strokeWidth={4} />}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </SheetBox>
-
-          {/* Azioni Bonus */}
-          <SheetBox title="Azioni Bonus" subtitle="(Una volta per Missione)">
-            <div className="grid grid-cols-[auto_1fr_1fr] items-center gap-x-2 gap-y-1 p-2 text-sm">
-              <span /><span className="text-center font-semibold">Riserva</span><span className="text-center font-semibold">Spesa</span>
-              {Array.from({ length: BONUS_ACTION_SLOTS }, (_, i) => i + 1).map((n) => {
-                const inReserve = n <= s.bonusActions;
-                const isSpent = n <= spent;
-                return [
-                  <span key={`n${n}`} className="grid size-6 place-items-center rounded-sm bg-[#f2c418] font-bold">{n}</span>,
-                  <span key={`r${n}`} className="grid place-items-center"><span className="grid size-6 place-items-center border-2 border-black bg-white">{inReserve && <Check className="size-4 text-green-700" strokeWidth={4} />}</span></span>,
-                  <span key={`s${n}`} className="grid place-items-center">
-                    <button type="button" disabled={!inReserve || s.dead} onClick={() => rioRepo.setBonusSpent(participant.id, isSpent ? n - 1 : n)}
-                      className="grid size-6 place-items-center border-2 border-black bg-white disabled:opacity-30" aria-label={`Azione Bonus ${n}: ${isSpent ? 'spesa' : 'disponibile'}`} aria-pressed={isSpent}>
-                      {isSpent && <Check className="size-4 text-green-700" strokeWidth={4} />}
-                    </button>
-                  </span>,
-                ];
-              })}
-            </div>
-            <p className="px-2 pb-2 text-[11px] text-black/60">Le spunte «Spesa» si cancellano alla registrazione della Missione successiva.</p>
-          </SheetBox>
-
-          {/* Equipaggiamento Conservato */}
-          <SheetBox title="Equipaggiamento Conservato">
-            <ul className="flex flex-col gap-1 p-2">
-              {kept.map((k) => (
-                <li key={k.id} className="flex items-center gap-2 rounded border border-black/20 bg-white/60 px-2 py-1">
-                  <span className="flex-1 font-medium">{k.name}</span>
-                  {(() => { const card = keepable?.find((c) => c.id === k.cardId); return card ? <span className="rounded bg-black px-1.5 text-xs font-bold text-white" title="Conservazione: dadi Al Massimo da tirare a fine Missione">🔒 {card.conservation}</span> : null; })()}
-                  <button type="button" onClick={() => rioRepo.removeKeptItem(k.id)} aria-label={`Rimuovi ${k.name}`} className="text-black/60 hover:text-red-700"><Trash2 className="size-4" /></button>
-                </li>
-              ))}
-              {!kept.length && <li className="text-sm text-black/60 italic">Nessun oggetto conservato.</li>}
-            </ul>
-            <form className="flex flex-col gap-1 p-2" onSubmit={(e) => { e.preventDefault(); rioRepo.addKeptItem(participant.id, newItem, newCardId || undefined); setNewItem(''); setNewCardId(''); }}>
-              <select className="rounded border border-black/30 bg-white px-2 py-1 text-black" value={newCardId} onChange={(e) => setNewCardId(e.target.value)} aria-label="Carta dal catalogo">
-                <option value="">Carta dal catalogo…</option>
-                {keepable?.map((c) => <option key={c.id} value={c.id}>{c.name} (Conservazione {c.conservation})</option>)}
-              </select>
-              <div className="flex gap-1">
-              <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="…oppure scrivi il nome" aria-label="Nuovo oggetto conservato" disabled={!!newCardId} />
-              <button type="submit" className="grid size-8 place-items-center rounded bg-black text-white" aria-label="Aggiungi oggetto"><Plus className="size-4" /></button>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.15fr_1fr]">
+          <div className="flex flex-col gap-4">
+            {/* PE della campagna: griglia 1-20 come nei mockup; Pietre Miliari dalla scheda ufficiale */}
+            <SheetBox title={`PEC · Progressione campagna (1–${PEC_MAX})`}>
+              <div className="grid grid-cols-10 gap-1 p-3">
+                {Array.from({ length: PEC_MAX }, (_, i) => i + 1).map((n) => {
+                  const milestone = (PEC_MILESTONES as readonly number[]).includes(n);
+                  const reached = n <= s.pec;
+                  const cls = reached && milestone ? 'border-green-800 bg-[var(--ok)] text-black' : reached ? 'border-black bg-black text-[#f2c418]' : milestone ? 'border-black/50 bg-[#f2c418] text-black' : 'border-black/30 bg-white text-black';
+                  return <span key={n} title={milestone ? REWARD_TEXT : undefined} className={`grid aspect-square place-items-center rounded-sm border-2 text-base font-bold sm:text-lg ${cls}`}>{n}</span>;
+                })}
               </div>
-            </form>
-            <p className="px-2 pb-2 text-[11px] text-black/60">Alla fine di ogni Missione tira i dadi Al Massimo pari al valore di Conservazione di ogni carta: con 1+ Rottura la carta è persa (pag. 6).</p>
-          </SheetBox>
+              {(() => { const next = PEC_MILESTONES.find((m) => m > s.pec); return (
+                <p className="flex items-center gap-2 border-t border-black/15 px-3 py-2 text-sm"><Star className="size-4 shrink-0 fill-[#f2c418] text-black" />
+                  {next ? <span>Prossimo PEC speciale: <strong>{next}</strong> <span className="text-black/60">({REWARD_TEXT})</span></span> : <span>Tutte le Pietre Miliari raggiunte.</span>}
+                </p>); })()}
+              <div className="flex items-center justify-end gap-2 px-3 pb-2 text-xs text-black/60">
+                Correzione manuale
+                <button type="button" className="grid size-6 place-items-center rounded bg-black text-white" onClick={() => rioRepo.adjustPecManually(participant.id, -1)} aria-label="Togli 1 PEC" disabled={s.pec === 0}><Minus className="size-3" /></button>
+                <button type="button" className="grid size-6 place-items-center rounded bg-black text-white" onClick={() => rioRepo.adjustPecManually(participant.id, 1)} aria-label="Aggiungi 1 PEC" disabled={s.pec >= PEC_MAX}><Plus className="size-3" /></button>
+              </div>
+            </SheetBox>
+
+            <SheetBox title="Abilità della Campagna" subtitle="(Livello Blu)">
+              <ul className="flex flex-col">
+                {CAMPAIGN_ABILITIES.map((a) => {
+                  const owned = s.campaignAbilityIds.includes(a.id);
+                  return (
+                    <li key={a.id} className="flex items-center gap-3 border-b border-black/10 px-3 py-1.5" title={a.description}>
+                      <LevelChip level="blu" />
+                      <span className={`flex-1 text-base ${owned ? 'font-bold' : ''}`}>{a.name}{a.note && <span className="block text-[10px] text-black/60">{a.note}</span>}</span>
+                      <span className="grid size-6 shrink-0 place-items-center border-2 border-black bg-white" aria-label={owned ? 'Acquisita' : 'Non acquisita'}>{owned && <Check className="size-5 text-green-700" strokeWidth={4} />}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </SheetBox>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <SheetBox title="Azioni Bonus" subtitle="(una volta per Missione)">
+              <div className="grid grid-cols-[auto_repeat(7,minmax(0,1fr))] items-center gap-1 p-3 text-sm">
+                <span />
+                {Array.from({ length: BONUS_ACTION_SLOTS }, (_, i) => <span key={i} className="grid h-8 place-items-center rounded-sm bg-[#f2c418] text-lg font-bold">{i + 1}</span>)}
+                <span className="pr-1 text-xs font-semibold">Riserva</span>
+                {Array.from({ length: BONUS_ACTION_SLOTS }, (_, i) => i + 1).map((n) => (
+                  <span key={n} className="grid place-items-center"><span className="grid size-7 place-items-center border-2 border-black bg-white">{n <= s.bonusActions && <Check className="size-5 text-green-700" strokeWidth={4} />}</span></span>
+                ))}
+                <span className="pr-1 text-xs font-semibold">Spesa</span>
+                {Array.from({ length: BONUS_ACTION_SLOTS }, (_, i) => i + 1).map((n) => {
+                  const inReserve = n <= s.bonusActions;
+                  const isSpent = n <= spent;
+                  return (
+                    <span key={n} className="grid place-items-center">
+                      <button type="button" disabled={!inReserve || s.dead} onClick={() => rioRepo.setBonusSpent(participant.id, isSpent ? n - 1 : n)}
+                        className="grid size-7 place-items-center border-2 border-black bg-white disabled:opacity-30" aria-label={`Azione Bonus ${n}: ${isSpent ? 'spesa' : 'disponibile'}`} aria-pressed={isSpent}>
+                        {isSpent && <Check className="size-5 text-green-700" strokeWidth={4} />}
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+              <p className="px-3 pb-2 text-[11px] text-black/60">Le spunte «Spesa» si cancellano alla registrazione della Missione successiva.</p>
+            </SheetBox>
+
+            <SheetBox title="Equipaggiamento Conservato">
+              <div className="grid grid-cols-3 gap-2 p-3 sm:grid-cols-4">
+                {kept.map((k) => {
+                  const card = keepable?.find((c) => c.id === k.cardId);
+                  return (
+                    <div key={k.id} className="relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border-2 border-[#f2c418] bg-gradient-to-b from-[#3a2a10] to-[#120d06] text-white shadow">
+                      <div className="grid flex-1 place-items-center p-1">
+                        <StoredImage imageId={card?.frontImageId} alt={k.name} className="size-full object-cover" fallback={<Swords className="size-8 text-[#f2c418]" />} />
+                      </div>
+                      <span className="bg-black/80 px-1 py-0.5 text-center text-xs leading-tight font-semibold">{k.name}</span>
+                      {card && <span className="absolute top-1 left-1 rounded bg-black/80 px-1 text-[11px] font-bold" title="Conservazione">🔒{card.conservation}</span>}
+                      <button type="button" onClick={() => rioRepo.removeKeptItem(k.id)} aria-label={`Rimuovi ${k.name}`} className="absolute top-1 right-1 rounded bg-black/70 p-0.5 hover:bg-red-700"><Trash2 className="size-3" /></button>
+                    </div>
+                  );
+                })}
+                <button type="button" onClick={() => setAddingItem(true)} className="grid aspect-[3/4] place-items-center rounded-md border-2 border-dashed border-black/50 bg-black/10 text-black/70 hover:bg-black/20" aria-label="Aggiungi oggetto conservato"><Plus className="size-8" /></button>
+              </div>
+              {addingItem && (
+                <form className="flex flex-col gap-1 px-3 pb-2" onSubmit={(e) => { e.preventDefault(); rioRepo.addKeptItem(participant.id, newItem, newCardId || undefined); setNewItem(''); setNewCardId(''); setAddingItem(false); }}>
+                  <select className="rounded border border-black/30 bg-white px-2 py-1 text-black" value={newCardId} onChange={(e) => setNewCardId(e.target.value)} aria-label="Carta dal catalogo">
+                    <option value="">Carta dal catalogo…</option>
+                    {keepable?.map((c) => <option key={c.id} value={c.id}>{c.name} (Conservazione {c.conservation})</option>)}
+                  </select>
+                  <div className="flex gap-1">
+                    <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="…oppure scrivi il nome" aria-label="Nuovo oggetto conservato" disabled={!!newCardId} />
+                    <button type="submit" className="rounded bg-black px-3 text-white">Aggiungi</button>
+                  </div>
+                </form>
+              )}
+              <p className="px-3 pb-2 text-[11px] text-black/60">A fine Missione tira i dadi Al Massimo pari alla Conservazione di ogni carta: con 1+ Rottura la carta è persa (pag. 6).</p>
+            </SheetBox>
+
+            <SheetBox title="Traguardi della Campagna">
+              <ul className="flex flex-col gap-1 p-3">
+                {s.traguardi.map((t) => (
+                  <li key={t} className="flex items-center gap-2 text-lg">
+                    <span className="grid size-6 place-items-center border-2 border-black bg-white"><Check className="size-5 text-green-700" strokeWidth={4} /></span>
+                    <span className="flex-1 font-medium">{t}</span>
+                    {!ownTraguardi.has(t) && <span className="text-xs text-black/60">ereditato</span>}
+                    {ownTraguardi.has(t) && !sessionTraguardi.has(t) && (
+                      <button type="button" onClick={() => rioRepo.removeManualTraguardo(participant.id, t)} aria-label={`Rimuovi ${t}`} className="text-black/60 hover:text-red-700"><Trash2 className="size-4" /></button>
+                    )}
+                  </li>
+                ))}
+                {!s.traguardi.length && <li className="text-black/60 italic">Nessun Traguardo.</li>}
+              </ul>
+              <form className="flex gap-1 px-3 pb-3" onSubmit={(e) => { e.preventDefault(); rioRepo.addManualTraguardo(participant.id, newTraguardo); setNewTraguardo(''); }}>
+                <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" list="rio-traguardi" value={newTraguardo} onChange={(e) => setNewTraguardo(e.target.value)} placeholder="Parola chiave del Traguardo" aria-label="Nuovo Traguardo" />
+                <datalist id="rio-traguardi">{KNOWN_MILESTONES.map((k) => <option key={k.name} value={k.name} />)}</datalist>
+                <button type="submit" className="grid size-8 place-items-center rounded bg-black text-white" aria-label="Aggiungi Traguardo"><Plus className="size-4" /></button>
+              </form>
+            </SheetBox>
+
+            <SheetBox title="Note">
+              <textarea key={participant.id} className="m-3 min-h-32 w-[calc(100%-1.5rem)] resize-y rounded border border-black/20 bg-white/50 p-2 text-black italic outline-none focus:border-black/50"
+                defaultValue={participant.notes ?? ''} placeholder="Storia del sopravvissuto, scelte, strategie…"
+                onBlur={(e) => rioRepo.updateParticipant(participant.id, { notes: e.target.value })} aria-label="Note della scheda" />
+            </SheetBox>
+          </div>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <SheetBox title="Traguardi della Campagna">
-          <ul className="flex flex-col gap-1 p-3">
-            {s.traguardi.map((t) => (
-              <li key={t} className="flex items-center gap-2 text-lg">
-                <Check className="size-5 text-green-700" strokeWidth={4} />
-                <span className="flex-1 font-medium">{t}</span>
-                {!ownTraguardi.has(t) && <span className="text-xs text-black/60">ereditato</span>}
-                {ownTraguardi.has(t) && !sessionTraguardi.has(t) && (
-                  <button type="button" onClick={() => rioRepo.removeManualTraguardo(participant.id, t)} aria-label={`Rimuovi ${t}`} className="text-black/60 hover:text-red-700"><Trash2 className="size-4" /></button>
-                )}
-              </li>
-            ))}
-            {!s.traguardi.length && <li className="text-black/60 italic">Nessun Traguardo.</li>}
-          </ul>
-          <form className="flex gap-1 px-3 pb-3" onSubmit={(e) => { e.preventDefault(); rioRepo.addManualTraguardo(participant.id, newTraguardo); setNewTraguardo(''); }}>
-            <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" list="rio-traguardi" value={newTraguardo} onChange={(e) => setNewTraguardo(e.target.value)} placeholder="Parola chiave del Traguardo" aria-label="Nuovo Traguardo" />
-            <datalist id="rio-traguardi">{KNOWN_MILESTONES.map((k) => <option key={k.name} value={k.name} />)}</datalist>
-            <button type="submit" className="grid size-8 place-items-center rounded bg-black text-white" aria-label="Aggiungi Traguardo"><Plus className="size-4" /></button>
-          </form>
-          <p className="px-3 pb-3 text-[11px] text-black/60">I Traguardi ottenuti in partita si correggono dal registro partite; quelli aggiunti qui si possono rimuovere.</p>
-        </SheetBox>
-
-        <SheetBox title="Note">
-          <textarea key={participant.id} className="m-3 min-h-40 w-[calc(100%-1.5rem)] resize-y rounded border border-black/20 bg-white/50 p-2 text-black italic outline-none focus:border-black/50"
-            defaultValue={participant.notes ?? ''} placeholder="Storia del sopravvissuto, scelte, strategie…"
-            onBlur={(e) => rioRepo.updateParticipant(participant.id, { notes: e.target.value })} aria-label="Note della scheda" />
-        </SheetBox>
       </div>
     </div>
   );

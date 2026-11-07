@@ -16,6 +16,8 @@ import { EmptyState } from '../../ui/components/EmptyState';
 import { Field, Modal } from '../../ui/components/Modal';
 import { StoredImage } from '../../ui/components/StoredImage';
 import { RioSessionForm } from './RioSessionForm';
+import { HeaderScenery } from '../../ui/layout/Scenery';
+import { CAMPAIGN_STATUS_LABEL } from '../../domain/types';
 
 /** Tutti i dati di una campagna Rio, letti in modo reattivo. */
 export function useRioData(campaignId: string) {
@@ -120,6 +122,21 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
 
   return (
     <div className="flex flex-col gap-5">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[300px_1fr]">
+      <div className="flex flex-col gap-3">
+        <div className="panel relative aspect-[4/3] overflow-hidden lg:aspect-auto lg:flex-1">
+          <HeaderScenery universeId="moderno" />
+          <div className="absolute inset-x-0 bottom-4 flex -rotate-6 flex-col items-center">
+            <span className="brush-banner px-5 text-3xl leading-tight">CAMPAGNA</span>
+            <span className="brush-banner -mt-1 px-5 text-4xl leading-tight">RIO Z JANEIRO</span>
+          </div>
+        </div>
+        <dl className="panel grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 p-3 text-sm">
+          <dt className="text-[var(--muted)]">Campagna:</dt><dd>Carnevale dei Morti</dd>
+          <dt className="text-[var(--muted)]">Stato:</dt><dd className="font-semibold text-[var(--ok)]">{CAMPAIGN_STATUS_LABEL[campaign.status]}</dd>
+          <dt className="text-[var(--muted)]">Sopravvissuti:</dt><dd>{alive.length} vivi su {participants.length}</dd>
+        </dl>
+      </div>
       <Panel title="Panoramica Campagna" icon={ClipboardList}>
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between text-sm">
@@ -131,7 +148,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
               <span key={m.mission.id} title={`${m.mission.code} – ${m.mission.title}`} className={`h-4 flex-1 rounded-sm border border-black/60 ${m.state === 'completata' ? 'bg-[var(--ok)] shadow-[0_0_8px_rgb(87_192_42/0.6)]' : m.state === 'disponibile' ? 'bg-[var(--accent-2)]/40' : 'bg-white/10'}`} />
             ))}
           </div>
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 2xl:grid-cols-6">
             <StatTile icon={Trophy} label="Vittorie" value={wins} />
             <StatTile icon={Skull} label="Sconfitte" value={losses} />
             <StatTile icon={Flag} label="Traguardi" value={allTraguardi.length} />
@@ -139,9 +156,16 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
             <StatTile icon={Dices} label="Zombie eliminati" value={zombieValues.length ? formatNumber(zombieValues.reduce((a, b) => a + b, 0)) : null} />
             <StatTile icon={Dices} label="Tempo di gioco" value={minutes.length ? formatDuration(minutes.reduce((a, b) => a + b, 0)) : null} />
           </div>
+          {allTraguardi.length > 0 && (
+            <div>
+              <h3 className="mb-1 text-sm font-semibold">Traguardi della Campagna</h3>
+              <div className="flex flex-wrap gap-2">{allTraguardi.map((t) => <span key={t} className="flex items-center gap-1.5 rounded-md border-2 border-green-700 bg-green-900/40 px-3 py-1.5 text-sm font-semibold"><CheckCircle2 className="size-4 text-[var(--ok)]" />{t}</span>)}</div>
+            </div>
+          )}
           {campaignLost && <p className="rounded-md border border-red-700 bg-red-900/30 px-3 py-2 text-sm">Tutti i Sopravvissuti sono morti: secondo il regolamento la campagna è persa (pag. 7). Puoi comunque aggiungere successori se la state ancora giocando.</p>}
         </div>
       </Panel>
+      </div>
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <Panel title="Scenario attuale" icon={Play} className="xl:col-span-2">

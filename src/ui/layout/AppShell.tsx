@@ -7,12 +7,13 @@ import { scopedPath, useScope } from '../../lib/scope';
 import { UniverseEmblem } from '../components/UniverseEmblem';
 import { NAV_ITEMS } from './navigation';
 import { SyncIndicator } from '../components/SyncIndicator';
+import { BloodEdge, HeaderScenery } from './Scenery';
 
 function Logo() {
   const { universeId } = useScope();
   return (
     <Link to="/" className="focus-ring flex shrink-0 flex-col leading-none" aria-label="Zombicide Hub, vai alla dashboard globale">
-      <span className="title-display text-3xl text-[var(--text)] sm:text-4xl" style={{ WebkitTextStroke: '1px #000' }}>
+      <span className="title-display rounded-sm bg-[#d8232a] px-2 text-3xl text-white sm:text-4xl" style={{ WebkitTextStroke: '1px #000', clipPath: 'polygon(2% 8%,100% 0,98% 92%,0 100%)' }}>
         ZOMBICIDE
       </span>
       <span className="title-display -mt-1 self-end text-xl text-[var(--accent-2)] sm:text-2xl">
@@ -95,8 +96,9 @@ export function AppShell() {
         Vai al contenuto
       </a>
 
-      <header className="sticky top-0 z-30 border-b border-[var(--line)] bg-black/70 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1600px] items-center gap-4 px-4 py-2">
+      <header className="sticky top-0 z-30 border-b border-[var(--line)] bg-black">
+        <HeaderScenery universeId={universeId} />
+        <div className="relative mx-auto flex max-w-[1600px] items-center gap-4 px-4 py-3">
           <Logo />
           <nav aria-label="Sezioni" className="hidden flex-1 flex-wrap gap-1.5 xl:flex">
             <TopNav />
@@ -111,7 +113,7 @@ export function AppShell() {
             </button>
           </div>
         </div>
-        <div className="h-1 hazard-stripe opacity-70" aria-hidden />
+        <div className="relative h-1.5 hazard-stripe" aria-hidden />
       </header>
 
       {drawer && (
@@ -132,7 +134,8 @@ export function AppShell() {
         </div>
       )}
 
-      <div className="mx-auto flex max-w-[1600px] gap-5 px-4 py-5">
+      <BloodEdge />
+      <div className="relative z-10 mx-auto flex max-w-[1600px] gap-5 px-4 pt-5 pb-24">
         <aside className="hidden w-60 shrink-0 lg:block">
           <div className="panel sticky top-24 p-3">
             <UniverseSwitcher />

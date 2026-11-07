@@ -14,8 +14,8 @@ export function Panel({ title, icon: Icon, action, children, className = '', bod
   return (
     <section className={`panel animate-rise ${className}`}>
       {title && (
-        <header className="flex items-center gap-2 border-b border-[var(--line)] px-4 py-2.5">
-          {Icon && <Icon className="size-5 shrink-0 text-[var(--accent-2)]" aria-hidden />}
+        <header className="flex items-center gap-2 rounded-t-[10px] border-b-2 border-black/60 bg-gradient-to-b from-white/10 to-transparent px-4 py-2.5">
+          {Icon && <Icon className="size-6 shrink-0 text-[var(--accent-2)]" aria-hidden />}
           <h2 className="title-display flex-1 truncate text-xl sm:text-2xl">{title}</h2>
           {action}
         </header>
