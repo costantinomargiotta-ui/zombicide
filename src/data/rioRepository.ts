@@ -132,11 +132,13 @@ export function createRioRepository(database: HubDatabase = db) {
       await addEntry(participant.campaignId, participantId, { kind: 'pec', amount, reason: 'manuale' });
     },
 
-    async addKeptItem(participantId: string, name: string) {
-      if (!name.trim()) return;
+    async addKeptItem(participantId: string, name: string, cardId?: string) {
+      const card = cardId ? await database.cards.get(cardId) : undefined;
+      const label = card?.name ?? name.trim();
+      if (!label) return;
       const p = await database.participants.get(participantId);
       if (!p) return;
-      await database.keptItems.add({ id: newId('kept'), campaignId: p.campaignId, participantId, name: name.trim(), createdAt: nowIso() });
+      await database.keptItems.add({ id: newId('kept'), campaignId: p.campaignId, participantId, name: label, cardId: card?.id, createdAt: nowIso() });
     },
 
     async removeKeptItem(id: string) {

@@ -1,5 +1,5 @@
 import type {
-  Activity, ActivityKind, Campaign, Character, CampaignStatus, CollectionEntry, Product,
+  Activity, ActivityKind, Campaign, Character, EquipmentCard, CampaignStatus, CollectionEntry, Product,
   RecordOrigin, UniverseId,
 } from '../domain/types';
 import { CAMPAIGN_STATUS_LABEL } from '../domain/types';
@@ -106,6 +106,10 @@ export function createRepository(database: HubDatabase = db) {
         await database.characters.update(id, patch);
         await log('personaggio', `Scheda aggiornata: ${character.name}`, { universeId: character.universeId, refId: id });
       });
+    },
+
+    async updateCard(id: string, patch: Partial<Pick<EquipmentCard, 'frontImageId' | 'dataStatus'>>) {
+      await database.cards.update(id, patch);
     },
 
     async saveImage(file: Blob): Promise<string> {

@@ -237,3 +237,44 @@ export interface StoredImage {
   mime: string;
   createdAt: string;
 }
+
+export interface WeaponProfile {
+  kind: 'mischia' | 'distanza';
+  range: string;
+  dice: number;
+  accuracy: string;
+  damage: number;
+  noisy: boolean;
+}
+
+export type CardDeck = 'partenza' | 'arma-pimpata' | 'avanzato';
+export const CARD_DECK_LABEL: Record<CardDeck, string> = {
+  partenza: 'Equipaggiamento di Partenza Avanzato',
+  'arma-pimpata': 'Armi Pimpate Avanzate',
+  avanzato: 'Equipaggiamento Avanzato',
+};
+
+/** Carta di catalogo. I campi assenti significano "non presente sulla carta". */
+export interface EquipmentCard {
+  id: string;
+  universeId: UniverseId;
+  productId: string;
+  deck: CardDeck;
+  category: 'arma' | 'oggetto' | 'aaahh';
+  name: string;
+  quantity: number;
+  profiles?: WeaponProfile[];
+  /** Dadi Al Massimo (riquadro "+N"). */
+  maxDice?: number;
+  /** Valore di Conservazione (lucchetto). */
+  conservation?: number;
+  dual?: boolean;
+  opensDoors?: 'silenziosa' | 'rumorosa';
+  ammo?: 'proiettili' | 'cartucce';
+  surpriseSpawn?: boolean;
+  text?: string;
+  frontImageId?: string;
+  transcriptionNotes?: string;
+  dataStatus: DataStatus;
+  origin: RecordOrigin;
+}

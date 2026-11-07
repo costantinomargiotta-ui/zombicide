@@ -58,6 +58,8 @@ export function RioSheet() {
   const abilities = useLiveQuery(() => db.abilities.toArray());
   const abilityName = useMemo(() => new Map(abilities?.map((a) => [a.id, a.name])), [abilities]);
   const [newItem, setNewItem] = useState('');
+  const [newCardId, setNewCardId] = useState('');
+  const keepable = useLiveQuery(() => db.cards.filter((c) => c.conservation !== undefined).toArray());
   const [newTraguardo, setNewTraguardo] = useState('');
 
   if (campaign === undefined || !data) return <p className="text-[var(--muted)]">Caricamento…</p>;
@@ -194,14 +196,21 @@ export function RioSheet() {
               {kept.map((k) => (
                 <li key={k.id} className="flex items-center gap-2 rounded border border-black/20 bg-white/60 px-2 py-1">
                   <span className="flex-1 font-medium">{k.name}</span>
+                  {(() => { const card = keepable?.find((c) => c.id === k.cardId); return card ? <span className="rounded bg-black px-1.5 text-xs font-bold text-white" title="Conservazione: dadi Al Massimo da tirare a fine Missione">🔒 {card.conservation}</span> : null; })()}
                   <button type="button" onClick={() => rioRepo.removeKeptItem(k.id)} aria-label={`Rimuovi ${k.name}`} className="text-black/60 hover:text-red-700"><Trash2 className="size-4" /></button>
                 </li>
               ))}
               {!kept.length && <li className="text-sm text-black/60 italic">Nessun oggetto conservato.</li>}
             </ul>
-            <form className="flex gap-1 p-2" onSubmit={(e) => { e.preventDefault(); rioRepo.addKeptItem(participant.id, newItem); setNewItem(''); }}>
-              <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="Es. Machete" aria-label="Nuovo oggetto conservato" />
+            <form className="flex flex-col gap-1 p-2" onSubmit={(e) => { e.preventDefault(); rioRepo.addKeptItem(participant.id, newItem, newCardId || undefined); setNewItem(''); setNewCardId(''); }}>
+              <select className="rounded border border-black/30 bg-white px-2 py-1 text-black" value={newCardId} onChange={(e) => setNewCardId(e.target.value)} aria-label="Carta dal catalogo">
+                <option value="">Carta dal catalogo…</option>
+                {keepable?.map((c) => <option key={c.id} value={c.id}>{c.name} (Conservazione {c.conservation})</option>)}
+              </select>
+              <div className="flex gap-1">
+              <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" value={newItem} onChange={(e) => setNewItem(e.target.value)} placeholder="…oppure scrivi il nome" aria-label="Nuovo oggetto conservato" disabled={!!newCardId} />
               <button type="submit" className="grid size-8 place-items-center rounded bg-black text-white" aria-label="Aggiungi oggetto"><Plus className="size-4" /></button>
+              </div>
             </form>
             <p className="px-2 pb-2 text-[11px] text-black/60">Alla fine di ogni Missione tira i dadi Al Massimo pari al valore di Conservazione di ogni carta: con 1+ Rottura la carta è persa (pag. 6).</p>
           </SheetBox>

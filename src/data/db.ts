@@ -1,10 +1,11 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
-  Ability, Activity, Campaign, CampaignParticipant, Character, CharacterNote, CollectionEntry, KeptItem, ProgressEntry, GameSession,
+  Ability, Activity, Campaign, CampaignParticipant, Character, CharacterNote, CollectionEntry, EquipmentCard, KeptItem, ProgressEntry, GameSession,
   Player, Product, Scenario, SessionParticipant, StoredImage,
 } from '../domain/types';
 import { seedProducts } from './seed/products';
 import type { QueueEntry } from './sync';
+import { seedRioCards } from './seed/equipmentRio';
 import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
@@ -23,6 +24,7 @@ export class HubDatabase extends Dexie {
   participants!: EntityTable<CampaignParticipant, 'id'>;
   progress!: EntityTable<ProgressEntry, 'id'>;
   keptItems!: EntityTable<KeptItem, 'id'>;
+  cards!: EntityTable<EquipmentCard, 'id'>;
   sessions!: EntityTable<GameSession, 'id'>;
   sessionParticipants!: EntityTable<SessionParticipant, 'id'>;
   activities!: EntityTable<Activity, 'id'>;
@@ -76,6 +78,8 @@ export class HubDatabase extends Dexie {
     });
     // Revisione 5: coda e stato della sincronizzazione con Supabase.
     this.version(5).stores({ syncQueue: 'key', syncMeta: 'key' });
+    // Revisione 6: catalogo delle carte Equipaggiamento.
+    this.version(6).stores({ cards: 'id, universeId, productId, deck, category' });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }
@@ -88,10 +92,11 @@ async function addMissing<T extends { id: string }>(table: EntityTable<T, 'id'>,
 }
 
 export async function syncBaseCatalog(database: HubDatabase) {
-  await database.transaction('rw', database.products, database.abilities, database.characters, async () => {
+  await database.transaction('rw', [database.products, database.abilities, database.characters, database.cards], async () => {
     await addMissing(database.products, seedProducts);
     await addMissing(database.abilities, seedModernAbilities);
     await addMissing(database.characters, seedModernSurvivors);
+    await addMissing(database.cards, seedRioCards);
   });
 }
 
@@ -99,7 +104,7 @@ export const db = new HubDatabase();
 
 /** Tabelle incluse nel backup (le immagini sono gestite a parte). */
 export const DATA_TABLES = [
-  'products', 'collection', 'players', 'characters', 'characterNotes', 'abilities', 'scenarios',
+  'products', 'collection', 'players', 'cards', 'characters', 'characterNotes', 'abilities', 'scenarios',
   'campaigns', 'participants', 'progress', 'keptItems', 'sessions', 'sessionParticipants', 'activities',
 ] as const;
 export type DataTable = (typeof DATA_TABLES)[number];
