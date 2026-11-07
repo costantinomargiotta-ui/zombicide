@@ -29,4 +29,4 @@ Apri l'indirizzo mostrato nel terminale (di solito http://localhost:5173).
 
 Fase 1 completata: navigazione a tre livelli, dashboard globale e per universo, collezione (catalogo separato dalla collezione personale, aggiunta di prodotti dall'app), campagne di base, backup ed esportazione, dati dimostrativi rimovibili.
 
-I dati sono salvati nel browser (IndexedDB). Lo schema per Supabase è in `supabase/migrations/`.
+I dati sono salvati nel browser (IndexedDB) e, se l'app è configurata, sincronizzati con Supabase (`supabase/migrations/0002_sincronizzazione.sql`). Variabili d'ambiente: vedi `.env.example`; in produzione sono impostate su Netlify.
