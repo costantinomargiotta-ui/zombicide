@@ -2,22 +2,20 @@ import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
-  CheckCircle2, ClipboardList, Dices, Flag, Lock, Pencil, Play, Plus, Skull, Star, Trash2, Trophy, UserPlus, UserRound, Users,
+  CheckCircle2, ClipboardList, Dices, Lock, Pencil, Play, Plus, Skull, Star, Package, Target, Trash2, Trophy, UserPlus, UserRound, Users,
 } from 'lucide-react';
 import { db } from '../../data/db';
 import { rioRepo, sheetFor } from '../../data/rioRepository';
 import type { Campaign, Character } from '../../domain/types';
-import { missionProgress, PEC_MAX, RIO_MISSIONS } from '../../rules/moderno/rioZJaneiro';
+import { KNOWN_MILESTONES, missionProgress, PEC_MAX, RIO_MISSIONS } from '../../rules/moderno/rioZJaneiro';
 import { formatDate, formatDuration, formatNumber } from '../../lib/format';
 import { Panel } from '../../ui/components/Panel';
-import { StatTile } from '../../ui/components/StatTile';
 import { Badge } from '../../ui/components/Badge';
 import { EmptyState } from '../../ui/components/EmptyState';
 import { Field, Modal } from '../../ui/components/Modal';
 import { StoredImage } from '../../ui/components/StoredImage';
 import { RioSessionForm } from './RioSessionForm';
 import { defaultPortraitUrl } from '../../domain/portraits';
-import { HeaderScenery } from '../../ui/layout/Scenery';
 import { CAMPAIGN_STATUS_LABEL } from '../../domain/types';
 
 /** Tutti i dati di una campagna Rio, letti in modo reattivo. */
@@ -124,84 +122,131 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[300px_1fr]">
-      <div className="flex flex-col gap-3">
-        <div className="panel relative aspect-[4/3] overflow-hidden lg:aspect-auto lg:flex-1">
-          <HeaderScenery universeId="moderno" />
-          <div className="absolute inset-x-0 bottom-4 flex -rotate-6 flex-col items-center">
-            <span className="brush-banner px-5 text-3xl leading-tight">CAMPAGNA</span>
-            <span className="brush-banner -mt-1 px-5 text-4xl leading-tight">RIO Z JANEIRO</span>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[230px_1fr] xl:grid-cols-[250px_1fr]">
+        {/* Colonna sinistra: illustrazione e modalità, come nel mockup */}
+        <div className="flex flex-col gap-4">
+          <div className="overflow-hidden rounded-xl border-2 border-black/70 shadow-[0_8px_24px_rgba(0,0,0,0.6)]">
+            <img src="/ui/campagna-rio.webp" alt="Campagna Rio Z Janeiro" className="block h-auto w-full" />
           </div>
+          <Panel title="Modalità Campagna" bodyClassName="p-3">
+            <dl className="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-2 text-sm">
+              <dt className="flex items-center gap-2 text-[var(--muted)]"><UserRound className="size-4" />Gioco:</dt><dd>Rio Z Janeiro</dd>
+              <dt className="flex items-center gap-2 text-[var(--muted)]"><Package className="size-4" />Stato:</dt>
+              <dd className={`font-semibold ${campaign.status === 'in-corso' ? 'text-[var(--ok)]' : ''}`}>{CAMPAIGN_STATUS_LABEL[campaign.status]}</dd>
+              <dt className="flex items-center gap-2 text-[var(--muted)]"><Package className="size-4" />Difficoltà:</dt>
+              <dd>{current ? current.mission.difficulty : '–'}<span className="block text-[10px] text-[var(--muted)]">della missione attuale</span></dd>
+              <dt className="flex items-center gap-2 text-[var(--muted)]"><Users className="size-4" />Sopravvissuti:</dt><dd>{alive.length} vivi su {participants.length}</dd>
+            </dl>
+          </Panel>
         </div>
-        <dl className="panel grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 p-3 text-sm">
-          <dt className="text-[var(--muted)]">Campagna:</dt><dd>Carnevale dei Morti</dd>
-          <dt className="text-[var(--muted)]">Stato:</dt><dd className="font-semibold text-[var(--ok)]">{CAMPAIGN_STATUS_LABEL[campaign.status]}</dd>
-          <dt className="text-[var(--muted)]">Sopravvissuti:</dt><dd>{alive.length} vivi su {participants.length}</dd>
-        </dl>
-      </div>
-      <Panel title="Panoramica Campagna" icon={ClipboardList}>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-semibold">Progressi generali</span>
-            <span>{completed} / {RIO_MISSIONS.length} missioni</span>
-          </div>
-          <div className="flex gap-1" role="progressbar" aria-valuemin={0} aria-valuemax={RIO_MISSIONS.length} aria-valuenow={completed} aria-label="Missioni completate">
-            {missions.map((m) => (
-              <span key={m.mission.id} title={`${m.mission.code} – ${m.mission.title}`} className={`h-4 flex-1 rounded-sm border border-black/60 ${m.state === 'completata' ? 'bg-[var(--ok)] shadow-[0_0_8px_rgb(87_192_42/0.6)]' : m.state === 'disponibile' ? 'bg-[var(--accent-2)]/40' : 'bg-white/10'}`} />
-            ))}
-          </div>
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-3 2xl:grid-cols-6">
-            <StatTile icon={Trophy} label="Vittorie" value={wins} />
-            <StatTile icon={Skull} label="Sconfitte" value={losses} />
-            <StatTile icon={Flag} label="Traguardi" value={allTraguardi.length} />
-            <StatTile icon={Star} label="PEC medi" value={avgPec} />
-            <StatTile icon={Dices} label="Zombie eliminati" value={zombieValues.length ? formatNumber(zombieValues.reduce((a, b) => a + b, 0)) : null} />
-            <StatTile icon={Dices} label="Tempo di gioco" value={minutes.length ? formatDuration(minutes.reduce((a, b) => a + b, 0)) : null} />
-          </div>
-          {allTraguardi.length > 0 && (
-            <div>
-              <h3 className="mb-1 text-sm font-semibold">Traguardi della Campagna</h3>
-              <div className="flex flex-wrap gap-2">{allTraguardi.map((t) => <span key={t} className="flex items-center gap-1.5 rounded-md border-2 border-green-700 bg-green-900/40 px-3 py-1.5 text-sm font-semibold"><CheckCircle2 className="size-4 text-[var(--ok)]" />{t}</span>)}</div>
-            </div>
-          )}
-          {campaignLost && <p className="rounded-md border border-red-700 bg-red-900/30 px-3 py-2 text-sm">Tutti i Sopravvissuti sono morti: secondo il regolamento la campagna è persa (pag. 7). Puoi comunque aggiungere successori se la state ancora giocando.</p>}
-        </div>
-      </Panel>
-      </div>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <Panel title="Scenario attuale" icon={Play} className="xl:col-span-2">
-          {current ? (
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="hazard-frame shrink-0 sm:w-48"><div className="hazard-inner grid h-28 place-items-center bg-black/80"><span className="title-display text-5xl text-[var(--accent-2)]">{current.mission.code}</span></div></div>
-              <div className="flex flex-1 flex-col gap-1.5">
-                <h3 className="text-xl font-semibold">{current.mission.code}. {current.mission.title}</h3>
-                <p className="text-sm text-[var(--muted)]">{current.mission.difficulty} · {current.mission.duration} · Tessere {current.mission.tiles.join(', ')} · pag. {current.mission.page}</p>
-                <ol className="list-decimal pl-5 text-sm">{current.mission.objectives.map((o) => <li key={o}>{o}</li>)}</ol>
-                {current.attempts > 0 && <p className="text-xs text-[var(--muted)]">Tentativi registrati: {current.attempts}. Il regolamento non specifica cosa accade dopo una Missione persa: la Missione resta disponibile.</p>}
-                <div className="mt-1">
-                  <button type="button" className="btn btn-accent" onClick={() => setForm({})} disabled={!alive.length}>
-                    <Play className="size-4" /> {alive.length ? 'Registra questa missione' : 'Aggiungi prima i sopravvissuti'}
-                  </button>
-                </div>
+        <div className="flex min-w-0 flex-col gap-4">
+          <Panel title="Panoramica Campagna" icon={ClipboardList}>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold">Progressi generali</span>
+                <span className="text-lg">{completed} / {RIO_MISSIONS.length} scenari</span>
               </div>
+              <div className="flex items-center gap-3">
+                <div className="flex flex-1 gap-1 rounded-full border-2 border-black/70 bg-black/60 p-1" role="progressbar" aria-valuemin={0} aria-valuemax={RIO_MISSIONS.length} aria-valuenow={completed} aria-label="Missioni completate">
+                  {missions.map((m) => (
+                    <span key={m.mission.id} title={`${m.mission.code} – ${m.mission.title}`} className={`h-4 flex-1 rounded-full ${m.state === 'completata' ? 'bg-gradient-to-b from-[#8ff04a] to-[#3f9a1c] shadow-[0_0_8px_rgb(87_192_42/0.6)]' : 'bg-white/10'}`} />
+                  ))}
+                </div>
+                <span className="w-14 text-right text-2xl font-bold text-[var(--accent-2)]">{Math.round((completed / RIO_MISSIONS.length) * 100)}%</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                {[
+                  { icon: Trophy, label: 'Vittorie', value: wins },
+                  { icon: Skull, label: 'Sconfitte', value: losses },
+                  { icon: Target, label: 'Traguardi', value: allTraguardi.length },
+                  { icon: Star, label: 'PEC medi', value: avgPec ?? '–' },
+                ].map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="flex items-center gap-3 rounded-lg border-2 border-white/15 bg-black/40 px-3 py-2">
+                    <Icon className={`size-8 shrink-0 ${label === 'PEC medi' ? 'fill-[#f5c518] text-[#f5c518]' : label === 'Vittorie' ? 'text-[#f5c518]' : ''}`} aria-hidden />
+                    <span className="flex-1 text-center leading-tight"><span className="block text-sm">{label}</span><span className="text-2xl font-bold text-[var(--accent-2)]">{value}</span></span>
+                  </div>
+                ))}
+              </div>
+              {(zombieValues.length > 0 || minutes.length > 0) && (
+                <p className="text-sm text-[var(--muted)]">
+                  {zombieValues.length > 0 && <>Zombie eliminati: <strong className="text-[var(--text)]">{formatNumber(zombieValues.reduce((x, y) => x + y, 0))}</strong> · </>}
+                  {minutes.length > 0 && <>Tempo di gioco: <strong className="text-[var(--text)]">{formatDuration(minutes.reduce((x, y) => x + y, 0))}</strong></>}
+                </p>
+              )}
+              {campaignLost && <p className="rounded-md border border-red-700 bg-red-900/30 px-3 py-2 text-sm">Tutti i Sopravvissuti sono morti: secondo il regolamento la campagna è persa (pag. 7). Puoi comunque aggiungere successori se la state ancora giocando.</p>}
             </div>
-          ) : (
-            <EmptyState icon={Trophy} title="Campagna completata!">Tutte e 10 le Missioni del Carnevale dei Morti sono state vinte.</EmptyState>
-          )}
-        </Panel>
+          </Panel>
 
-        <Panel title="Missioni" icon={Flag}>
-          <ol className="flex flex-col gap-1 text-sm">
-            {missions.map(({ mission, state }) => (
-              <li key={mission.id} className={`flex items-center gap-2 rounded-md px-2 py-1 ${state === 'disponibile' ? 'bg-[var(--accent-2)]/15' : ''}`}>
-                <span className="w-9 font-semibold">{mission.code}</span>
-                <span className={`flex-1 truncate ${state === 'bloccata' ? 'text-[var(--muted)]' : ''}`}>{mission.title}</span>
-                {state === 'completata' ? <CheckCircle2 className="size-4 text-[var(--ok)]" aria-label="Completata" /> : state === 'bloccata' ? <Lock className="size-4 text-[var(--muted)]" aria-label="Bloccata" /> : <Play className="size-4 text-[var(--accent-2)]" aria-label="Disponibile" />}
-              </li>
-            ))}
-          </ol>
-        </Panel>
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.4fr_1fr]">
+            <Panel title="Scenario attuale">
+              {current ? (
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <img src="/ui/scenario-rio.webp" alt="" className="h-28 w-full shrink-0 rounded-md border-2 border-white/20 object-cover sm:w-44" />
+                  <div className="flex flex-1 flex-col gap-1.5">
+                    <h3 className="text-xl font-semibold">{current.mission.code.replace('M', '')}. {current.mission.title}</h3>
+                    <p className="text-sm">{current.mission.objectives[0]}</p>
+                    <p className="text-xs text-[var(--muted)]">{current.mission.difficulty} · {current.mission.duration} · pag. {current.mission.page}{current.attempts > 0 ? ` · tentativi: ${current.attempts}` : ''}</p>
+                    <div className="mt-1">
+                      <button type="button" onClick={() => setForm({})} disabled={!alive.length}
+                        className="flex items-center gap-2 rounded-md border-2 border-[#8a4a00] bg-gradient-to-b from-[#ffb21e] to-[#e88a00] px-4 py-1.5 font-semibold text-black shadow hover:brightness-110 disabled:opacity-50">
+                        <Play className="size-4 fill-black" /> {alive.length ? 'Gioca scenario' : 'Aggiungi prima i sopravvissuti'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <EmptyState icon={Trophy} title="Campagna completata!">Tutte e 10 le Missioni del Carnevale dei Morti sono state vinte.</EmptyState>
+              )}
+            </Panel>
+
+            <Panel title="Prossimi scenari">
+              <ol className="flex flex-col gap-1.5">
+                {missions.filter((m) => m.state === 'bloccata').slice(0, 3).map(({ mission }) => (
+                  <li key={mission.id} className="flex items-center gap-2 rounded-md border border-white/15 bg-black/40 px-2 py-1.5 text-sm">
+                    <span className="w-6 font-semibold">{mission.code.replace('M', '')}.</span>
+                    <span className="flex-1 truncate">{mission.title}</span>
+                    <Lock className="size-4 text-[var(--muted)]" aria-label="Bloccato" />
+                  </li>
+                ))}
+                {!missions.some((m) => m.state === 'bloccata') && <li className="text-sm text-[var(--muted)]">Nessuno scenario bloccato.</li>}
+              </ol>
+              <details className="mt-2 text-sm">
+                <summary className="cursor-pointer text-[var(--muted)]">Tutte le missioni</summary>
+                <ol className="mt-1 flex flex-col gap-0.5">
+                  {missions.map(({ mission, state }) => (
+                    <li key={mission.id} className="flex items-center gap-2">
+                      <span className="w-8 font-semibold">{mission.code}</span>
+                      <span className={`flex-1 truncate ${state === 'bloccata' ? 'text-[var(--muted)]' : ''}`}>{mission.title}</span>
+                      {state === 'completata' ? <CheckCircle2 className="size-4 text-[var(--ok)]" aria-label="Completata" /> : state === 'bloccata' ? <Lock className="size-4 text-[var(--muted)]" aria-label="Bloccata" /> : <Play className="size-4 text-[var(--accent-2)]" aria-label="Disponibile" />}
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            </Panel>
+          </div>
+
+          <Panel title="Traguardi della Campagna">
+            {(() => {
+              const locked = KNOWN_MILESTONES.map((k) => k.name).filter((n) => !allTraguardi.includes(n));
+              return allTraguardi.length + locked.length ? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 2xl:grid-cols-4">
+                  {allTraguardi.map((t) => (
+                    <div key={t} className="flex min-h-24 flex-col items-center justify-center gap-1 rounded-lg border-2 border-[#57c02a] bg-gradient-to-b from-[#2c6410] to-[#112a06] px-2 py-2 text-center font-semibold">
+                      <CheckCircle2 className="size-7 fill-[#57c02a] text-black" />{t}
+                    </div>
+                  ))}
+                  {locked.map((t) => (
+                    <div key={t} className="flex min-h-24 flex-col items-center justify-center gap-1 rounded-lg border-2 border-white/25 bg-black/40 px-2 py-2 text-center text-[var(--muted)]">
+                      <Lock className="size-6" />{t}
+                    </div>
+                  ))}
+                </div>
+              ) : <p className="text-sm text-[var(--muted)]">Nessun Traguardo.</p>;
+            })()}
+            <p className="mt-2 text-xs text-[var(--muted)]">Lucchetto: Traguardi citati dal regolamento non ancora ottenuti. Gli altri arrivano dalle carte Obiettivo e si aggiungono dalle schede.</p>
+          </Panel>
+        </div>
       </div>
 
       <Panel title={`Sopravvissuti (${alive.length} vivi)`} icon={Users} action={<button type="button" className="btn btn-accent text-sm" onClick={() => setAdding(true)}><UserPlus className="size-4" /> Aggiungi</button>}>

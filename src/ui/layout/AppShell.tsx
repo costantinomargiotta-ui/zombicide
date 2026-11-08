@@ -161,7 +161,7 @@ export function AppShell() {
 
       <BloodEdge />
       <div className="relative z-10 mx-auto flex max-w-[1600px] gap-5 px-4 pt-5 pb-24">
-        <aside className={`hidden w-60 shrink-0 ${location.pathname.includes('/scheda/') ? '' : 'lg:block'}`}>
+        <aside className={`hidden w-60 shrink-0 ${/^\/campagne\/[^/]+/.test(location.pathname) ? '' : 'lg:block'}`}>
           <div className="sticky top-24 flex flex-col gap-3">
             <div className="panel p-2.5"><UniverseSwitcher /></div>
             <div className="panel px-1.5 py-1"><SideLinks /></div>
@@ -169,7 +169,7 @@ export function AppShell() {
         </aside>
         <main id="contenuto" className="min-w-0 flex-1">
           {/* Selettore universo compatto per tablet e smartphone */}
-          <div className={`mb-4 flex gap-2 overflow-x-auto pb-1 ${location.pathname.includes('/scheda/') ? 'hidden' : 'lg:hidden'}`} aria-label="Universi">
+          <div className={`mb-4 flex gap-2 overflow-x-auto pb-1 ${/^\/campagne\/[^/]+/.test(location.pathname) ? 'hidden' : 'lg:hidden'}`} aria-label="Universi">
             <Link to="/" className={`btn shrink-0 text-sm ${!universeId ? 'btn-accent' : ''}`}>
               <Globe className="size-4" /> Tutti
             </Link>
