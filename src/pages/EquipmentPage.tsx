@@ -36,10 +36,10 @@ export function CardTile({ card }: { card: EquipmentCard }) {
   }
   return (
     <article className="panel flex flex-col overflow-hidden">
-      <div className="relative flex h-44 items-center justify-center overflow-hidden" style={{ background: DECK_STYLE[card.deck] }}>
-        <StoredImage imageId={card.frontImageId} alt={card.name} className="size-full object-cover"
+      <div className="relative flex min-h-32 items-center justify-center overflow-hidden" style={{ background: DECK_STYLE[card.deck] }}>
+        <StoredImage imageId={card.frontImageId} alt={card.name} className="block h-auto w-full"
           fallback={defaultCardImageUrl(card.id)
-            ? <img src={defaultCardImageUrl(card.id)} alt={card.name} className="size-full object-cover" loading="lazy" />
+            ? <img src={defaultCardImageUrl(card.id)} alt={card.name} className="block h-auto w-full" loading="lazy" />
             : <span className="title-display px-3 text-center text-3xl text-white">{card.name.toUpperCase()}</span>} />
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {card.conservation !== undefined && <span className="flex items-center gap-1 rounded bg-black/70 px-1.5 text-sm font-bold text-white" title="Conservazione"><Lock className="size-3" />{card.conservation}</span>}

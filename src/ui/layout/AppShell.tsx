@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Globe, Menu, Settings, X } from 'lucide-react';
+import { Box, ClipboardList, Globe, Library, Menu, Package, Settings, Target, Trophy, Users, X } from 'lucide-react';
 import { UNIVERSES } from '../../domain/universes';
 import { UNIVERSE_IDS } from '../../domain/types';
 import { scopedPath, useScope } from '../../lib/scope';
@@ -12,13 +12,9 @@ import { BloodEdge, HeaderScenery } from './Scenery';
 function Logo() {
   const { universeId } = useScope();
   return (
-    <Link to="/" className="focus-ring flex shrink-0 flex-col leading-none" aria-label="Zombicide Hub, vai alla dashboard globale">
-      <span className="title-display rounded-sm bg-[#d8232a] px-2 text-3xl text-white sm:text-4xl" style={{ WebkitTextStroke: '1px #000', clipPath: 'polygon(2% 8%,100% 0,98% 92%,0 100%)' }}>
-        ZOMBICIDE
-      </span>
-      <span className="title-display -mt-1 self-end text-xl text-[var(--accent-2)] sm:text-2xl">
-        {universeId ? UNIVERSES[universeId].name.toUpperCase() : 'HUB'}
-      </span>
+    <Link to="/" className="focus-ring relative flex shrink-0 flex-col items-center leading-none" aria-label="Zombicide Hub, vai alla dashboard globale">
+      <img src="/ui/logo.webp" alt="Zombicide Hub" className="h-14 w-auto drop-shadow-[0_3px_0_rgba(0,0,0,0.8)] sm:h-16" />
+      {universeId && <span className="title-display -mt-1 text-sm text-[var(--accent-2)]">{UNIVERSES[universeId].name.toUpperCase()}</span>}
     </Link>
   );
 }
@@ -52,31 +48,59 @@ function UniverseSwitcher({ onNavigate }: { onNavigate?: () => void }) {
   const section = location.pathname.replace(/^\/u\/[^/]+/, '').replace(/^\//, '').split('/')[0];
   const keepSection = NAV_ITEMS.some((n) => n.sub === section) ? section : '';
 
-  const item = (active: boolean) =>
-    `focus-ring flex items-center gap-3 rounded-lg border px-3 py-2 transition ${
-      active ? 'border-[var(--accent)] bg-[var(--accent)]/15 shadow-[0_0_14px_var(--glow)]' : 'border-[var(--line)] bg-black/30 hover:border-[var(--line-hi)]'
+  const ROW: Record<string, string> = {
+    fantasy: 'from-[#5a1f86] to-[#2b0f45] border-[#9b4de0]',
+    moderno: 'from-[#2f6a12] to-[#13300a] border-[#7ccf2a]',
+    western: 'from-[#8a3d10] to-[#3d1a06] border-[#ec7a1c]',
+    marvel: 'from-[#14427e] to-[#0a1f3d] border-[#2f8fd8]',
+    tutti: 'from-[#b0141b] to-[#5a0a0d] border-[#ff4a4a]',
+  };
+  const item = (key: string, active: boolean) =>
+    `focus-ring flex items-center gap-2.5 rounded-lg border-2 bg-gradient-to-r px-2.5 py-1.5 transition hover:brightness-125 ${ROW[key]} ${
+      active ? 'shadow-[0_0_16px_rgba(255,255,255,0.35)] ring-2 ring-white/70' : 'opacity-90'
     }`;
 
   return (
-    <nav aria-label="Universi" className="flex flex-col gap-2">
-      <h2 className="title-display px-1 text-2xl">Universi</h2>
+    <nav aria-label="Universi" className="flex flex-col gap-1.5">
+      <h2 className="title-display flex items-center gap-2 px-1 text-2xl"><Globe className="size-5" aria-hidden /> Universi</h2>
       {UNIVERSE_IDS.map((id) => (
-        <Link key={id} to={scopedPath(id, keepSection)} onClick={onNavigate} data-universe={id} className={item(universeId === id)}>
-          <span className="grid size-9 place-items-center rounded-md bg-[var(--accent)]/20 text-[var(--accent)]">
-            <UniverseEmblem id={id} className="size-5" />
-          </span>
+        <Link key={id} to={scopedPath(id, keepSection)} onClick={onNavigate} className={item(id, universeId === id)} aria-current={universeId === id || undefined}>
+          <img src={`/ui/icona-${id}.webp`} alt="" className="size-9 shrink-0 rounded object-contain" />
           <span className="min-w-0 leading-tight">
-            <span className="block font-semibold">{UNIVERSES[id].name}</span>
-            <span className="block truncate text-xs text-[var(--muted)]">{UNIVERSES[id].subtitle}</span>
+            <span className="block text-lg font-semibold text-white">{UNIVERSES[id].name}</span>
+            <span className="block truncate text-[11px] text-white/75">({UNIVERSES[id].subtitle})</span>
           </span>
         </Link>
       ))}
-      <Link to={scopedPath(undefined, keepSection)} onClick={onNavigate} className={item(!universeId)}>
-        <span className="grid size-9 place-items-center rounded-md bg-white/10">
-          <Globe className="size-5" aria-hidden />
-        </span>
-        <span className="font-semibold">Tutti gli universi</span>
+      <Link to={scopedPath(undefined, keepSection)} onClick={onNavigate} className={item('tutti', !universeId)} aria-current={!universeId || undefined}>
+        <img src="/ui/icona-tutti.webp" alt="" className="size-9 shrink-0 rounded object-contain" />
+        <span className="title-display text-xl text-white">Tutti gli Universi</span>
       </Link>
+    </nav>
+  );
+}
+
+/** Collegamenti rapidi sotto gli universi, come nel mockup. */
+function SideLinks({ onNavigate }: { onNavigate?: () => void }) {
+  const { path } = useScope();
+  const links = [
+    { sub: 'collezione', label: 'La mia Collezione', icon: Box },
+    { sub: 'campagne', label: 'Le mie Campagne', icon: Target },
+    { sub: 'partite', label: 'Registro Partite', icon: ClipboardList },
+    { sub: 'statistiche', label: 'Statistiche Globali', icon: Trophy },
+    { sub: 'personaggi', label: 'Sopravvissuti (tutti)', icon: Users },
+    { sub: 'equipaggiamento', label: 'Equipaggiamento (tutto)', icon: Package },
+    { sub: 'carte', label: 'Carte (tutte)', icon: Library },
+    { sub: 'impostazioni', label: 'Impostazioni', icon: Settings },
+  ];
+  return (
+    <nav aria-label="Collegamenti" className="flex flex-col">
+      {links.map(({ sub, label, icon: Icon }) => (
+        <NavLink key={sub} to={path(sub)} onClick={onNavigate}
+          className={({ isActive }) => `focus-ring flex items-center gap-3 border-b border-white/10 px-2 py-2 text-[15px] transition last:border-0 hover:bg-white/5 ${isActive ? 'text-[var(--accent-2)]' : ''}`}>
+          <Icon className="size-5 shrink-0" aria-hidden />{label}
+        </NavLink>
+      ))}
     </nav>
   );
 }
@@ -130,6 +154,7 @@ export function AppShell() {
               <TopNav onNavigate={() => setDrawer(false)} />
             </nav>
             <UniverseSwitcher onNavigate={() => setDrawer(false)} />
+            <SideLinks onNavigate={() => setDrawer(false)} />
           </div>
         </div>
       )}
@@ -137,8 +162,9 @@ export function AppShell() {
       <BloodEdge />
       <div className="relative z-10 mx-auto flex max-w-[1600px] gap-5 px-4 pt-5 pb-24">
         <aside className={`hidden w-60 shrink-0 ${location.pathname.includes('/scheda/') ? '' : 'lg:block'}`}>
-          <div className="panel sticky top-24 p-3">
-            <UniverseSwitcher />
+          <div className="sticky top-24 flex flex-col gap-3">
+            <div className="panel p-2.5"><UniverseSwitcher /></div>
+            <div className="panel px-1.5 py-1"><SideLinks /></div>
           </div>
         </aside>
         <main id="contenuto" className="min-w-0 flex-1">

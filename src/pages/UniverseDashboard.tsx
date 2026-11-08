@@ -124,7 +124,7 @@ export function UniverseDashboard({ universeId }: { universeId: UniverseId }) {
 
           <Panel title="Accesso rapido" icon={Zap}>
             <div className="grid grid-cols-2 gap-2">
-              {QUICK_ACTIONS.map(({ sub, label, icon: Icon }) => (
+              {QUICK_ACTIONS.filter((q) => !q.sub.startsWith('#')).map(({ sub, label, icon: Icon }) => (
                 <Link key={sub} to={scopedPath(universeId, sub)} className="btn justify-start text-sm">
                   <Icon className="size-4 text-[var(--accent-2)]" aria-hidden /> {label}
                 </Link>

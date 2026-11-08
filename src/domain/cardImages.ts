@@ -1,8 +1,8 @@
 /**
  * Illustrazioni delle carte fornite dall'utente (public/carte), usate quando non è stata
  * caricata una foto della carta dall'app. Una foto caricata ha sempre la precedenza.
- * Delle Armi Pimpate e dell'Equipaggiamento Avanzato si usa solo l'illustrazione: i valori stampati nell'immagine fornita
- * non coincidono tutti con le carte reali, quindi sono stati tagliati via.
+ * Su richiesta dell'utente si usano le illustrazioni intere. Alcuni valori stampati nelle immagini
+ * non coincidono con le carte reali: fanno fede i dati del catalogo mostrati sotto l'immagine.
  */
 const AVAILABLE = new Set([
   'rio-asse-di-legno', 'rio-piede-di-porco', 'rio-ascia-antincendio', 'rio-38',

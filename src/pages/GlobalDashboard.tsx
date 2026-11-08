@@ -1,37 +1,37 @@
 import { Link } from 'react-router-dom';
 import {
-  Activity as ActivityIcon, BarChart3, Box, CheckCircle2, Clock, Dices, FlaskConical, Layers,
-  Library, Percent, Skull, Swords, Target, Trophy, UserRound, Users, Zap,
+  Activity as ActivityIcon, ArrowRight, BarChart3, Box, CheckCircle2, CheckSquare, ClipboardList, Dices, Flag, FlaskConical,
+  Layers, Library, Package, Skull, Star, Target, Trophy, Users, Zap,
 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../data/db';
 import { useHasDemoData, useRecentActivities, useStatsInput } from '../data/hooks';
-import { UNIVERSE_IDS, SESSION_OUTCOME_LABEL } from '../domain/types';
+import { UNIVERSE_IDS } from '../domain/types';
 import { UNIVERSES } from '../domain/universes';
 import { computeStats } from '../services/stats';
-import { formatDate, formatDuration, formatNumber, formatPercent, relativeTime } from '../lib/format';
+import { formatNumber, relativeTime } from '../lib/format';
 import { Panel } from '../ui/components/Panel';
-import { StatTile } from '../ui/components/StatTile';
 import { UniverseCard } from '../ui/components/UniverseCard';
 import { CampaignRow } from '../ui/components/CampaignRow';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Badge } from '../ui/components/Badge';
-import { UniverseEmblem } from '../ui/components/UniverseEmblem';
 import { scopedPath } from '../lib/scope';
 
 export const QUICK_ACTIONS = [
-  { sub: 'partite?nuova=1', label: 'Nuova partita', icon: Dices },
-  { sub: 'campagne?nuova=1', label: 'Nuova campagna', icon: Layers },
-  { sub: 'personaggi', label: 'Seleziona personaggi', icon: Users },
-  { sub: 'scenari', label: 'Sfoglia scenari', icon: Target },
-  { sub: 'carte', label: 'Cerca carte', icon: Library },
-  { sub: 'equipaggiamento', label: 'Gestisci equipaggiamento', icon: Swords },
-  { sub: 'statistiche', label: 'Consulta statistiche', icon: BarChart3 },
+  { sub: 'partite?nuova=1', label: 'Nuova Partita', icon: Dices },
+  { sub: '#universi', label: 'Scegli Universo', icon: Layers },
+  { sub: 'campagne', label: 'Scegli Campagna', icon: Flag },
+  { sub: 'personaggi', label: 'Archivio Sopravvissuti', icon: Users },
+  { sub: 'equipaggiamento', label: 'Inventario Globale', icon: Package },
+  { sub: 'carte', label: 'Cerca Carte', icon: Library },
+  { sub: 'statistiche', label: 'Vedi Statistiche', icon: BarChart3 },
 ];
+
+const ACT_ICON = { partita: Star, campagna: Target, collezione: CheckSquare, prodotto: Box, giocatore: Users, personaggio: Users, sistema: ActivityIcon } as const;
 
 export function GlobalDashboard() {
   const input = useStatsInput();
-  const activities = useRecentActivities(6);
+  const activities = useRecentActivities(5);
   const hasDemo = useHasDemoData();
   const products = useLiveQuery(() => db.products.toArray());
   const productName = (id: string) => products?.find((p) => p.id === id)?.name;
@@ -39,15 +39,11 @@ export function GlobalDashboard() {
   if (!input) return <p className="text-[var(--muted)]">Caricamento…</p>;
   const global = computeStats(input);
   const byUniverse = Object.fromEntries(UNIVERSE_IDS.map((u) => [u, computeStats(input, u)]));
-  const last = global.lastSession;
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="text-center">
-        <h1 className="title-display text-3xl sm:text-5xl">Un'unica app per tutto l'universo Zombicide</h1>
-        <p className="mt-1 text-sm text-[var(--muted)] sm:text-base">
-          Collezione, campagne, personaggi, partite e progressi di Fantasy, Moderno, Western e Marvel.
-        </p>
+      <div className="relative overflow-hidden rounded-xl border-2 border-black/60">
+        <img src="/ui/banner.webp" alt="Un'unica app per tutto l'universo Zombicide. Gestisci collezione, campagne, sopravvissuti, partite e progressi di tutti gli universi: Fantasy, Moderno, Western e Marvel." className="block h-auto w-full" />
       </div>
 
       {hasDemo && (
@@ -58,15 +54,15 @@ export function GlobalDashboard() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+      <div id="universi" className="grid scroll-mt-28 grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
         {UNIVERSE_IDS.map((id) => <UniverseCard key={id} id={id} stats={byUniverse[id]} />)}
       </div>
 
-      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        <div className="flex flex-col gap-5 xl:col-span-2">
-          <Panel title="Le mie campagne attive" icon={Target} action={<Link to="/campagne" className="text-sm text-[var(--muted)] hover:text-[var(--text)]">Vedi tutte →</Link>}>
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.9fr_1fr]">
+        <div className="flex flex-col gap-5">
+          <Panel title="Le mie campagne attive" icon={Target} action={<Link to="/campagne" className="flex items-center gap-1 text-sm hover:text-[var(--accent-2)]">Vedi tutte <ArrowRight className="size-4" /></Link>}>
             {global.activeCampaigns.length ? (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col">
                 {global.activeCampaigns.slice(0, 6).map((p) => <CampaignRow key={p.campaign.id} progress={p} productName={productName(p.campaign.productId)} />)}
               </div>
             ) : (
@@ -79,29 +75,26 @@ export function GlobalDashboard() {
           <Panel title="Accesso rapido" icon={Zap}>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
               {QUICK_ACTIONS.map(({ sub, label, icon: Icon }) => (
-                <Link key={sub} to={`/${sub}`} className="btn focus-ring flex-col gap-1 py-3 text-center text-sm">
-                  <Icon className="size-7 text-[var(--accent-2)]" aria-hidden />
-                  {label}
-                </Link>
+                sub.startsWith('#')
+                  ? <a key={sub} href={sub} className="btn focus-ring min-h-24 flex-col gap-1.5 py-3 text-center text-[15px] leading-tight"><Icon className="size-9 text-[var(--accent-2)]" aria-hidden />{label}</a>
+                  : <Link key={sub} to={`/${sub}`} className="btn focus-ring min-h-24 flex-col gap-1.5 py-3 text-center text-[15px] leading-tight"><Icon className="size-9 text-[var(--accent-2)]" aria-hidden />{label}</Link>
               ))}
             </div>
           </Panel>
         </div>
 
         <div className="flex flex-col gap-5">
-          <Panel title="La mia collezione" icon={Box} action={<Link to="/collezione" className="text-sm text-[var(--muted)] hover:text-[var(--text)]">Modifica</Link>}>
-            <ul className="flex flex-col gap-2">
+          <Panel title="La mia Collezione" icon={Box} action={<Link to="/collezione" className="text-sm hover:text-[var(--accent-2)]">Modifica</Link>}>
+            <ul className="flex flex-col">
               {UNIVERSE_IDS.map((id) => {
                 const s = byUniverse[id];
                 return (
-                  <li key={id} data-universe={id}>
-                    <Link to={scopedPath(id, 'collezione')} className="flex items-center gap-3 rounded-md px-1 py-1 hover:bg-white/5">
-                      <UniverseEmblem id={id} className="size-5 text-[var(--accent)]" />
-                      <span className="flex-1 font-medium">{UNIVERSES[id].name}</span>
-                      <span className="text-sm text-[var(--muted)]">
-                        {s.ownedBaseGames} giochi · {s.ownedExpansions} espansioni
-                      </span>
-                      {s.ownedProducts > 0 && <CheckCircle2 className="size-5 text-[var(--ok)]" aria-label="Presente in collezione" />}
+                  <li key={id}>
+                    <Link to={scopedPath(id, 'collezione')} className="flex items-center gap-3 border-b border-white/10 py-1.5 last:border-0 hover:bg-white/5">
+                      <img src={`/ui/icona-${id}.webp`} alt="" className="size-7 object-contain" />
+                      <span className="w-24 text-lg font-medium">{UNIVERSES[id].name}</span>
+                      <span className="flex-1 text-sm">{s.ownedProducts} {s.ownedProducts === 1 ? 'gioco' : 'giochi'} / espansioni</span>
+                      {s.ownedProducts > 0 ? <CheckCircle2 className="size-6 fill-[#57c02a] text-black" aria-label="Presente in collezione" /> : <span className="size-6 rounded-full border-2 border-white/30" aria-label="Nessun prodotto" />}
                     </Link>
                   </li>
                 );
@@ -109,51 +102,36 @@ export function GlobalDashboard() {
             </ul>
           </Panel>
 
-          <Panel title="Statistiche globali" icon={Trophy}>
-            <div className="grid grid-cols-2 gap-2">
-              <StatTile icon={Dices} label="Partite giocate" value={global.sessionsPlayed} />
-              <StatTile icon={Target} label="Scenari completati" value={global.scenariosCompleted} />
-              <StatTile icon={Percent} label="Successo" value={global.successRate === null ? null : formatPercent(global.successRate)} />
-              <StatTile icon={Skull} label="Zombie eliminati" value={global.zombiesKilled === null ? null : formatNumber(global.zombiesKilled)} />
-              <StatTile icon={Users} label="Personaggi usati" value={global.distinctCharacters} />
-              <StatTile icon={Clock} label="Tempo di gioco" value={global.minutesPlayed === null ? null : formatDuration(global.minutesPlayed)} />
+          <Panel title="Statistiche Globali" icon={Trophy}>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
+              {[
+                { icon: Dices, label: 'Partite giocate', value: global.sessionsPlayed },
+                { icon: Target, label: 'Scenari completati', value: global.scenariosCompleted },
+                { icon: Users, label: 'Sopravvissuti utilizzati', value: global.distinctCharacters },
+                { icon: Skull, label: 'Zombie eliminati', value: global.zombiesKilled === null ? null : formatNumber(global.zombiesKilled) },
+              ].map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex flex-col items-center gap-0.5 rounded-lg border-2 border-white/15 bg-black/40 px-2 py-2 text-center">
+                  <Icon className="size-6" aria-hidden />
+                  <span className="text-xs leading-tight">{label}</span>
+                  <span className={value === null ? 'text-xs text-[var(--muted)] italic' : 'text-2xl font-bold'}>{value ?? 'Non disponibile'}</span>
+                </div>
+              ))}
             </div>
           </Panel>
 
-          <Panel title="Ultima partita" icon={Dices}>
-            {last ? (
-              <div className="flex flex-col gap-2 text-sm" data-universe={last.universeId}>
-                <div className="flex flex-wrap items-center gap-2">
-                  <UniverseEmblem id={last.universeId} className="size-5 text-[var(--accent)]" />
-                  <span className="font-semibold">{last.scenarioTitle ?? 'Scenario senza titolo'}</span>
-                  <Badge tone={last.outcome === 'vittoria' ? 'ok' : last.outcome === 'sconfitta' ? 'danger' : 'neutral'}>{SESSION_OUTCOME_LABEL[last.outcome]}</Badge>
-                  {last.origin === 'demo' && <Badge tone="demo">DEMO</Badge>}
-                </div>
-                <span className="text-[var(--muted)]">{formatDate(last.playedOn)}</span>
-                {global.recentCharacters.length > 0 && (
-                  <div>
-                    <div className="mb-1 text-xs uppercase tracking-wide text-[var(--muted)]">Ultimi personaggi utilizzati</div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {global.recentCharacters.map((c) => <Badge key={c}><UserRound className="size-3" />{c}</Badge>)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <EmptyState icon={Dices} title="Nessuna partita registrata">Registra una missione da una campagna Rio Z Janeiro o da Partite → Nuova partita.</EmptyState>
-            )}
-          </Panel>
-
-          <Panel title="Ultime attività" icon={ActivityIcon}>
+          <Panel title="Ultime attività" icon={ClipboardList}>
             {activities?.length ? (
-              <ul className="flex flex-col divide-y divide-[var(--line)] text-sm">
-                {activities.map((a) => (
-                  <li key={a.id} className="flex items-center gap-2 py-1.5">
-                    {a.universeId ? <span data-universe={a.universeId}><UniverseEmblem id={a.universeId} className="size-4 text-[var(--accent)]" /></span> : <ActivityIcon className="size-4" />}
-                    <span className="flex-1">{a.message}</span>
-                    <span className="shrink-0 text-xs text-[var(--muted)]">{relativeTime(a.at)}</span>
-                  </li>
-                ))}
+              <ul className="flex flex-col">
+                {activities.map((a) => {
+                  const Icon = ACT_ICON[a.kind] ?? ActivityIcon;
+                  return (
+                    <li key={a.id} className="flex items-center gap-2.5 border-b border-white/10 py-1.5 text-sm last:border-0">
+                      <Icon className={`size-5 shrink-0 ${a.kind === 'partita' ? 'fill-[#f5c518] text-[#f5c518]' : a.kind === 'collezione' ? 'text-[#57c02a]' : ''}`} aria-hidden />
+                      <span className="flex-1">{a.message}</span>
+                      <span className="shrink-0 text-xs text-[var(--muted)]">{relativeTime(a.at)}</span>
+                    </li>
+                  );
+                })}
               </ul>
             ) : (
               <EmptyState icon={ActivityIcon} title="Nessuna attività">Le modifiche alla collezione e alle campagne verranno registrate qui.</EmptyState>
