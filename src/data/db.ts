@@ -1,6 +1,6 @@
 import Dexie, { type EntityTable } from 'dexie';
 import type {
-  Ability, Activity, Campaign, CampaignParticipant, Character, CharacterNote, CollectionEntry, EquipmentCard, KeptItem, ProgressEntry, GameSession,
+  Ability, Activity, Campaign, CampaignParticipant, Character, CharacterNote, CollectionEntry, EquipmentCard, FreeNote, KeptItem, ProgressEntry, GameSession,
   Player, Product, Scenario, SessionParticipant, StoredImage,
 } from '../domain/types';
 import { seedProducts } from './seed/products';
@@ -25,6 +25,7 @@ export class HubDatabase extends Dexie {
   progress!: EntityTable<ProgressEntry, 'id'>;
   keptItems!: EntityTable<KeptItem, 'id'>;
   cards!: EntityTable<EquipmentCard, 'id'>;
+  notes!: EntityTable<FreeNote, 'id'>;
   sessions!: EntityTable<GameSession, 'id'>;
   sessionParticipants!: EntityTable<SessionParticipant, 'id'>;
   activities!: EntityTable<Activity, 'id'>;
@@ -95,6 +96,8 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 9: note libere.
+    this.version(9).stores({ notes: 'id, universeId, updatedAt' });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).
     this.on('ready', () => syncBaseCatalog(this));
   }
@@ -120,6 +123,6 @@ export const db = new HubDatabase();
 /** Tabelle incluse nel backup (le immagini sono gestite a parte). */
 export const DATA_TABLES = [
   'products', 'collection', 'players', 'cards', 'characters', 'characterNotes', 'abilities', 'scenarios',
-  'campaigns', 'participants', 'progress', 'keptItems', 'sessions', 'sessionParticipants', 'activities',
+  'campaigns', 'participants', 'progress', 'keptItems', 'sessions', 'sessionParticipants', 'activities', 'notes',
 ] as const;
 export type DataTable = (typeof DATA_TABLES)[number];

@@ -74,7 +74,7 @@ export function BloodEdge() {
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-0" aria-hidden>
       <img src="/ui/zombie-angolo.webp" alt="" className="absolute bottom-0 left-0 hidden w-64 opacity-90 lg:block" />
-      <img src="/ui/schizzi-basso.webp" alt="" className="block h-10 w-full object-cover object-bottom sm:h-14" />
+      <img src="/ui/schizzi-basso.webp" alt="" className="block h-6 w-full object-cover object-bottom sm:h-8" />
     </div>
   );
 }

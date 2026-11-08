@@ -112,6 +112,18 @@ export function createRepository(database: HubDatabase = db) {
       await database.cards.update(id, patch);
     },
 
+    async saveNote(input: { id?: string; title: string; body: string; universeId?: UniverseId; pinned?: boolean }) {
+      const now = nowIso();
+      const existing = input.id ? await database.notes.get(input.id) : undefined;
+      const note = { ...existing, ...input, id: existing?.id ?? newId('nota'), createdAt: existing?.createdAt ?? now, updatedAt: now };
+      await database.notes.put(note);
+      return note;
+    },
+
+    async deleteNote(id: string) {
+      await database.notes.delete(id);
+    },
+
     async saveImage(file: Blob): Promise<string> {
       const id = newId('img');
       await database.images.add({ id, blob: file, mime: file.type, createdAt: nowIso() });

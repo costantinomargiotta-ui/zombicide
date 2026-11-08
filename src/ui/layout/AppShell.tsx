@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Box, ClipboardList, Globe, Library, Menu, Package, Settings, Target, Trophy, Users, X } from 'lucide-react';
+import { Box, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Settings, Target, Trophy, Users, X } from 'lucide-react';
 import { UNIVERSES } from '../../domain/universes';
 import { UNIVERSE_IDS } from '../../domain/types';
 import { scopedPath, useScope } from '../../lib/scope';
@@ -91,6 +91,7 @@ function SideLinks({ onNavigate }: { onNavigate?: () => void }) {
     { sub: 'personaggi', label: 'Sopravvissuti (tutti)', icon: Users },
     { sub: 'equipaggiamento', label: 'Equipaggiamento (tutto)', icon: Package },
     { sub: 'carte', label: 'Carte (tutte)', icon: Library },
+    { sub: 'note', label: 'Note', icon: NotebookPen },
     { sub: 'impostazioni', label: 'Impostazioni', icon: Settings },
   ];
   return (
@@ -128,6 +129,9 @@ export function AppShell() {
             <TopNav />
           </nav>
           <div className="ml-auto flex items-center gap-2">
+            <NavLink to={path('cerca')} className={({ isActive }) => `btn focus-ring px-2.5 ${isActive ? 'btn-accent' : ''}`} aria-label="Cerca" title="Cerca">
+              <Search className="size-5" />
+            </NavLink>
             <SyncIndicator />
             <NavLink to={path('impostazioni')} className={({ isActive }) => `btn focus-ring px-2.5 ${isActive ? 'btn-accent' : ''}`} aria-label="Impostazioni">
               <Settings className="size-5" />

@@ -141,7 +141,7 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
   const [tab, setTab] = useState<'catalogo' | 'conservato'>('catalogo');
   const [cat, setCat] = useState('tutti');
   const [productId, setProductId] = useState('');
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '');
   const [onlyKeepable, setOnlyKeepable] = useState(false);
   const [open, setOpen] = useState<EquipmentCard | null>(null);
   if (!cards || !products) return <p className="text-[var(--muted)]">Caricamento…</p>;

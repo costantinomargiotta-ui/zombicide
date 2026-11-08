@@ -279,3 +279,14 @@ export interface EquipmentCard {
   dataStatus: DataStatus;
   origin: RecordOrigin;
 }
+
+/** Nota libera dell'utente, eventualmente collegata a un universo. */
+export interface FreeNote {
+  id: string;
+  title: string;
+  body: string;
+  universeId?: UniverseId;
+  pinned?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
