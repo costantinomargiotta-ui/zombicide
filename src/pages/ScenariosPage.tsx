@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ChevronDown, Map, Target } from 'lucide-react';
 import { db } from '../data/db';
 import { RIO_MISSIONS } from '../rules/moderno/rioZJaneiro';
+import { BP_MISSIONS } from '../rules/fantasy/blackPlague';
 import { UNIVERSES } from '../domain/universes';
 import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
@@ -15,6 +16,7 @@ export function ScenariosPage() {
   const [open, setOpen] = useState<string | null>(null);
   const sessions = useLiveQuery(() => db.sessions.toArray());
   const show = !universeId || universeId === 'moderno';
+  const showBp = !universeId || universeId === 'fantasy';
 
   return (
     <div className="flex flex-col gap-5">
@@ -55,7 +57,37 @@ export function ScenariosPage() {
             })}
           </ol>
         </Panel>
-      ) : (
+      ) : null}
+      {showBp && (
+        <Panel title="Black Plague · Missioni" icon={Target}>
+          <p className="mb-3 text-sm text-[var(--muted)]">11 Missioni indipendenti, da giocare in qualsiasi ordine (Black Plague – Regole e Missioni, pag. 38–50).</p>
+          <ol className="flex flex-col gap-2">
+            {BP_MISSIONS.map((m) => {
+              const own = (sessions ?? []).filter((s) => s.scenarioId === m.id);
+              const isOpen = open === m.id;
+              return (
+                <li key={m.id} className="rounded-lg border border-[var(--line)] bg-black/30">
+                  <button type="button" onClick={() => setOpen(isOpen ? null : m.id)} aria-expanded={isOpen} className="flex w-full flex-wrap items-center gap-3 px-3 py-2 text-left">
+                    <span className="title-display w-12 text-2xl text-[var(--accent-2)]">{m.code}</span>
+                    <span className="min-w-40 flex-1 font-semibold">{m.title}</span>
+                    <Badge tone={m.difficulty === 'Facile' ? 'ok' : m.difficulty === 'Medio' ? 'neutral' : 'warn'}>{m.difficulty}</Badge>
+                    <span className="text-xs text-[var(--muted)]">{m.survivors} · {m.duration}</span>
+                    <span className="text-xs text-[var(--muted)]">{own.length ? `${own.length} partite · ${own.filter((s) => s.outcome === 'vittoria').length} vittorie` : 'mai giocata'}</span>
+                    <ChevronDown className={`size-4 transition ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {isOpen && (
+                    <div className="flex flex-col gap-2 border-t border-[var(--line)] px-3 py-3 text-sm">
+                      {m.tiles.length > 0 && <p className="flex items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · pag. {m.page}</p>}
+                      <div><h4 className="font-semibold">Obiettivi {m.objectivesInOrder ? '' : '(in qualsiasi ordine)'}</h4><ol className="list-decimal pl-5">{m.objectives.map((o) => <li key={o}>{o}</li>)}</ol></div>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </Panel>
+      )}
+      {!show && !showBp && (
         <EmptyState icon={Target} title={`Nessuno scenario ${UNIVERSES[universeId!].name} a catalogo`}>Gli scenari di questo universo arriveranno con i suoi regolamenti.</EmptyState>
       )}
     </div>

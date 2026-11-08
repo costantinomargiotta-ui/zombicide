@@ -9,6 +9,7 @@ import { CAMPAIGN_STATUS_LABEL, UNIVERSE_IDS, type CampaignStatus, type Universe
 import { UNIVERSES } from '../domain/universes';
 import { rulesFor } from '../rules';
 import { RIO_MISSIONS, RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
+import { BP_MISSIONS, BP_TEMPLATE_ID } from '../rules/fantasy/blackPlague';
 import { computeStats } from '../services/stats';
 import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
@@ -39,7 +40,7 @@ function NewCampaignForm({ defaultUniverse, onClose }: { defaultUniverse?: Unive
     const c = await repo.createCampaign({
       universeId, productId, name: name.trim(),
       description: description.trim() || undefined,
-      plannedScenarioCount: Number.isFinite(plannedNum) && plannedNum > 0 ? plannedNum : template?.id === RIO_TEMPLATE_ID ? RIO_MISSIONS.length : undefined,
+      plannedScenarioCount: Number.isFinite(plannedNum) && plannedNum > 0 ? plannedNum : template?.id === RIO_TEMPLATE_ID ? RIO_MISSIONS.length : template?.id === BP_TEMPLATE_ID ? BP_MISSIONS.length : undefined,
       templateId: template?.id,
     });
     onClose();

@@ -6,6 +6,7 @@ import type {
 import { seedProducts } from './seed/products';
 import type { QueueEntry } from './sync';
 import { seedRioCards } from './seed/equipmentRio';
+import { seedFantasySurvivors } from './seed/survivorsFantasy';
 import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
@@ -114,6 +115,7 @@ export async function syncBaseCatalog(database: HubDatabase) {
     await addMissing(database.products, seedProducts);
     await addMissing(database.abilities, seedModernAbilities);
     await addMissing(database.characters, seedModernSurvivors);
+    await addMissing(database.characters, seedFantasySurvivors);
     await addMissing(database.cards, seedRioCards);
   });
 }

@@ -63,6 +63,7 @@ function OriginalAbilities({ c, abilities }: { c: Character; abilities: Map<stri
         <h3 className="sheet-header px-3 py-1.5 text-2xl">
           Abilità Originali <span className="font-sans text-sm font-semibold italic">(dal personaggio)</span>
         </h3>
+        {!c.abilities.length && <p className="px-3 py-3 text-black/70 italic">Abilità non ancora trascritte: mandami la fotografia della scheda identità di {c.name}.</p>}
         <ol className="divide-y divide-black/15">
           {c.abilities.flatMap((group) =>
             group.abilityIds.map((id) => (
@@ -179,7 +180,7 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
                 </div>
               )}
               <p className="text-xs text-[var(--muted)]">
-                {product ? `Provenienza: ${product.name}. ` : ''}Trascrizione dalle fotografie delle schede originali. Livelli: 1 abilità blu, 1 gialla, 2 arancioni, 3 rosse.
+                {product ? `Provenienza: ${product.name}. ` : ''}{c.abilities.length ? 'Trascrizione dalle fotografie delle schede originali.' : 'Dati dal regolamento: nome e scatola di provenienza.'}
               </p>
             </>
           )}

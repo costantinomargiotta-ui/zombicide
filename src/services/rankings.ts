@@ -48,7 +48,8 @@ export function playerRanking(input: RankingInput, universeId?: UniverseId): Pla
   const out = new Map<string, PlayerRank>();
   for (const sp of sps) {
     const part = input.participants.find((p) => p.id === sp.participantId);
-    const name = part?.playerName?.trim();
+    const fromSession = typeof sp.campaignData?.playerName === 'string' ? sp.campaignData.playerName : undefined;
+    const name = (part?.playerName ?? fromSession)?.trim();
     if (!name) continue;
     const key = name.toLowerCase();
     const r = out.get(key) ?? { name, played: 0, victories: 0, characters: [] };

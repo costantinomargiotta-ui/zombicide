@@ -1,5 +1,6 @@
 import type { Campaign, Character, EquipmentCard, FreeNote, Product } from '../domain/types';
 import { RIO_MISSIONS, CAMPAIGN_ABILITIES } from '../rules/moderno/rioZJaneiro';
+import { BP_MISSIONS } from '../rules/fantasy/blackPlague';
 
 export type ResultKind = 'campagna' | 'sopravvissuto' | 'carta' | 'scenario' | 'prodotto' | 'abilita' | 'nota';
 
@@ -39,6 +40,8 @@ export function search(index: SearchIndex, query: string, limit = 60): SearchRes
     out.push({ kind: 'carta', id: c.id, title: c.name, subtitle: productName(c.productId), to: `/u/${c.universeId}/carte?q=${encodeURIComponent(c.name)}` });
   for (const m of RIO_MISSIONS) if (hit(m.code, m.title, ...m.objectives))
     out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: 'Rio Z Janeiro', to: '/u/moderno/scenari' });
+  for (const m of BP_MISSIONS) if (hit(m.code, m.title, ...m.objectives))
+    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: 'Black Plague', to: '/u/fantasy/scenari' });
   for (const p of index.products) if (hit(p.name, p.description))
     out.push({ kind: 'prodotto', id: p.id, title: p.name, subtitle: 'Collezione', to: `/u/${p.universeId}/collezione` });
   for (const a of CAMPAIGN_ABILITIES) if (hit(a.name, a.description))

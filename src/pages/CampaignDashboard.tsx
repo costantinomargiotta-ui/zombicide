@@ -18,6 +18,8 @@ import { UniverseEmblem } from '../ui/components/UniverseEmblem';
 import { Modal } from '../ui/components/Modal';
 import { RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
 import { RioCampaign } from './rio/RioCampaign';
+import { BpCampaign } from './fantasy/BpCampaign';
+import { BP_TEMPLATE_ID } from '../rules/fantasy/blackPlague';
 
 const transitions: Record<CampaignStatus, { to: CampaignStatus; label: string; icon: typeof Play }[]> = {
   'da-iniziare': [{ to: 'in-corso', label: 'Avvia', icon: Play }],
@@ -39,6 +41,7 @@ export function CampaignDashboard() {
 
   const progress = campaignProgress(campaign, sessions);
   const template = campaign.templateId ? rulesFor(campaign.universeId).campaignTemplates.find((t) => t.id === campaign.templateId) : undefined;
+  const hasModule = campaign.templateId === RIO_TEMPLATE_ID || campaign.templateId === BP_TEMPLATE_ID;
   const sorted = [...sessions].sort((a, b) => b.playedOn.localeCompare(a.playedOn));
 
   return (
@@ -72,7 +75,7 @@ export function CampaignDashboard() {
             <button type="button" className="btn btn-danger" onClick={() => setConfirmDelete(true)} aria-label="Elimina campagna"><Trash2 className="size-4" /></button>
           </div>
         </div>
-        {campaign.templateId !== RIO_TEMPLATE_ID && <div className="mt-4">
+        {!hasModule && <div className="mt-4">
           <div className="mb-1 flex justify-between text-sm text-[var(--muted)]">
             <span>Progressi generali</span>
             <span>{progress.completedScenarios}{campaign.plannedScenarioCount ? ` / ${campaign.plannedScenarioCount}` : ''} scenari</span>
@@ -82,6 +85,7 @@ export function CampaignDashboard() {
       </div>
 
       {campaign.templateId === RIO_TEMPLATE_ID && <RioCampaign campaign={campaign} />}
+      {campaign.templateId === BP_TEMPLATE_ID && <BpCampaign campaign={campaign} />}
 
       {template?.status === 'materiali-mancanti' && (
         <Panel title={`Scheda ${template.name}: materiali mancanti`} icon={AlertTriangle}>
@@ -91,7 +95,7 @@ export function CampaignDashboard() {
       )}
 
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
-        {campaign.templateId !== RIO_TEMPLATE_ID && <Panel title="Registro partite" icon={Dices} className="xl:col-span-2">
+        {!hasModule && <Panel title="Registro partite" icon={Dices} className="xl:col-span-2">
           {sorted.length ? (
             <ul className="flex flex-col divide-y divide-[var(--line)]">
               {sorted.map((s) => (
@@ -107,7 +111,7 @@ export function CampaignDashboard() {
             <EmptyState icon={Dices} title="Nessuna partita registrata">La registrazione delle partite per questo tipo di campagna arriverà con il suo modulo regole.</EmptyState>
           )}
         </Panel>}
-        <div className={`flex flex-col gap-5 ${campaign.templateId === RIO_TEMPLATE_ID ? 'xl:col-span-3 md:grid md:grid-cols-2' : ''}`}>
+        <div className={`flex flex-col gap-5 ${hasModule ? 'xl:col-span-3 md:grid md:grid-cols-2' : ''}`}>
           <Panel title="Descrizione" icon={Trophy}>
             <p className="text-sm text-[var(--muted)]">{campaign.description || 'Nessuna descrizione.'}</p>
           </Panel>

@@ -27,7 +27,7 @@ describe('sopravvissuti Moderno', () => {
   it('la sincronizzazione del catalogo non sovrascrive le modifiche dell\'utente', async () => {
     const db = new HubDatabase(`t-${Math.random()}`);
     await db.open();
-    expect(await db.characters.count()).toBe(24);
+    expect(await db.characters.where('universeId').equals('moderno').count()).toBe(24);
     await db.characters.update('moderno-odin', { productId: 'zombicide-2e' });
     db.close();
     await db.open();
