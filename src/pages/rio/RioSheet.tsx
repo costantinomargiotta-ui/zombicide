@@ -5,6 +5,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ArrowLeft, Check, Minus, Plus, Skull, Star, Swords, Trash2, X } from 'lucide-react';
 import { StoredImage } from '../../ui/components/StoredImage';
 import { defaultPortraitUrl } from '../../domain/portraits';
+import { defaultCardImageUrl } from '../../domain/cardImages';
 import { db } from '../../data/db';
 import { bonusSpent, rioRepo, sheetFor } from '../../data/rioRepository';
 import {
@@ -226,7 +227,7 @@ export function RioSheet() {
                   return (
                     <div key={k.id} className="relative flex aspect-[3/4] flex-col overflow-hidden rounded-md border-2 border-[#f2c418] bg-gradient-to-b from-[#3a2a10] to-[#120d06] text-white shadow">
                       <div className="grid flex-1 place-items-center p-1">
-                        <StoredImage imageId={card?.frontImageId} alt={k.name} className="size-full object-cover" fallback={<Swords className="size-8 text-[#f2c418]" />} />
+                        <StoredImage imageId={card?.frontImageId} alt={k.name} className="size-full object-cover" fallback={defaultCardImageUrl(card?.id) ? <img src={defaultCardImageUrl(card?.id)} alt={k.name} className="size-full object-cover" /> : <Swords className="size-8 text-[#f2c418]" />} />
                       </div>
                       <span className="bg-black/80 px-1 py-0.5 text-center text-xs leading-tight font-semibold">{k.name}</span>
                       {card && <span className="absolute top-1 left-1 rounded bg-black/80 px-1 text-[11px] font-bold" title="Conservazione">🔒{card.conservation}</span>}
