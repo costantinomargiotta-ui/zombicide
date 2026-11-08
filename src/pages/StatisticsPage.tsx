@@ -8,7 +8,8 @@ import { UNIVERSES } from '../domain/universes';
 import { defaultPortraitUrl } from '../domain/portraits';
 import { computeStats } from '../services/stats';
 import { characterRanking, playerRanking, sessionsByMonth, type CharacterRank, type MonthBucket } from '../services/rankings';
-import { PEC_MAX, RIO_MISSIONS } from '../rules/moderno/rioZJaneiro';
+import { PEC_MAX } from '../rules/moderno/rioZJaneiro';
+import { SHEET_CAMPAIGNS } from '../rules/moderno/sheetCampaigns';
 import { MISSION_SERIES } from '../rules/missionSeries';
 import { formatDuration, formatNumber, formatPercent } from '../lib/format';
 import { useScope } from '../lib/scope';
@@ -143,7 +144,7 @@ export function StatisticsPage() {
 
   // Vittorie per difficoltà, dove la difficoltà è indicata dal regolamento (Rio e serie di missioni).
   const sessions = input.sessions.filter((x) => !universeId || x.universeId === universeId);
-  const diffOf = new Map<string, string>([...RIO_MISSIONS.map((m) => [m.id, m.difficulty] as [string, string]), ...MISSION_SERIES.flatMap((sr) => sr.missions.map((m) => [m.id, m.difficulty] as [string, string]))]);
+  const diffOf = new Map<string, string>([...SHEET_CAMPAIGNS.flatMap((c) => c.missions.map((m) => [m.id, m.difficulty] as [string, string])), ...MISSION_SERIES.flatMap((sr) => sr.missions.map((m) => [m.id, m.difficulty] as [string, string]))]);
   const byDifficulty = ['Facile', 'Medio', 'Difficile', 'Molto Difficile'].map((d) => ({
     label: d, value: sessions.filter((x) => x.outcome === 'vittoria' && x.scenarioId && diffOf.get(x.scenarioId) === d).length,
   }));
@@ -204,7 +205,7 @@ export function StatisticsPage() {
                   ))}
                 </div>
                 <div className="mt-1 flex gap-4 px-2 text-center text-xs text-[var(--muted)]">{byDifficulty.map((d) => <span key={d.label} className="flex-1">{d.label}</span>)}</div>
-                <p className="mt-2 text-xs text-[var(--muted)]">Difficoltà indicate dai regolamenti (Rio Z Janeiro, Zombicide 2ª edizione, Black Plague).</p>
+                <p className="mt-2 text-xs text-[var(--muted)]">Difficoltà indicate dai regolamenti dei giochi.</p>
               </div>
             </div>
           </Panel>

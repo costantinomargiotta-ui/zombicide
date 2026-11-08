@@ -97,6 +97,15 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 10: Washington Z.C. (provenienza dei 6 sopravvissuti e prodotto verificato).
+    this.version(10).upgrade(async (tx) => {
+      const w = seedProducts.find((x) => x.id === 'washington-zc')!;
+      await tx.table('products').update(w.id, { kind: w.kind, requires: w.requires, dataStatus: w.dataStatus });
+      for (const c of seedModernSurvivors.filter((x) => x.productId === 'washington-zc')) {
+        const existing = await tx.table('characters').get(c.id);
+        if (existing && !existing.productId) await tx.table('characters').update(c.id, { productId: c.productId });
+      }
+    });
     // Revisione 9: note libere.
     this.version(9).stores({ notes: 'id, universeId, updatedAt' });
     // Aggiunge i record di base mancanti senza toccare quelli esistenti (anche se modificati dall'utente).

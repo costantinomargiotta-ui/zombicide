@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { AlertTriangle, Skull } from 'lucide-react';
 import type { CampaignParticipant, Character, GameSession, SessionParticipant } from '../../domain/types';
 import { rioRepo, type MissionParticipantInput } from '../../data/rioRepository';
-import { KNOWN_MILESTONES, RIO_MISSIONS } from '../../rules/moderno/rioZJaneiro';
+import type { SheetCampaign } from '../../rules/moderno/sheetCampaigns';
 import { Field, Modal } from '../../ui/components/Modal';
 
 interface Props {
+  cfg: SheetCampaign;
   campaignId: string;
   participants: CampaignParticipant[];
   characters: Map<string, Character>;
@@ -19,7 +20,7 @@ interface Props {
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-export function RioSessionForm({ campaignId, participants, characters, deadIds, defaultMissionId, session, sessionParticipants, onClose }: Props) {
+export function RioSessionForm({ cfg, campaignId, participants, characters, deadIds, defaultMissionId, session, sessionParticipants, onClose }: Props) {
   const editing = !!session;
   const [missionId, setMissionId] = useState(session?.scenarioId ?? defaultMissionId);
   const [playedOn, setPlayedOn] = useState(session?.playedOn ?? today());
@@ -47,7 +48,7 @@ export function RioSessionForm({ campaignId, participants, characters, deadIds, 
   }
   const [rows, setRows] = useState(initial);
   const set = (id: string, patch: Partial<(typeof initial)[string]>) => setRows((r) => ({ ...r, [id]: { ...r[id], ...patch } }));
-  const mission = RIO_MISSIONS.find((m) => m.id === missionId)!;
+  const mission = cfg.missions.find((m) => m.id === missionId)!;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -86,7 +87,7 @@ export function RioSessionForm({ campaignId, participants, characters, deadIds, 
           <div className="sm:col-span-2">
             <Field label="Missione">
               <select className="input" value={missionId} onChange={(e) => setMissionId(e.target.value)}>
-                {RIO_MISSIONS.map((m) => <option key={m.id} value={m.id}>{m.code} – {m.title} ({m.difficulty})</option>)}
+                {cfg.missions.map((m) => <option key={m.id} value={m.id}>{m.code} – {m.title} ({m.difficulty})</option>)}
               </select>
             </Field>
           </div>
@@ -132,7 +133,7 @@ export function RioSessionForm({ campaignId, participants, characters, deadIds, 
                     <label className="flex items-center gap-2 text-red-200"><input type="checkbox" checked={r.died} onChange={(e) => set(p.id, { died: e.target.checked })} /><Skull className="size-4" /> Morto (KO non salvato)</label>
                     <label className="flex flex-col gap-1 sm:col-span-2">
                       <span className="text-[var(--muted)]">Traguardi ottenuti (uno per riga)</span>
-                      <textarea className="input min-h-14" value={r.traguardiText} onChange={(e) => set(p.id, { traguardiText: e.target.value })} placeholder={KNOWN_MILESTONES.map((k) => k.name).join(', ')} />
+                      <textarea className="input min-h-14" value={r.traguardiText} onChange={(e) => set(p.id, { traguardiText: e.target.value })} placeholder={cfg.knownMilestones.map((k) => k.name).join(', ')} />
                     </label>
                   </div>
                 )}

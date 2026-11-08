@@ -1,6 +1,7 @@
 import type { UniverseRules } from './types';
 import { RIO_TEMPLATE_ID } from './moderno/rioZJaneiro';
 import { Z2_TEMPLATE_ID } from './moderno/zombicide2e';
+import { WZC_TEMPLATE_ID } from './moderno/washingtonZC';
 
 const Z2 = 'Zombicide 2ª Edizione – Regolamento (ITA)';
 
@@ -26,12 +27,13 @@ export const modernRules: UniverseRules = {
       status: 'pronto',
       missingMaterials: [],
     },
+    { id: WZC_TEMPLATE_ID, name: 'Stato Infetto (Washington Z.C.)', productId: 'washington-zc', status: 'pronto', missingMaterials: [] },
     { id: Z2_TEMPLATE_ID, name: 'Missioni di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
-    'Regole di campagna di Washington Z.C. e Fort Hendrix',
+    'Regole di Fort Hendrix e di Zombicide 1ª edizione',
     'Carte Equipaggiamento Avanzato di Rio Z Janeiro (per collegare l\'equipaggiamento conservato al catalogo)',
-    'Scatola di provenienza di Angelo, Ashley, Justin, Mindy, Tess e Anton',
+    'Fotografie delle carte Equipaggiamento di Washington Z.C. (95 carte, di cui 33 dei Servizi Segreti)',
   ],
-  sources: [{ document: Z2 }, { document: 'Zombicide: Rio Z Janeiro – Regole e Missioni (ITA)' }],
+  sources: [{ document: Z2 }, { document: 'Zombicide: Rio Z Janeiro – Regole e Missioni (ITA)' }, { document: 'Zombicide: Washington Z.C. – Regole e Missioni (ITA)' }],
 };

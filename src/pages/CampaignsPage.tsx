@@ -8,7 +8,7 @@ import { useStatsInput } from '../data/hooks';
 import { CAMPAIGN_STATUS_LABEL, UNIVERSE_IDS, type CampaignStatus, type UniverseId } from '../domain/types';
 import { UNIVERSES } from '../domain/universes';
 import { rulesFor } from '../rules';
-import { RIO_MISSIONS, RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
+import { sheetCampaignFor } from '../rules/moderno/sheetCampaigns';
 import { seriesFor } from '../rules/missionSeries';
 import { computeStats } from '../services/stats';
 import { useScope } from '../lib/scope';
@@ -40,7 +40,7 @@ function NewCampaignForm({ defaultUniverse, onClose }: { defaultUniverse?: Unive
     const c = await repo.createCampaign({
       universeId, productId, name: name.trim(),
       description: description.trim() || undefined,
-      plannedScenarioCount: Number.isFinite(plannedNum) && plannedNum > 0 ? plannedNum : template?.id === RIO_TEMPLATE_ID ? RIO_MISSIONS.length : seriesFor(template?.id)?.missions.length,
+      plannedScenarioCount: Number.isFinite(plannedNum) && plannedNum > 0 ? plannedNum : (sheetCampaignFor(template?.id) ?? seriesFor(template?.id))?.missions.length,
       templateId: template?.id,
     });
     onClose();

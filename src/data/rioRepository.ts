@@ -1,9 +1,10 @@
 import type { CampaignParticipant, GameSession, ProgressEntry, SessionOutcome, SessionParticipant } from '../domain/types';
 import {
-  BONUS_ACTION_SLOTS, RIO_MISSIONS, computeSheet, missionPec, validateReward,
+  BONUS_ACTION_SLOTS, computeSheet, missionPec, validateReward,
   type ProgressPayload, type ProgressRow, type RewardChoice, type SheetState,
 } from '../rules/moderno/rioZJaneiro';
 import { newId, nowIso } from '../lib/ids';
+import { sheetCampaignFor } from '../rules/moderno/sheetCampaigns';
 import { db, type HubDatabase } from './db';
 import { createRepository } from './repository';
 
@@ -97,7 +98,8 @@ export function createRioRepository(database: HubDatabase = db) {
 
     async chooseReward(participantId: string, milestone: number, choice: RewardChoice, abilityId?: string) {
       const { participant, state } = await stateOf(participantId);
-      const error = validateReward(state, milestone, choice, abilityId);
+      const cfg = sheetCampaignFor((await campaignOf(participant.campaignId)).templateId);
+      const error = validateReward(state, milestone, choice, abilityId, cfg?.abilities);
       if (error) throw new Error(error);
       await addEntry(participant.campaignId, participantId, { kind: 'ricompensa', milestone, choice, abilityId: choice === 'abilita-campagna' ? abilityId : undefined });
     },
@@ -151,7 +153,7 @@ export function createRioRepository(database: HubDatabase = db) {
      */
     async saveMissionSession(input: MissionSessionInput, sessionId?: string): Promise<string> {
       const campaign = await campaignOf(input.campaignId);
-      const mission = RIO_MISSIONS.find((m) => m.id === input.missionId);
+      const mission = sheetCampaignFor(campaign.templateId)?.missions.find((m) => m.id === input.missionId);
       if (!mission) throw new Error('Missione sconosciuta.');
       if (!input.participants.length) throw new Error('Indica almeno un Sopravvissuto.');
       const now = nowIso();

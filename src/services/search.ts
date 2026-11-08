@@ -1,5 +1,5 @@
 import type { Campaign, Character, EquipmentCard, FreeNote, Product } from '../domain/types';
-import { RIO_MISSIONS, CAMPAIGN_ABILITIES } from '../rules/moderno/rioZJaneiro';
+import { SHEET_CAMPAIGNS, allCampaignAbilities } from '../rules/moderno/sheetCampaigns';
 import { MISSION_SERIES } from '../rules/missionSeries';
 
 export type ResultKind = 'campagna' | 'sopravvissuto' | 'carta' | 'scenario' | 'prodotto' | 'abilita' | 'nota';
@@ -38,14 +38,14 @@ export function search(index: SearchIndex, query: string, limit = 60): SearchRes
   }
   for (const c of index.cards) if (hit(c.name, c.text))
     out.push({ kind: 'carta', id: c.id, title: c.name, subtitle: productName(c.productId), to: `/u/${c.universeId}/carte?q=${encodeURIComponent(c.name)}` });
-  for (const m of RIO_MISSIONS) if (hit(m.code, m.title, ...m.objectives))
-    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: 'Rio Z Janeiro', to: '/u/moderno/scenari' });
+  for (const sc of SHEET_CAMPAIGNS) for (const m of sc.missions) if (hit(m.code, m.title, ...m.objectives))
+    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: sc.gameName, to: '/u/moderno/scenari' });
   for (const sr of MISSION_SERIES) for (const m of sr.missions) if (hit(m.code, m.title, ...m.objectives))
     out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: sr.gameName, to: `/u/${sr.universeId}/scenari` });
   for (const p of index.products) if (hit(p.name, p.description))
     out.push({ kind: 'prodotto', id: p.id, title: p.name, subtitle: 'Collezione', to: `/u/${p.universeId}/collezione` });
-  for (const a of CAMPAIGN_ABILITIES) if (hit(a.name, a.description))
-    out.push({ kind: 'abilita', id: a.id, title: a.name, subtitle: 'Abilità della Campagna di Rio', to: '/u/moderno/personaggi' });
+  for (const a of allCampaignAbilities()) if (hit(a.name, a.description))
+    out.push({ kind: 'abilita', id: a.id, title: a.name, subtitle: `Abilità della Campagna (${SHEET_CAMPAIGNS.filter((c) => c.abilities.some((x) => x.id === a.id)).map((c) => c.gameName).join(', ')})`, to: '/u/moderno/personaggi' });
   for (const n of index.notes) if (hit(n.title, n.body))
     out.push({ kind: 'nota', id: n.id, title: n.title || 'Nota senza titolo', subtitle: n.body.slice(0, 80), to: `/note?n=${n.id}` });
 

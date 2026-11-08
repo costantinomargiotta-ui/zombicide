@@ -7,7 +7,8 @@ import {
 import { db } from '../../data/db';
 import { rioRepo, sheetFor } from '../../data/rioRepository';
 import type { Campaign, Character } from '../../domain/types';
-import { KNOWN_MILESTONES, missionProgress, PEC_MAX, RIO_MISSIONS } from '../../rules/moderno/rioZJaneiro';
+import { missionProgress, PEC_MAX } from '../../rules/moderno/rioZJaneiro';
+import { sheetCampaignFor } from '../../rules/moderno/sheetCampaigns';
 import { formatDate, formatDuration, formatNumber } from '../../lib/format';
 import { Panel } from '../../ui/components/Panel';
 import { Badge } from '../../ui/components/Badge';
@@ -94,6 +95,7 @@ function AddParticipant({ campaign, characters, usedIds, deadParticipants, onClo
 }
 
 export function RioCampaign({ campaign }: { campaign: Campaign }) {
+  const cfg = sheetCampaignFor(campaign.templateId)!;
   const data = useRioData(campaign.id);
   const [params, setParams] = useSearchParams();
   const [form, setFormState] = useState<{ sessionId?: string } | null>(params.get('registra') === '1' ? {} : null);
@@ -107,7 +109,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
   const sheets = new Map(participants.map((p) => [p.id, sheetFor(p, participants, progress)]));
   const deadIds = new Set(participants.filter((p) => sheets.get(p.id)!.dead).map((p) => p.id));
   const alive = participants.filter((p) => !deadIds.has(p.id));
-  const missions = missionProgress(sessions);
+  const missions = missionProgress(sessions, cfg.missions);
   const completed = missions.filter((m) => m.state === 'completata').length;
   const current = missions.find((m) => m.state === 'disponibile');
   const wins = sessions.filter((s) => s.outcome === 'vittoria').length;
@@ -126,11 +128,11 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
         {/* Colonna sinistra: illustrazione e modalità, come nel mockup */}
         <div className="flex flex-col gap-4">
           <div className="overflow-hidden rounded-xl border-2 border-black/70 shadow-[0_8px_24px_rgba(0,0,0,0.6)]">
-            <img src="/ui/campagna-rio.webp" alt="Campagna Rio Z Janeiro" className="block h-auto w-full" />
+            <img src={cfg.image} alt={`Campagna ${cfg.gameName}`} className="block h-auto w-full" />
           </div>
           <Panel title="Modalità Campagna" bodyClassName="p-3">
             <dl className="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-2 text-sm">
-              <dt className="flex items-center gap-2 text-[var(--muted)]"><UserRound className="size-4" />Gioco:</dt><dd>Rio Z Janeiro</dd>
+              <dt className="flex items-center gap-2 text-[var(--muted)]"><UserRound className="size-4" />Gioco:</dt><dd>{cfg.gameName}<span className="block text-[10px] text-[var(--muted)]">{cfg.campaignName}</span></dd>
               <dt className="flex items-center gap-2 text-[var(--muted)]"><Package className="size-4" />Stato:</dt>
               <dd className={`font-semibold ${campaign.status === 'in-corso' ? 'text-[var(--ok)]' : ''}`}>{CAMPAIGN_STATUS_LABEL[campaign.status]}</dd>
               <dt className="flex items-center gap-2 text-[var(--muted)]"><Package className="size-4" />Difficoltà:</dt>
@@ -145,15 +147,15 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-between">
                 <span className="text-lg font-semibold">Progressi generali</span>
-                <span className="text-lg">{completed} / {RIO_MISSIONS.length} scenari</span>
+                <span className="text-lg">{completed} / {cfg.missions.length} scenari</span>
               </div>
               <div className="flex items-center gap-3">
-                <div className="flex flex-1 gap-1 rounded-full border-2 border-black/70 bg-black/60 p-1" role="progressbar" aria-valuemin={0} aria-valuemax={RIO_MISSIONS.length} aria-valuenow={completed} aria-label="Missioni completate">
+                <div className="flex flex-1 gap-1 rounded-full border-2 border-black/70 bg-black/60 p-1" role="progressbar" aria-valuemin={0} aria-valuemax={cfg.missions.length} aria-valuenow={completed} aria-label="Missioni completate">
                   {missions.map((m) => (
                     <span key={m.mission.id} title={`${m.mission.code} – ${m.mission.title}`} className={`h-4 flex-1 rounded-full ${m.state === 'completata' ? 'bg-gradient-to-b from-[#8ff04a] to-[#3f9a1c] shadow-[0_0_8px_rgb(87_192_42/0.6)]' : 'bg-white/10'}`} />
                   ))}
                 </div>
-                <span className="w-14 text-right text-2xl font-bold text-[var(--accent-2)]">{Math.round((completed / RIO_MISSIONS.length) * 100)}%</span>
+                <span className="w-14 text-right text-2xl font-bold text-[var(--accent-2)]">{Math.round((completed / cfg.missions.length) * 100)}%</span>
               </div>
               <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
                 {[
@@ -182,11 +184,11 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
             <Panel title="Scenario attuale">
               {current ? (
                 <div className="flex flex-col gap-3 sm:flex-row">
-                  <img src="/ui/scenario-rio.webp" alt="" className="h-28 w-full shrink-0 rounded-md border-2 border-white/20 object-cover sm:w-44" />
+                  <img src={cfg.scenarioImage} alt="" className="h-28 w-full shrink-0 rounded-md border-2 border-white/20 object-cover sm:w-44" />
                   <div className="flex flex-1 flex-col gap-1.5">
                     <h3 className="text-xl font-semibold">{current.mission.code.replace('M', '')}. {current.mission.title}</h3>
                     <p className="text-sm">{current.mission.objectives[0]}</p>
-                    <p className="text-xs text-[var(--muted)]">{current.mission.difficulty} · {current.mission.duration} · pag. {current.mission.page}{current.attempts > 0 ? ` · tentativi: ${current.attempts}` : ''}</p>
+                    <p className="text-xs text-[var(--muted)]">{current.mission.difficulty} · {current.mission.duration}{'startTime' in current.mission ? ` · partenza ${(current.mission as { startTime: string }).startTime}` : ''} · pag. {current.mission.page}{current.attempts > 0 ? ` · tentativi: ${current.attempts}` : ''}</p>
                     <div className="mt-1">
                       <button type="button" onClick={() => setForm({})} disabled={!alive.length}
                         className="flex items-center gap-2 rounded-md border-2 border-[#8a4a00] bg-gradient-to-b from-[#ffb21e] to-[#e88a00] px-4 py-1.5 font-semibold text-black shadow hover:brightness-110 disabled:opacity-50">
@@ -196,7 +198,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
                   </div>
                 </div>
               ) : (
-                <EmptyState icon={Trophy} title="Campagna completata!">Tutte e 10 le Missioni del Carnevale dei Morti sono state vinte.</EmptyState>
+                <EmptyState icon={Trophy} title="Campagna completata!">Tutte le Missioni di {cfg.campaignName} sono state vinte.</EmptyState>
               )}
             </Panel>
 
@@ -228,7 +230,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
 
           <Panel title="Traguardi della Campagna">
             {(() => {
-              const locked = KNOWN_MILESTONES.map((k) => k.name).filter((n) => !allTraguardi.includes(n));
+              const locked = cfg.knownMilestones.map((k) => k.name).filter((n) => !allTraguardi.includes(n));
               return allTraguardi.length + locked.length ? (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 2xl:grid-cols-4">
                   {allTraguardi.map((t) => (
@@ -277,7 +279,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
           </div>
         ) : (
           <EmptyState icon={Users} title="Nessun sopravvissuto" action={<button type="button" className="btn btn-accent" onClick={() => setAdding(true)}><Plus className="size-4" /> Aggiungi il primo</button>}>
-            Il Carnevale dei Morti è pensato per 6 Sopravvissuti (pag. 15).
+            {cfg.survivorsAdvice}
           </EmptyState>
         )}
       </Panel>
@@ -306,11 +308,12 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
 
       {form && (
         <RioSessionForm
+          cfg={cfg}
           campaignId={campaign.id}
           participants={participants}
           characters={characters}
           deadIds={deadIds}
-          defaultMissionId={current?.mission.id ?? RIO_MISSIONS[RIO_MISSIONS.length - 1].id}
+          defaultMissionId={current?.mission.id ?? cfg.missions[cfg.missions.length - 1].id}
           session={editing}
           sessionParticipants={editing ? sessionParticipants.filter((x) => x.sessionId === editing.id) : undefined}
           onClose={() => setForm(null)}

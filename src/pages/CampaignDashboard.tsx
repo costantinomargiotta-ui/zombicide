@@ -16,7 +16,7 @@ import { ProgressBar } from '../ui/components/ProgressBar';
 import { EmptyState } from '../ui/components/EmptyState';
 import { UniverseEmblem } from '../ui/components/UniverseEmblem';
 import { Modal } from '../ui/components/Modal';
-import { RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
+import { sheetCampaignFor } from '../rules/moderno/sheetCampaigns';
 import { RioCampaign } from './rio/RioCampaign';
 import { MissionSeriesCampaign } from './MissionSeriesCampaign';
 import { seriesFor } from '../rules/missionSeries';
@@ -41,7 +41,7 @@ export function CampaignDashboard() {
 
   const progress = campaignProgress(campaign, sessions);
   const template = campaign.templateId ? rulesFor(campaign.universeId).campaignTemplates.find((t) => t.id === campaign.templateId) : undefined;
-  const hasModule = campaign.templateId === RIO_TEMPLATE_ID || !!seriesFor(campaign.templateId);
+  const hasModule = !!sheetCampaignFor(campaign.templateId) || !!seriesFor(campaign.templateId);
   const sorted = [...sessions].sort((a, b) => b.playedOn.localeCompare(a.playedOn));
 
   return (
@@ -84,7 +84,7 @@ export function CampaignDashboard() {
         </div>}
       </div>
 
-      {campaign.templateId === RIO_TEMPLATE_ID && <RioCampaign campaign={campaign} />}
+      {sheetCampaignFor(campaign.templateId) && <RioCampaign campaign={campaign} />}
       {seriesFor(campaign.templateId) && <MissionSeriesCampaign campaign={campaign} />}
 
       {template?.status === 'materiali-mancanti' && (

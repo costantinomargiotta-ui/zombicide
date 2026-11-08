@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ChevronDown, Map, Target } from 'lucide-react';
 import { db } from '../data/db';
-import { RIO_MISSIONS } from '../rules/moderno/rioZJaneiro';
+import { SHEET_CAMPAIGNS } from '../rules/moderno/sheetCampaigns';
 import { MISSION_SERIES } from '../rules/missionSeries';
 import { UNIVERSES } from '../domain/universes';
 import { useScope } from '../lib/scope';
@@ -19,11 +19,11 @@ export function ScenariosPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      {show ? (
-        <Panel title="Rio Z Janeiro · Carnevale dei Morti" icon={Target}>
-          <p className="mb-3 text-sm text-[var(--muted)]">10 Missioni da giocare in ordine (Rio Z Janeiro – Regole e Missioni, pag. 15–26). Mappe, carte Obiettivo e Note restano sul libretto e nelle carte: qui trovi il riepilogo.</p>
+      {show && SHEET_CAMPAIGNS.map((sc) => (
+        <Panel key={sc.templateId} title={`${sc.gameName} · ${sc.campaignName}`} icon={Target}>
+          <p className="mb-3 text-sm text-[var(--muted)]">Campagna di {sc.missions.length} Missioni da giocare in ordine ({sc.rulebook}). Mappe, carte Obiettivo e Note restano sul libretto e nelle carte: qui trovi il riepilogo.</p>
           <ol className="flex flex-col gap-2">
-            {RIO_MISSIONS.map((m) => {
+            {sc.missions.map((m) => {
               const own = (sessions ?? []).filter((s) => s.scenarioId === m.id);
               const wins = own.filter((s) => s.outcome === 'vittoria').length;
               const isOpen = open === m.id;
@@ -56,7 +56,8 @@ export function ScenariosPage() {
             })}
           </ol>
         </Panel>
-      ) : null}
+      ))}
+
       {MISSION_SERIES.filter((sr) => !universeId || sr.universeId === universeId).map((sr) => (
         <Panel key={sr.templateId} title={`${sr.gameName} · Missioni`} icon={Target}>
           <p className="mb-3 text-sm text-[var(--muted)]">{sr.missions.length} Missioni indipendenti, da giocare in qualsiasi ordine ({sr.source}).</p>

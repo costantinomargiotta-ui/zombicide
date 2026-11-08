@@ -9,8 +9,9 @@ import { defaultCardImageUrl } from '../../domain/cardImages';
 import { db } from '../../data/db';
 import { bonusSpent, rioRepo, sheetFor } from '../../data/rioRepository';
 import {
-  BONUS_ACTION_SLOTS, CAMPAIGN_ABILITIES, KNOWN_MILESTONES, PEC_MAX, PEC_MILESTONES, RIO_SOURCES, type RewardChoice,
+  BONUS_ACTION_SLOTS, PEC_MAX, PEC_MILESTONES, type CampaignAbility, type RewardChoice,
 } from '../../rules/moderno/rioZJaneiro';
+import { sheetCampaignFor } from '../../rules/moderno/sheetCampaigns';
 import { EmptyState } from '../../ui/components/EmptyState';
 import { LevelChip } from '../CharactersPage';
 import { Portrait, useRioData } from './RioCampaign';
@@ -30,7 +31,7 @@ function SheetBox({ title, subtitle, children, className = '' }: { title: string
   );
 }
 
-function PendingReward({ participantId, milestone, ownedAbilities }: { participantId: string; milestone: number; ownedAbilities: string[] }) {
+function PendingReward({ participantId, milestone, ownedAbilities, abilities }: { participantId: string; milestone: number; ownedAbilities: string[]; abilities: CampaignAbility[] }) {
   const [abilityId, setAbilityId] = useState('');
   const [error, setError] = useState<string | null>(null);
   const choose = async (choice: RewardChoice) => {
@@ -44,11 +45,11 @@ function PendingReward({ participantId, milestone, ownedAbilities }: { participa
         <span className="text-sm text-[var(--muted)]">oppure</span>
         <select className="input w-auto" value={abilityId} onChange={(e) => setAbilityId(e.target.value)} aria-label="Abilità della Campagna">
           <option value="">Abilità della Campagna…</option>
-          {CAMPAIGN_ABILITIES.filter((a) => !ownedAbilities.includes(a.id)).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          {abilities.filter((a) => !ownedAbilities.includes(a.id)).map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
         <button type="button" className="btn" disabled={!abilityId} onClick={() => choose('abilita-campagna')}>Conferma Abilità</button>
       </div>
-      {abilityId && <p className="text-xs text-[var(--muted)]">{CAMPAIGN_ABILITIES.find((a) => a.id === abilityId)?.description}</p>}
+      {abilityId && <p className="text-xs text-[var(--muted)]">{abilities.find((a) => a.id === abilityId)?.description}</p>}
       {error && <p role="alert" className="text-sm text-red-300">{error}</p>}
     </div>
   );
@@ -72,6 +73,7 @@ export function RioSheet() {
   const participant = data.participants.find((p) => p.id === participantId);
   if (!campaign || !participant) return <EmptyState icon={X} title="Scheda non trovata" action={<Link to="/campagne" className="btn">Torna alle campagne</Link>} />;
 
+  const cfg = sheetCampaignFor(campaign.templateId)!;
   const c = data.characters.find((x) => x.id === participant.characterId);
   const s = sheetFor(participant, data.participants, data.progress);
   const spent = bonusSpent(participant);
@@ -104,7 +106,7 @@ export function RioSheet() {
       <div className="flex flex-wrap items-center gap-3">
         <Link to={`/campagne/${campaign.id}`} className="btn"><ArrowLeft className="size-4" /> {campaign.name}</Link>
         <h1 className="title-display -rotate-1 bg-[#f2c418] px-4 py-1 text-3xl text-black sm:text-4xl" style={{ textShadow: 'none' }}>Scheda Campagna</h1>
-        <span className="text-xs text-[var(--muted)]">Fonte: {RIO_SOURCES.scheda.document}, pag. 10–12</span>
+        <span className="text-xs text-[var(--muted)]">Fonte: {cfg.rulebook}, pag. {cfg.sheetPages}</span>
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -121,7 +123,7 @@ export function RioSheet() {
 
       {s.dead && <p className="flex items-center gap-2 rounded-md border border-red-700 bg-red-900/40 px-3 py-2"><Skull className="size-5" /> {c?.name} è morto e non può più essere giocato in questa campagna. Un successore erediterà i Traguardi.</p>}
       {predecessor && <p className="text-sm text-[var(--muted)]">Successore di {data.characters.find((x) => x.id === predecessor.characterId)?.name}: ne eredita i Traguardi della Campagna.</p>}
-      {s.pendingMilestones.map((m) => <PendingReward key={m} participantId={participant.id} milestone={m} ownedAbilities={s.campaignAbilityIds} />)}
+      {s.pendingMilestones.map((m) => <PendingReward key={m} participantId={participant.id} milestone={m} ownedAbilities={s.campaignAbilityIds} abilities={cfg.abilities} />)}
       {s.orphanRewards.map((m) => (
         <div key={m} className="flex flex-wrap items-center gap-2 rounded-md border border-red-700 bg-red-900/30 px-3 py-2 text-sm">
           <AlertTriangle className="size-5" /> La ricompensa della Pietra Miliare {m} non è più valida: i PEC attuali ({s.pec}) non la raggiungono, probabilmente per una partita corretta.
@@ -149,7 +151,7 @@ export function RioSheet() {
                 <li key={`${g.level}-${id}`} className="flex items-center gap-2"><LevelChip level={g.level} /><span>{abilityName.get(id) ?? id}</span></li>
               )))}
               {s.campaignAbilityIds.map((id) => (
-                <li key={id} className="flex items-center gap-2"><LevelChip level="blu" /><span className="font-semibold text-[var(--accent-2)]">{CAMPAIGN_ABILITIES.find((a) => a.id === id)?.name}</span><span className="text-xs text-[var(--muted)]">(campagna)</span></li>
+                <li key={id} className="flex items-center gap-2"><LevelChip level="blu" /><span className="font-semibold text-[var(--accent-2)]">{cfg.abilities.find((a) => a.id === id)?.name}</span><span className="text-xs text-[var(--muted)]">(campagna)</span></li>
               ))}
             </ul>
           </div>
@@ -180,7 +182,7 @@ export function RioSheet() {
 
             <SheetBox title="Abilità della Campagna" subtitle="(Livello Blu)">
               <ul className="flex flex-col">
-                {CAMPAIGN_ABILITIES.map((a) => {
+                {cfg.abilities.map((a) => {
                   const owned = s.campaignAbilityIds.includes(a.id);
                   return (
                     <li key={a.id} className="flex items-center gap-3 border-b border-black/10 px-3 py-1.5" title={a.description}>
@@ -268,7 +270,7 @@ export function RioSheet() {
               </ul>
               <form className="flex gap-1 px-3 pb-3" onSubmit={(e) => { e.preventDefault(); rioRepo.addManualTraguardo(participant.id, newTraguardo); setNewTraguardo(''); }}>
                 <input className="min-w-0 flex-1 rounded border border-black/30 bg-white px-2 py-1 text-black" list="rio-traguardi" value={newTraguardo} onChange={(e) => setNewTraguardo(e.target.value)} placeholder="Parola chiave del Traguardo" aria-label="Nuovo Traguardo" />
-                <datalist id="rio-traguardi">{KNOWN_MILESTONES.map((k) => <option key={k.name} value={k.name} />)}</datalist>
+                <datalist id="rio-traguardi">{cfg.knownMilestones.map((k) => <option key={k.name} value={k.name} />)}</datalist>
                 <button type="submit" className="grid size-8 place-items-center rounded bg-black text-white" aria-label="Aggiungi Traguardo"><Plus className="size-4" /></button>
               </form>
             </SheetBox>

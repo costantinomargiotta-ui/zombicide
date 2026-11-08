@@ -152,10 +152,10 @@ export function computeSheet(rows: ProgressRow[], inheritedTraguardi: string[] =
 }
 
 /** Verifica una scelta di ricompensa prima di salvarla. Restituisce un messaggio d'errore o null. */
-export function validateReward(state: SheetState, milestone: number, choice: RewardChoice, abilityId?: string): string | null {
+export function validateReward(state: SheetState, milestone: number, choice: RewardChoice, abilityId?: string, abilities: CampaignAbility[] = CAMPAIGN_ABILITIES): string | null {
   if (!state.pendingMilestones.includes(milestone)) return 'Questa Pietra Miliare non è raggiunta o ha già una ricompensa.';
   if (choice === 'abilita-campagna') {
-    if (!abilityId || !CAMPAIGN_ABILITIES.some((a) => a.id === abilityId)) return 'Scegli un\'Abilità della Campagna dalla lista.';
+    if (!abilityId || !abilities.some((a) => a.id === abilityId)) return 'Scegli un\'Abilità della Campagna dalla lista.';
     if (state.campaignAbilityIds.includes(abilityId)) return 'Questa Abilità della Campagna è già stata spuntata.';
   }
   return null;
@@ -177,9 +177,9 @@ export interface MissionProgress {
 }
 
 /** Ordine lineare: è disponibile la prima Missione non ancora vinta. */
-export function missionProgress(sessions: { scenarioId?: string; outcome: string }[]): MissionProgress[] {
+export function missionProgress(sessions: { scenarioId?: string; outcome: string }[], missions: RioMission[] = RIO_MISSIONS): MissionProgress[] {
   let unlockedNext = true;
-  return RIO_MISSIONS.map((mission) => {
+  return missions.map((mission) => {
     const own = sessions.filter((s) => s.scenarioId === mission.id);
     const won = own.some((s) => s.outcome === 'vittoria');
     let state: MissionProgress['state'];
