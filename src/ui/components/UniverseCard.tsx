@@ -7,11 +7,11 @@ import { scopedPath } from '../../lib/scope';
 import { formatPercent } from '../../lib/format';
 
 /** Stile delle card universo come nel mockup: illustrazione in alto, fascia colorata con dati reali. */
-const STYLE: Record<UniverseId, { border: string; band: string; bar: string }> = {
-  fantasy: { border: '#b06cf0', band: 'linear-gradient(180deg,#4a1a70,#24093a)', bar: '#f5c518' },
-  moderno: { border: '#8fd12a', band: 'linear-gradient(180deg,#2c6410,#112a06)', bar: '#57c02a' },
-  western: { border: '#f08a2c', band: 'linear-gradient(180deg,#7a3410,#341405)', bar: '#f5a218' },
-  marvel: { border: '#3b9cf0', band: 'linear-gradient(180deg,#123c74,#071a36)', bar: '#2f8fd8' },
+const STYLE: Record<UniverseId, { border: string; band: string; bar: string; solid: string }> = {
+  fantasy: { border: '#b06cf0', band: '', bar: '#f5c518', solid: '#3a1358' },
+  moderno: { border: '#8fd12a', band: '', bar: '#57c02a', solid: '#1f4a0c' },
+  western: { border: '#f08a2c', band: '', bar: '#f5a218', solid: '#5a250a' },
+  marvel: { border: '#3b9cf0', band: '', bar: '#2f8fd8', solid: '#0d2d58' },
 };
 
 export function UniverseCard({ id, stats }: { id: UniverseId; stats?: ScopeStats }) {
@@ -23,11 +23,11 @@ export function UniverseCard({ id, stats }: { id: UniverseId; stats?: ScopeStats
     <Link to={scopedPath(id)} className="group focus-ring flex flex-col overflow-hidden rounded-xl border-[3px] shadow-[0_8px_24px_rgba(0,0,0,0.6)] transition duration-300 hover:-translate-y-1 hover:brightness-110"
       style={{ borderColor: st.border, boxShadow: `0 0 18px ${st.border}55` }}>
       <img src={`/ui/universo-${id}.webp`} alt="" className="block aspect-[5/3] w-full object-cover" />
-      <div className="flex flex-col gap-1.5 px-3 pt-2 pb-3" style={{ background: st.band }}>
+      <div className="relative -mt-12 flex flex-col gap-1.5 px-3 pt-8 pb-3" style={{ background: `linear-gradient(180deg, transparent 0, ${st.solid}cc 36px, ${st.solid} 64px)` }}>
         <div className="flex items-center gap-2">
           <img src={`/ui/icona-${id}.webp`} alt="" className="size-10 shrink-0 object-contain" />
           <div className="min-w-0 leading-tight">
-            <h3 className="text-2xl font-semibold text-white">{u.name}</h3>
+            <h3 className="text-2xl font-semibold text-white [text-shadow:0_2px_3px_#000]">{u.name}</h3>
             <p className="truncate text-xs text-white/80">({u.subtitle})</p>
           </div>
         </div>

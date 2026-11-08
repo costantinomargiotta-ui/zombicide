@@ -7,13 +7,13 @@ import { scopedPath, useScope } from '../../lib/scope';
 import { UniverseEmblem } from '../components/UniverseEmblem';
 import { NAV_ITEMS } from './navigation';
 import { SyncIndicator } from '../components/SyncIndicator';
-import { BloodEdge, HeaderScenery } from './Scenery';
+import { BloodEdge, HeaderScenery, PaintSplatter } from './Scenery';
 
 function Logo() {
   const { universeId } = useScope();
   return (
     <Link to="/" className="focus-ring relative flex shrink-0 flex-col items-center leading-none" aria-label="Zombicide Hub, vai alla dashboard globale">
-      <img src="/ui/logo.webp" alt="Zombicide Hub" className="h-14 w-auto drop-shadow-[0_3px_0_rgba(0,0,0,0.8)] sm:h-16" />
+      <img src="/ui/logo.webp" alt="Zombicide Hub" className="h-14 w-auto drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)] sm:h-20 lg:-mb-6 lg:h-24" />
       {universeId && <span className="title-display -mt-1 text-sm text-[var(--accent-2)]">{UNIVERSES[universeId].name.toUpperCase()}</span>}
     </Link>
   );
@@ -30,10 +30,10 @@ function TopNav({ onNavigate }: { onNavigate?: () => void }) {
           end={sub === ''}
           onClick={onNavigate}
           className={({ isActive }) =>
-            `btn focus-ring justify-start whitespace-nowrap px-3 py-1.5 text-sm ${isActive ? 'btn-accent' : ''}`
+            `btn focus-ring justify-start whitespace-nowrap px-3.5 py-2 text-base ${isActive ? 'border-2 !border-[#ff9a1a] text-[#ffc21a] shadow-[0_0_14px_rgba(255,154,26,0.55)]' : ''}`
           }
         >
-          <Icon className="size-4" aria-hidden />
+          <Icon className="size-5" aria-hidden />
           {label}
         </NavLink>
       ))}
@@ -159,6 +159,7 @@ export function AppShell() {
         </div>
       )}
 
+      <PaintSplatter />
       <BloodEdge />
       <div className="relative z-10 mx-auto flex max-w-[1600px] gap-5 px-4 pt-5 pb-24">
         <aside className={`hidden w-60 shrink-0 ${/^\/campagne\/[^/]+/.test(location.pathname) ? '' : 'lg:block'}`}>
