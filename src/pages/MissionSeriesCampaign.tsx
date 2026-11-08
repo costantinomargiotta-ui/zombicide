@@ -28,8 +28,10 @@ function SessionForm({ series, campaign, mission, session, onClose }: { series: 
   const [zombies, setZombies] = useState(session?.zombiesKilled?.toString() ?? '');
   const [notes, setNotes] = useState(session?.notes ?? '');
   const [picked, setPicked] = useState<Record<string, string> | null>(null);
+  const [kills, setKills] = useState<Record<string, string> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const chosen = picked ?? Object.fromEntries((previous ?? []).filter((p) => p.characterId).map((p) => [p.characterId!, String(p.campaignData?.playerName ?? '')]));
+  const killMap = kills ?? Object.fromEntries((previous ?? []).filter((p) => p.characterId && typeof p.campaignData?.killsTotal === 'number').map((p) => [p.characterId!, String(p.campaignData!.killsTotal)]));
   const m = MISSIONS.find((x) => x.id === missionId)!;
 
   async function submit(e: React.FormEvent) {
@@ -39,7 +41,7 @@ function SessionForm({ series, campaign, mission, session, onClose }: { series: 
       await missionRepo.saveSession({
         campaignId: campaign.id, missionId, missionTitle: `${m.code} – ${m.title}`, playedOn, outcome,
         durationMinutes: n(duration) || undefined, zombiesKilled: n(zombies), notes: notes.trim() || undefined,
-        participants: Object.entries(chosen).map(([characterId, playerName]) => ({ characterId, playerName })),
+        participants: Object.entries(chosen).map(([characterId, playerName]) => ({ characterId, playerName, kills: killMap[characterId] ? Math.max(0, Number.parseInt(killMap[characterId], 10) || 0) : undefined })),
       }, session?.id);
       onClose();
     } catch (err) { setError((err as Error).message); }
@@ -74,7 +76,8 @@ function SessionForm({ series, campaign, mission, session, onClose }: { series: 
                   <label className="flex flex-1 items-center gap-2 font-medium">
                     <input type="checkbox" checked={on} onChange={(e) => { const next = { ...chosen }; if (e.target.checked) next[c.id] = ''; else delete next[c.id]; setPicked(next); }} />{c.name}
                   </label>
-                  {on && <input className="input w-44 py-1 text-sm" placeholder="Giocatore" value={chosen[c.id]} onChange={(e) => setPicked({ ...chosen, [c.id]: e.target.value })} aria-label={`Giocatore di ${c.name}`} />}
+                  {on && <input className="input w-36 py-1 text-sm" placeholder="Giocatore" value={chosen[c.id]} onChange={(e) => setPicked({ ...chosen, [c.id]: e.target.value })} aria-label={`Giocatore di ${c.name}`} />}
+                  {on && <input className="input w-24 py-1 text-sm" type="number" min={0} placeholder="Zombie" value={killMap[c.id] ?? ''} onChange={(e) => setKills({ ...killMap, [c.id]: e.target.value })} aria-label={`Zombie eliminati da ${c.name}`} />}
                 </div>
               );
             })}

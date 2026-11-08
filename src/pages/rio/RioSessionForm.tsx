@@ -3,6 +3,8 @@ import { AlertTriangle, Skull } from 'lucide-react';
 import type { CampaignParticipant, Character, GameSession, SessionParticipant } from '../../domain/types';
 import { rioRepo, type MissionParticipantInput } from '../../data/rioRepository';
 import type { SheetCampaign } from '../../rules/moderno/sheetCampaigns';
+import { ZOMBIE_TYPES, totalKills, type KillCount } from '../../domain/kills';
+import { liveKills } from '../../data/rioRepository';
 import { Field, Modal } from '../../ui/components/Modal';
 
 interface Props {
@@ -44,6 +46,7 @@ export function RioSessionForm({ cfg, campaignId, participants, characters, dead
       traguardi: d.traguardi ?? [],
       traguardiText: (d.traguardi ?? []).join('\n'),
       died: !!d.died,
+      kills: editing ? (d.kills ?? {}) : liveKills(p),
     };
   }
   const [rows, setRows] = useState(initial);
@@ -62,7 +65,7 @@ export function RioSessionForm({ cfg, campaignId, participants, characters, dead
         notes: notes.trim() || undefined,
         participants: Object.values(rows).filter((r) => r.played).map((r) => ({
           participantId: r.participantId, reachedOrange: r.reachedOrange, reachedRed: r.reachedRed,
-          extraPec: Math.max(0, r.extraPec), died: r.died,
+          extraPec: Math.max(0, r.extraPec), died: r.died, kills: r.kills,
           traguardi: r.traguardiText.split('\n').map((t) => t.trim()).filter(Boolean),
         })),
       }, session?.id);
@@ -102,7 +105,7 @@ export function RioSessionForm({ cfg, campaignId, participants, characters, dead
           </Field>
           <Field label="Data"><input className="input" type="date" value={playedOn} onChange={(e) => setPlayedOn(e.target.value)} required /></Field>
           <Field label="Durata (minuti)" hint="Facoltativa"><input className="input" type="number" min={1} value={duration} onChange={(e) => setDuration(e.target.value)} /></Field>
-          <Field label="Zombie eliminati" hint="Facoltativo: se vuoto resta «non registrato»"><input className="input" type="number" min={0} value={zombies} onChange={(e) => setZombies(e.target.value)} /></Field>
+          <Field label="Zombie eliminati (totale)" hint="Se vuoto, è la somma dei conteggi dei sopravvissuti"><input className="input" type="number" min={0} value={zombies} onChange={(e) => setZombies(e.target.value)} /></Field>
         </div>
 
         {mission.campaignNotes && (
@@ -131,6 +134,16 @@ export function RioSessionForm({ cfg, campaignId, participants, characters, dead
                     <label className="flex items-center gap-2"><input type="checkbox" checked={r.reachedRed} onChange={(e) => set(p.id, { reachedRed: e.target.checked })} /><span className="rounded px-1.5 text-white" style={{ background: 'var(--lvl-rosso)' }}>Rosso</span> raggiunto</label>
                     <label className="flex items-center gap-2">PEC extra della Missione <input className="input w-20 py-1" type="number" min={0} value={r.extraPec} onChange={(e) => set(p.id, { extraPec: Number.parseInt(e.target.value, 10) || 0 })} /></label>
                     <label className="flex items-center gap-2 text-red-200"><input type="checkbox" checked={r.died} onChange={(e) => set(p.id, { died: e.target.checked })} /><Skull className="size-4" /> Morto (KO non salvato)</label>
+                    <div className="flex flex-wrap items-center gap-2 sm:col-span-2">
+                      <span className="text-[var(--muted)]">Zombie eliminati</span>
+                      {ZOMBIE_TYPES.map((t) => (
+                        <label key={t.id} className="flex items-center gap-1 text-xs">{t.label}
+                          <input className="input w-14 py-0.5" type="number" min={0} value={r.kills?.[t.id] ?? 0}
+                            onChange={(e) => set(p.id, { kills: { ...r.kills, [t.id]: Math.max(0, Number.parseInt(e.target.value, 10) || 0) } as KillCount })} />
+                        </label>
+                      ))}
+                      <span className="text-sm font-semibold">= {totalKills(r.kills)}</span>
+                    </div>
                     <label className="flex flex-col gap-1 sm:col-span-2">
                       <span className="text-[var(--muted)]">Traguardi ottenuti (uno per riga)</span>
                       <textarea className="input min-h-14" value={r.traguardiText} onChange={(e) => set(p.id, { traguardiText: e.target.value })} placeholder={cfg.knownMilestones.map((k) => k.name).join(', ')} />

@@ -5,6 +5,7 @@ import {
 } from '../rules/moderno/rioZJaneiro';
 import { newId, nowIso } from '../lib/ids';
 import { sheetCampaignFor } from '../rules/moderno/sheetCampaigns';
+import { totalKills, type KillCount, type ZombieType } from '../domain/kills';
 import { db, type HubDatabase } from './db';
 import { createRepository } from './repository';
 
@@ -15,6 +16,8 @@ export interface MissionParticipantInput {
   extraPec: number;
   traguardi: string[];
   died: boolean;
+  /** Zombie eliminati per tipo (facoltativo). */
+  kills?: KillCount;
 }
 
 export interface MissionSessionInput {
@@ -38,6 +41,11 @@ export function sheetFor(participant: CampaignParticipant, all: CampaignParticip
   while (prev && !seen.has(prev.id)) { seen.add(prev.id); chain.unshift(prev); prev = prev.successorOf ? all.find((p) => p.id === prev!.successorOf) : undefined; }
   for (const p of chain) for (const t of computeSheet(rowsOf(p.id)).traguardi) if (!inherited.includes(t)) inherited.push(t);
   return computeSheet(rowsOf(participant.id), inherited);
+}
+
+/** Contatore degli zombie della missione in corso, azzerato alla registrazione della missione. */
+export function liveKills(p: CampaignParticipant): KillCount {
+  return (p.missionState?.liveKills as KillCount | undefined) ?? {};
 }
 
 export function bonusSpent(p: CampaignParticipant): number {
@@ -117,6 +125,19 @@ export function createRioRepository(database: HubDatabase = db) {
       await database.participants.update(participantId, { missionState: { ...participant.missionState, bonusSpent: value } });
     },
 
+    async addLiveKill(participantId: string, type: ZombieType, delta: 1 | -1) {
+      const p = await database.participants.get(participantId);
+      if (!p) return;
+      const k = { ...liveKills(p) };
+      k[type] = Math.max(0, (k[type] ?? 0) + delta);
+      await database.participants.update(participantId, { missionState: { ...p.missionState, liveKills: k } });
+    },
+
+    async resetLiveKills(campaignId: string) {
+      const ps = await database.participants.where('campaignId').equals(campaignId).toArray();
+      for (const p of ps) await database.participants.update(p.id, { missionState: { ...p.missionState, liveKills: {} } });
+    },
+
     async addManualTraguardo(participantId: string, text: string) {
       if (!text.trim()) return;
       const { participant } = await stateOf(participantId);
@@ -162,7 +183,8 @@ export function createRioRepository(database: HubDatabase = db) {
       const session: GameSession = {
         id, universeId: campaign.universeId, campaignId: campaign.id, scenarioId: mission.id,
         scenarioTitle: `${mission.code} – ${mission.title}`, playedOn: input.playedOn,
-        durationMinutes: input.durationMinutes, outcome: input.outcome, zombiesKilled: input.zombiesKilled,
+        durationMinutes: input.durationMinutes, outcome: input.outcome,
+        zombiesKilled: input.zombiesKilled ?? (input.participants.some((p) => totalKills(p.kills)) ? input.participants.reduce((a, p) => a + totalKills(p.kills), 0) : undefined),
         notes: input.notes, origin: campaign.origin, createdAt: existing?.createdAt ?? now, updatedAt: now,
       };
       const participants = await database.participants.where('campaignId').equals(campaign.id).toArray();
@@ -176,7 +198,7 @@ export function createRioRepository(database: HubDatabase = db) {
           if (!participant) throw new Error('Partecipante non valido.');
           const sp: SessionParticipant = {
             id: newId('sp'), sessionId: id, participantId: participant.id, characterId: participant.characterId,
-            campaignData: { reachedOrange: p.reachedOrange, reachedRed: p.reachedRed, extraPec: p.extraPec, traguardi: p.traguardi, died: p.died },
+            campaignData: { reachedOrange: p.reachedOrange, reachedRed: p.reachedRed, extraPec: p.extraPec, traguardi: p.traguardi, died: p.died, ...(p.kills && totalKills(p.kills) ? { kills: p.kills } : {}) },
           };
           await database.sessionParticipants.add(sp);
           for (const payload of missionPec({ reachedOrange: p.reachedOrange, reachedRed: p.reachedRed, extra: p.extraPec })) await addEntry(campaign.id, participant.id, payload, id);
@@ -185,7 +207,7 @@ export function createRioRepository(database: HubDatabase = db) {
         }
         if (!existing) {
           // La Riserva di Azioni Bonus si rifornisce alla fine di ogni Missione (pag. 11).
-          for (const p of participants) await database.participants.update(p.id, { missionState: { ...p.missionState, bonusSpent: 0 } });
+          for (const p of participants) await database.participants.update(p.id, { missionState: { ...p.missionState, bonusSpent: 0, liveKills: {} } });
         }
         if (campaign.status === 'da-iniziare') await database.campaigns.update(campaign.id, { status: 'in-corso', updatedAt: now });
         else await database.campaigns.update(campaign.id, { updatedAt: now });

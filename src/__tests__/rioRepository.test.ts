@@ -20,7 +20,7 @@ async function setup() {
 }
 
 const base = { playedOn: '2026-11-07', outcome: 'vittoria' as const };
-const part = (participantId: string, o: Partial<{ reachedOrange: boolean; reachedRed: boolean; extraPec: number; traguardi: string[]; died: boolean }> = {}) =>
+const part = (participantId: string, o: Partial<{ reachedOrange: boolean; reachedRed: boolean; extraPec: number; traguardi: string[]; died: boolean; kills: Record<string, number> }> = {}) =>
   ({ participantId, reachedOrange: false, reachedRed: false, extraPec: 0, traguardi: [], died: false, ...o });
 
 describe('campagna Rio Z Janeiro collegata a partite e schede', () => {
@@ -73,5 +73,23 @@ describe('campagna Rio Z Janeiro collegata a partite e schede', () => {
     await rio.saveMissionSession({ ...base, campaignId: c.id, missionId: 'rio-m1', participants: [part(ney.id, { extraPec: 4 })] });
     expect((await sheet(ney.id)).pec).toBe(4);
     expect((await sheet(ney2.id)).pec).toBe(0);
+  });
+});
+
+describe('contatore zombie', () => {
+  it('il contatore passa nella partita, somma il totale e si azzera', async () => {
+    const { db, rio, c, ney, vivi } = await setup();
+    await rio.addLiveKill(ney.id, 'deambulante', 1);
+    await rio.addLiveKill(ney.id, 'deambulante', 1);
+    await rio.addLiveKill(ney.id, 'corridore', 1);
+    await rio.addLiveKill(ney.id, 'corridore', -1);
+    await rio.addLiveKill(vivi.id, 'abominio', 1);
+    const { liveKills } = await import('../data/rioRepository');
+    const n = await db.participants.get(ney.id);
+    expect(liveKills(n!)).toEqual({ deambulante: 2, corridore: 0 });
+    const id = await rio.saveMissionSession({ ...base, campaignId: c.id, missionId: 'rio-m1', participants: [
+      part(ney.id, { kills: liveKills(n!) } as never), part(vivi.id, { kills: { abominio: 1 } } as never)] });
+    expect((await db.sessions.get(id))?.zombiesKilled).toBe(3);
+    expect(liveKills((await db.participants.get(ney.id))!)).toEqual({});
   });
 });

@@ -12,7 +12,7 @@ export interface SimpleSessionInput {
   durationMinutes?: number;
   zombiesKilled?: number;
   notes?: string;
-  participants: { characterId: string; playerName?: string }[];
+  participants: { characterId: string; playerName?: string; kills?: number }[];
 }
 
 /**
@@ -31,14 +31,18 @@ export function createMissionRepository(database: HubDatabase = db) {
       const id = existing?.id ?? newId('sess');
       const session: GameSession = {
         id, universeId: campaign.universeId, campaignId: campaign.id, scenarioId: input.missionId, scenarioTitle: input.missionTitle,
-        playedOn: input.playedOn, durationMinutes: input.durationMinutes, outcome: input.outcome, zombiesKilled: input.zombiesKilled,
+        playedOn: input.playedOn, durationMinutes: input.durationMinutes, outcome: input.outcome,
+        zombiesKilled: input.zombiesKilled ?? (input.participants.some((p) => typeof p.kills === 'number') ? input.participants.reduce((a, p) => a + (p.kills ?? 0), 0) : undefined),
         notes: input.notes, origin: campaign.origin, createdAt: existing?.createdAt ?? now, updatedAt: now,
       };
       await database.transaction('rw', [database.sessions, database.sessionParticipants, database.campaigns, database.activities], async () => {
         await database.sessions.put(session);
         await database.sessionParticipants.where('sessionId').equals(id).delete();
         for (const p of input.participants) {
-          await database.sessionParticipants.add({ id: newId('sp'), sessionId: id, characterId: p.characterId, campaignData: p.playerName?.trim() ? { playerName: p.playerName.trim() } : undefined });
+          const data: Record<string, unknown> = {};
+          if (p.playerName?.trim()) data.playerName = p.playerName.trim();
+          if (typeof p.kills === 'number') data.killsTotal = p.kills;
+          await database.sessionParticipants.add({ id: newId('sp'), sessionId: id, characterId: p.characterId, campaignData: Object.keys(data).length ? data : undefined });
         }
         await database.campaigns.update(campaign.id, { status: campaign.status === 'da-iniziare' ? 'in-corso' : campaign.status, updatedAt: now });
         const verb = existing ? 'Partita corretta' : input.outcome === 'vittoria' ? 'Vittoria' : 'Sconfitta';

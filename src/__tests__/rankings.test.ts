@@ -7,7 +7,7 @@ const s = (id: string, playedOn: string, outcome: GameSession['outcome']): GameS
 const input = {
   sessions: [s('a', '2026-09-10', 'vittoria'), s('b', '2026-11-02', 'sconfitta'), s('c', '2026-11-05', 'in-corso')],
   sessionParticipants: [
-    { id: '1', sessionId: 'a', characterId: 'ney', participantId: 'p1' },
+    { id: '1', sessionId: 'a', characterId: 'ney', participantId: 'p1', campaignData: { kills: { deambulante: 5, corridore: 2 } } },
     { id: '2', sessionId: 'b', characterId: 'ney', participantId: 'p1' },
     { id: '3', sessionId: 'b', characterId: 'vivi', participantId: 'p2' },
   ],
@@ -21,7 +21,7 @@ const input = {
 
 describe('classifiche', () => {
   it('conta partite, vittorie e PEC per sopravvissuto, ignorando le partite in corso', () => {
-    expect(characterRanking(input)[0]).toEqual({ characterId: 'ney', name: 'Ney', played: 2, victories: 1, pec: 2 });
+    expect(characterRanking(input)[0]).toEqual({ characterId: 'ney', name: 'Ney', played: 2, victories: 1, pec: 2, kills: 7 });
   });
   it('i giocatori senza nome non entrano in classifica', () => {
     expect(playerRanking(input).map((p) => p.name)).toEqual(['Costantino']);

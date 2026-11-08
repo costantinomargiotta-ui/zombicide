@@ -67,7 +67,7 @@ function TopSurvivor({ r, c }: { r: CharacterRank; c?: Character }) {
           <span className="flex shrink-0 items-center gap-1 text-sm text-[var(--muted)]"><Trophy className="size-4 text-[var(--accent-2)]" />{n(r.victories, 'vittoria', 'vittorie')}</span>
         </span>
         <SegmentBar value={Math.min(r.pec, PEC_MAX)} max={PEC_MAX} />
-        <span className="text-xs text-[var(--muted)]">{n(r.played, 'partita', 'partite')}</span>
+        <span className="text-xs text-[var(--muted)]">{n(r.played, 'partita', 'partite')}{r.kills ? ` · ${formatNumber(r.kills)} zombie eliminati` : ''}</span>
       </span>
       <span className="text-right"><span className="block text-xs text-[var(--muted)]">PEC</span><span className="text-2xl font-bold text-[var(--accent-2)]">{r.pec}</span></span>
     </li>
@@ -181,6 +181,23 @@ export function StatisticsPage() {
           </Panel>
 
           <Panel title="Statistiche di campagna" icon={BarChart3} className="lg:col-span-2 2xl:col-span-1">
+            {chars.some((c) => c.kills) && (
+              <div className="mb-5">
+                <h3 className="mb-2 font-semibold">Cacciatori di zombie</h3>
+                <ol className="flex flex-col gap-1">
+                  {[...chars].filter((c) => c.kills).sort((a, b) => b.kills - a.kills).slice(0, 5).map((c, i) => {
+                    const max = Math.max(...chars.map((x) => x.kills));
+                    return (
+                      <li key={c.characterId} className="grid grid-cols-[1.25rem_6.5rem_1fr_auto] items-center gap-2 text-sm">
+                        <span className="text-[var(--muted)]">{i + 1}.</span><span className="truncate font-semibold">{c.name}</span>
+                        <span className="h-2.5 overflow-hidden rounded-full bg-black/50"><span className="block h-full rounded-full bg-[var(--accent-2)]" style={{ width: `${(c.kills / max) * 100}%` }} /></span>
+                        <span className="font-semibold">{formatNumber(c.kills)}</span>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 2xl:grid-cols-1">
               <div>
                 <h3 className="mb-2 font-semibold">Esito scenari</h3>
@@ -220,7 +237,7 @@ export function StatisticsPage() {
                 <li key={p.name} className="grid grid-cols-[minmax(6rem,10rem)_1fr_auto] items-center gap-3 border-b border-[var(--line)] py-2 last:border-0">
                   <span className="truncate text-lg font-semibold">{p.name}</span>
                   <span className="truncate text-sm text-[var(--muted)]">{p.characters.join(', ')}</span>
-                  <span className="text-sm">{n(p.played, 'partita', 'partite')} · {n(p.victories, 'vittoria', 'vittorie')}</span>
+                  <span className="text-sm">{n(p.played, 'partita', 'partite')} · {n(p.victories, 'vittoria', 'vittorie')}{p.kills ? ` · ${formatNumber(p.kills)} zombie` : ''}</span>
                 </li>
               ))}
             </ol>

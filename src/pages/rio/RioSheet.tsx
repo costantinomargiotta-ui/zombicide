@@ -6,6 +6,7 @@ import { AlertTriangle, ArrowLeft, Check, Minus, Plus, Skull, Star, Swords, Tras
 import { StoredImage } from '../../ui/components/StoredImage';
 import { defaultPortraitUrl } from '../../domain/portraits';
 import { defaultCardImageUrl } from '../../domain/cardImages';
+import { killsOf } from '../../domain/kills';
 import { db } from '../../data/db';
 import { bonusSpent, rioRepo, sheetFor } from '../../data/rioRepository';
 import {
@@ -142,6 +143,7 @@ export function RioSheet() {
             <dt className="text-[var(--muted)]">Gioco:</dt><dd>{products?.find((p) => p.id === c?.productId)?.name ?? 'Da indicare'}</dd>
             <dt className="text-[var(--muted)]">Tipo:</dt><dd>Sopravvissuto</dd>
             <dt className="text-[var(--muted)]">Missioni:</dt><dd>{missionsPlayed}</dd>
+            <dt className="text-[var(--muted)]">Zombie:</dt><dd>{data.sessionParticipants.filter((x) => x.participantId === participant.id).reduce((a, x) => a + (killsOf(x.campaignData) ?? 0), 0)} eliminati</dd>
             <dt className="text-[var(--muted)]">Stato:</dt><dd>{s.dead ? <span className="rounded bg-red-700 px-2 text-white">Morto</span> : <span className="rounded bg-[var(--ok)] px-2 text-black">Attivo in campagna</span>}</dd>
           </dl>
           <div className="panel p-3 text-sm">

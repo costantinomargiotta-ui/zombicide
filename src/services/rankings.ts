@@ -1,3 +1,4 @@
+import { killsOf } from '../domain/kills';
 import type { CampaignParticipant, Character, GameSession, ProgressEntry, SessionParticipant, UniverseId } from '../domain/types';
 
 /** Classifiche e serie temporali, calcolate solo dai dati registrati. Funzioni pure. */
@@ -9,8 +10,8 @@ export interface RankingInput {
   characters: Character[];
 }
 
-export interface CharacterRank { characterId: string; name: string; played: number; victories: number; pec: number }
-export interface PlayerRank { name: string; played: number; victories: number; characters: string[] }
+export interface CharacterRank { characterId: string; name: string; played: number; victories: number; pec: number; kills: number }
+export interface PlayerRank { name: string; played: number; victories: number; characters: string[]; kills: number }
 export interface MonthBucket { month: string; label: string; victories: number; defeats: number }
 
 const concluded = (s: GameSession) => s.outcome === 'vittoria' || s.outcome === 'sconfitta';
@@ -27,8 +28,9 @@ export function characterRanking(input: RankingInput, universeId?: UniverseId): 
   const out = new Map<string, CharacterRank>();
   for (const sp of sps) {
     if (!sp.characterId) continue;
-    const r = out.get(sp.characterId) ?? { characterId: sp.characterId, name: input.characters.find((c) => c.id === sp.characterId)?.name ?? sp.characterId, played: 0, victories: 0, pec: 0 };
+    const r = out.get(sp.characterId) ?? { characterId: sp.characterId, name: input.characters.find((c) => c.id === sp.characterId)?.name ?? sp.characterId, played: 0, victories: 0, pec: 0, kills: 0 };
     r.played += 1;
+    r.kills += killsOf(sp.campaignData) ?? 0;
     if (byId.get(sp.sessionId)?.outcome === 'vittoria') r.victories += 1;
     out.set(sp.characterId, r);
   }
@@ -52,8 +54,9 @@ export function playerRanking(input: RankingInput, universeId?: UniverseId): Pla
     const name = (part?.playerName ?? fromSession)?.trim();
     if (!name) continue;
     const key = name.toLowerCase();
-    const r = out.get(key) ?? { name, played: 0, victories: 0, characters: [] };
+    const r = out.get(key) ?? { name, played: 0, victories: 0, characters: [], kills: 0 };
     r.played += 1;
+    r.kills += killsOf(sp.campaignData) ?? 0;
     if (byId.get(sp.sessionId)?.outcome === 'vittoria') r.victories += 1;
     const cname = input.characters.find((c) => c.id === sp.characterId)?.name;
     if (cname && !r.characters.includes(cname)) r.characters.push(cname);

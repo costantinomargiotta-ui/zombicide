@@ -16,6 +16,8 @@ import { EmptyState } from '../../ui/components/EmptyState';
 import { Field, Modal } from '../../ui/components/Modal';
 import { StoredImage } from '../../ui/components/StoredImage';
 import { RioSessionForm } from './RioSessionForm';
+import { KillCounter } from './KillCounter';
+import { killsOf } from '../../domain/kills';
 import { defaultPortraitUrl } from '../../domain/portraits';
 import { CAMPAIGN_STATUS_LABEL } from '../../domain/types';
 
@@ -228,6 +230,8 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
             </Panel>
           </div>
 
+          {current && alive.length > 0 && campaign.status !== 'completata' && <KillCounter campaignId={campaign.id} participants={alive} characters={characters} />}
+
           <Panel title="Traguardi della Campagna">
             {(() => {
               const locked = cfg.knownMilestones.map((k) => k.name).filter((n) => !allTraguardi.includes(n));
@@ -271,6 +275,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
                       {s.pendingMilestones.length > 0 && <Badge tone="warn">Ricompensa da scegliere</Badge>}
                       {s.orphanRewards.length > 0 && <Badge tone="danger">Ricompensa da verificare</Badge>}
                       {s.bonusActions > 0 && <Badge>Azioni Bonus {s.bonusActions}</Badge>}
+                      {(() => { const n = sessionParticipants.filter((x) => x.participantId === p.id).reduce((a, x) => a + (killsOf(x.campaignData) ?? 0), 0); return n ? <Badge><Skull className="size-3" /> {n} zombie</Badge> : null; })()}
                     </span>
                   </span>
                 </Link>
