@@ -9,6 +9,7 @@ import { defaultPortraitUrl } from '../domain/portraits';
 import { computeStats } from '../services/stats';
 import { characterRanking, playerRanking, sessionsByMonth, type CharacterRank, type MonthBucket } from '../services/rankings';
 import { PEC_MAX, RIO_MISSIONS } from '../rules/moderno/rioZJaneiro';
+import { MISSION_SERIES } from '../rules/missionSeries';
 import { formatDuration, formatNumber, formatPercent } from '../lib/format';
 import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
@@ -140,12 +141,12 @@ export function StatisticsPage() {
   const totalPec = chars.reduce((a, c) => a + c.pec, 0);
   const charById = new Map(extra.characters.map((c) => [c.id, c]));
 
-  // Vittorie per difficoltà delle Missioni (solo dove la difficoltà è nota: Rio Z Janeiro).
+  // Vittorie per difficoltà, dove la difficoltà è indicata dal regolamento (Rio e serie di missioni).
   const sessions = input.sessions.filter((x) => !universeId || x.universeId === universeId);
-  const byDifficulty = (['Medio', 'Difficile', 'Molto Difficile'] as const).map((d) => {
-    const ids = new Set(RIO_MISSIONS.filter((m) => m.difficulty === d).map((m) => m.id));
-    return { label: d, value: sessions.filter((x) => x.outcome === 'vittoria' && x.scenarioId && ids.has(x.scenarioId)).length };
-  });
+  const diffOf = new Map<string, string>([...RIO_MISSIONS.map((m) => [m.id, m.difficulty] as [string, string]), ...MISSION_SERIES.flatMap((sr) => sr.missions.map((m) => [m.id, m.difficulty] as [string, string]))]);
+  const byDifficulty = ['Facile', 'Medio', 'Difficile', 'Molto Difficile'].map((d) => ({
+    label: d, value: sessions.filter((x) => x.outcome === 'vittoria' && x.scenarioId && diffOf.get(x.scenarioId) === d).length,
+  }));
   const maxDiff = Math.max(1, ...byDifficulty.map((d) => d.value));
 
   const tabBtn = (id: Tab, label: string) => (
@@ -203,7 +204,7 @@ export function StatisticsPage() {
                   ))}
                 </div>
                 <div className="mt-1 flex gap-4 px-2 text-center text-xs text-[var(--muted)]">{byDifficulty.map((d) => <span key={d.label} className="flex-1">{d.label}</span>)}</div>
-                <p className="mt-2 text-xs text-[var(--muted)]">Difficoltà indicate nel libretto delle Missioni di Rio Z Janeiro.</p>
+                <p className="mt-2 text-xs text-[var(--muted)]">Difficoltà indicate dai regolamenti (Rio Z Janeiro, Zombicide 2ª edizione, Black Plague).</p>
               </div>
             </div>
           </Panel>

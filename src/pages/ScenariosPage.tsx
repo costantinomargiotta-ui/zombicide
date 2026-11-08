@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ChevronDown, Map, Target } from 'lucide-react';
 import { db } from '../data/db';
 import { RIO_MISSIONS } from '../rules/moderno/rioZJaneiro';
-import { BP_MISSIONS } from '../rules/fantasy/blackPlague';
+import { MISSION_SERIES } from '../rules/missionSeries';
 import { UNIVERSES } from '../domain/universes';
 import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
@@ -16,7 +16,6 @@ export function ScenariosPage() {
   const [open, setOpen] = useState<string | null>(null);
   const sessions = useLiveQuery(() => db.sessions.toArray());
   const show = !universeId || universeId === 'moderno';
-  const showBp = !universeId || universeId === 'fantasy';
 
   return (
     <div className="flex flex-col gap-5">
@@ -58,11 +57,11 @@ export function ScenariosPage() {
           </ol>
         </Panel>
       ) : null}
-      {showBp && (
-        <Panel title="Black Plague · Missioni" icon={Target}>
-          <p className="mb-3 text-sm text-[var(--muted)]">11 Missioni indipendenti, da giocare in qualsiasi ordine (Black Plague – Regole e Missioni, pag. 38–50).</p>
+      {MISSION_SERIES.filter((sr) => !universeId || sr.universeId === universeId).map((sr) => (
+        <Panel key={sr.templateId} title={`${sr.gameName} · Missioni`} icon={Target}>
+          <p className="mb-3 text-sm text-[var(--muted)]">{sr.missions.length} Missioni indipendenti, da giocare in qualsiasi ordine ({sr.source}).</p>
           <ol className="flex flex-col gap-2">
-            {BP_MISSIONS.map((m) => {
+            {sr.missions.map((m) => {
               const own = (sessions ?? []).filter((s) => s.scenarioId === m.id);
               const isOpen = open === m.id;
               return (
@@ -71,7 +70,7 @@ export function ScenariosPage() {
                     <span className="title-display w-12 text-2xl text-[var(--accent-2)]">{m.code}</span>
                     <span className="min-w-40 flex-1 font-semibold">{m.title}</span>
                     <Badge tone={m.difficulty === 'Facile' ? 'ok' : m.difficulty === 'Medio' ? 'neutral' : 'warn'}>{m.difficulty}</Badge>
-                    <span className="text-xs text-[var(--muted)]">{m.survivors} · {m.duration}</span>
+                    <span className="text-xs text-[var(--muted)]">{m.survivors ? `${m.survivors} · ` : ''}{m.duration}</span>
                     <span className="text-xs text-[var(--muted)]">{own.length ? `${own.length} partite · ${own.filter((s) => s.outcome === 'vittoria').length} vittorie` : 'mai giocata'}</span>
                     <ChevronDown className={`size-4 transition ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
@@ -86,8 +85,8 @@ export function ScenariosPage() {
             })}
           </ol>
         </Panel>
-      )}
-      {!show && !showBp && (
+      ))}
+      {!show && !MISSION_SERIES.some((sr) => sr.universeId === universeId) && (
         <EmptyState icon={Target} title={`Nessuno scenario ${UNIVERSES[universeId!].name} a catalogo`}>Gli scenari di questo universo arriveranno con i suoi regolamenti.</EmptyState>
       )}
     </div>

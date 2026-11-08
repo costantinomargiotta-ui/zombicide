@@ -8,6 +8,7 @@ export const BP_TEMPLATE_ID = 'black-plague-missioni';
 
 export type BpDifficulty = 'Facile' | 'Medio' | 'Difficile';
 
+
 export interface BpMission {
   id: string;
   code: string;

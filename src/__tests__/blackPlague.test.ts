@@ -29,3 +29,24 @@ describe('Black Plague', () => {
     expect((await db.campaigns.get(c.id))?.status).toBe('in-corso');
   });
 });
+
+import { MISSION_SERIES, seriesFor, seriesStates } from '../rules/missionSeries';
+import { Z2_MISSIONS } from '../rules/moderno/zombicide2e';
+describe('serie di missioni', () => {
+  it('Zombicide 2ª edizione: 26 Missioni, da M0 a M25', () => {
+    expect(Z2_MISSIONS.map((m) => m.code)).toEqual(Array.from({ length: 26 }, (_, i) => `M${i}`));
+    expect(new Set(Z2_MISSIONS.map((m) => m.page)).size).toBe(26);
+  });
+  it('ogni serie ha id univoci e una difficoltà prevista', () => {
+    for (const sr of MISSION_SERIES) {
+      expect(new Set(sr.missions.map((m) => m.id)).size).toBe(sr.missions.length);
+      expect(sr.missions.every((m) => sr.difficulties.includes(m.difficulty))).toBe(true);
+    }
+  });
+  it('calcola lo stato senza ordine obbligato', () => {
+    const sr = seriesFor('zombicide-2e-missioni')!;
+    const st = seriesStates(sr, [{ scenarioId: 'z2-m10', outcome: 'vittoria' }, { scenarioId: 'z2-m10', outcome: 'sconfitta' }]);
+    expect(st[10]).toMatchObject({ wins: 1, played: 2 });
+    expect(st[0]).toMatchObject({ wins: 0, played: 0 });
+  });
+});

@@ -1,5 +1,6 @@
 import type { UniverseRules } from './types';
 import { RIO_TEMPLATE_ID } from './moderno/rioZJaneiro';
+import { Z2_TEMPLATE_ID } from './moderno/zombicide2e';
 
 const Z2 = 'Zombicide 2ª Edizione – Regolamento (ITA)';
 
@@ -25,6 +26,7 @@ export const modernRules: UniverseRules = {
       status: 'pronto',
       missingMaterials: [],
     },
+    { id: Z2_TEMPLATE_ID, name: 'Missioni di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
     'Regole di campagna di Washington Z.C. e Fort Hendrix',

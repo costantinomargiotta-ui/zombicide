@@ -18,8 +18,8 @@ import { UniverseEmblem } from '../ui/components/UniverseEmblem';
 import { Modal } from '../ui/components/Modal';
 import { RIO_TEMPLATE_ID } from '../rules/moderno/rioZJaneiro';
 import { RioCampaign } from './rio/RioCampaign';
-import { BpCampaign } from './fantasy/BpCampaign';
-import { BP_TEMPLATE_ID } from '../rules/fantasy/blackPlague';
+import { MissionSeriesCampaign } from './MissionSeriesCampaign';
+import { seriesFor } from '../rules/missionSeries';
 
 const transitions: Record<CampaignStatus, { to: CampaignStatus; label: string; icon: typeof Play }[]> = {
   'da-iniziare': [{ to: 'in-corso', label: 'Avvia', icon: Play }],
@@ -41,7 +41,7 @@ export function CampaignDashboard() {
 
   const progress = campaignProgress(campaign, sessions);
   const template = campaign.templateId ? rulesFor(campaign.universeId).campaignTemplates.find((t) => t.id === campaign.templateId) : undefined;
-  const hasModule = campaign.templateId === RIO_TEMPLATE_ID || campaign.templateId === BP_TEMPLATE_ID;
+  const hasModule = campaign.templateId === RIO_TEMPLATE_ID || !!seriesFor(campaign.templateId);
   const sorted = [...sessions].sort((a, b) => b.playedOn.localeCompare(a.playedOn));
 
   return (
@@ -85,7 +85,7 @@ export function CampaignDashboard() {
       </div>
 
       {campaign.templateId === RIO_TEMPLATE_ID && <RioCampaign campaign={campaign} />}
-      {campaign.templateId === BP_TEMPLATE_ID && <BpCampaign campaign={campaign} />}
+      {seriesFor(campaign.templateId) && <MissionSeriesCampaign campaign={campaign} />}
 
       {template?.status === 'materiali-mancanti' && (
         <Panel title={`Scheda ${template.name}: materiali mancanti`} icon={AlertTriangle}>
