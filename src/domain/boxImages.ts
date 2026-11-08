@@ -1,8 +1,10 @@
 /**
- * Copertine delle scatole (public/scatole), scaricate dalle schede prodotto di asmodee.it
- * su richiesta dell'utente, per uso personale. Una copertina caricata dall'app ha la precedenza.
+ * Copertine frontali dei giochi (public/scatole), da BoardGameGeek, su richiesta dell'utente,
+ * per uso personale. No Rest for the Wicked: copertina dell'edizione italiana.
+ * Una copertina caricata dall'app ha la precedenza.
  */
 const AVAILABLE = new Set([
+  'zombicide-1e',
   'black-plague', 'green-horde', 'wulfsburg', 'friends-and-foes', 'no-rest-for-the-wicked', 'white-death',
   'zombicide-2e', 'washington-zc', 'fort-hendrix', 'rio-z-janeiro',
   'undead-or-alive', 'gears-and-guns', 'running-wild',

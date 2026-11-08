@@ -78,12 +78,12 @@ export function CollectionPage() {
             const requires = (p.requires ?? []).map((r) => products?.find((x) => x.id === r)?.name ?? r);
             return (
               <article key={p.id} data-universe={p.universeId} className={`panel flex flex-col overflow-hidden transition ${isOwned ? 'shadow-[0_0_18px_var(--glow)]' : 'opacity-80 hover:opacity-100'}`} style={isOwned ? { borderColor: 'var(--accent)' } : undefined}>
-                <div className="relative grid h-56 place-items-center overflow-hidden p-3" style={{ background: 'linear-gradient(160deg, color-mix(in srgb, var(--accent) 30%, #000), #0b0b0d)' }}>
-                  <StoredImage imageId={p.coverImageId} alt={`Scatola di ${p.name}`} className="size-full object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.7)]" fallback={defaultBoxImageUrl(p.id) ? <img src={defaultBoxImageUrl(p.id)} alt={`Scatola di ${p.name}`} className="size-full object-contain drop-shadow-[0_8px_12px_rgba(0,0,0,0.7)]" loading="lazy" /> : <UniverseEmblem id={p.universeId} className="size-16 text-[var(--accent)] opacity-60" />} />
-                  <div className="absolute top-2 left-2 flex gap-1">
+                <div className="relative grid aspect-square place-items-center overflow-hidden" style={{ background: 'linear-gradient(160deg, color-mix(in srgb, var(--accent) 30%, #000), #0b0b0d)' }}>
+                  <StoredImage imageId={p.coverImageId} alt={`Scatola di ${p.name}`} className="size-full object-cover" fallback={defaultBoxImageUrl(p.id) ? <img src={defaultBoxImageUrl(p.id)} alt={`Scatola di ${p.name}`} className="size-full object-cover" loading="lazy" /> : <UniverseEmblem id={p.universeId} className="size-16 text-[var(--accent)] opacity-60" />} />
+                  <div className="absolute top-2 left-2 flex gap-1 rounded-md bg-black/85 shadow">
                     <Badge tone="accent">{PRODUCT_KIND_LABEL[p.kind]}</Badge>
                   </div>
-                  {p.dataStatus === 'da-verificare' && <div className="absolute top-2 right-2"><Badge tone="warn">Da verificare</Badge></div>}
+                  {p.dataStatus === 'da-verificare' && <div className="absolute top-2 right-2 rounded-md bg-black/85 shadow"><Badge tone="warn">Da verificare</Badge></div>}
                 </div>
                 <div className="flex flex-1 flex-col gap-2 p-3">
                   <div>
