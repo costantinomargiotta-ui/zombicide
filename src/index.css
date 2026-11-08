@@ -111,9 +111,11 @@ body {
 }
 
 .title-display {
-  font-family: var(--font-display);
-  letter-spacing: 0.03em;
-  text-shadow: 2px 2px 0 rgb(0 0 0 / 0.8);
+  /* Titoli come nei mockup: carattere condensato, grassetto, senza maiuscolo forzato. */
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0;
+  text-shadow: 1px 2px 0 rgb(0 0 0 / 0.85);
 }
 
 .btn {

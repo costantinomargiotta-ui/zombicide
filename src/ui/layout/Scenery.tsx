@@ -79,17 +79,14 @@ export function BloodEdge() {
   );
 }
 
-/** Schizzi di colore sui bordi della pagina, come nel mockup della Dashboard. */
+/** Schizzi di colore netti sui bordi laterali della pagina, come nel mockup della Dashboard. */
 export function PaintSplatter() {
-  const spots = [
-    ['2%', '8%', 160, '#c4141b'], ['0%', '30%', 120, '#e0a312'], ['96%', '4%', 150, '#c4141b'], ['99%', '40%', 120, '#e0a312'],
-    ['1%', '62%', 130, '#c4141b'], ['98%', '70%', 150, '#c4141b'], ['20%', '0%', 90, '#e0a312'], ['80%', '0%', 100, '#c4141b'],
-  ] as const;
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
-      {spots.map(([x, y, r, c], i) => (
-        <span key={i} className="absolute rounded-full blur-2xl" style={{ left: x, top: y, width: r * 2, height: r * 2, marginLeft: -r, marginTop: -r, background: c, opacity: 0.5 }} />
-      ))}
+    <div className="pointer-events-none fixed inset-y-0 inset-x-0 z-0 hidden overflow-hidden lg:block" aria-hidden>
+      <img src="/ui/schizzi-lato.webp" alt="" className="absolute top-0 left-0 h-full w-3 object-cover opacity-80" />
+      <img src="/ui/schizzi-lato.webp" alt="" className="absolute top-0 right-0 h-full w-3 -scale-x-100 object-cover opacity-80" />
+      <span className="absolute -top-24 -right-24 size-72 rounded-full bg-[#c4141b] opacity-25 blur-3xl" />
+      <span className="absolute top-1/3 -left-24 size-64 rounded-full bg-[#e0a312] opacity-15 blur-3xl" />
     </div>
   );
 }

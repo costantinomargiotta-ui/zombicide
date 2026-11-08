@@ -1,21 +1,64 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Box, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Settings, Target, Trophy, Users, X } from 'lucide-react';
+import { BarChart3, Bell as Bell_, Box, CircleUserRound, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Target, Trophy, Users, X } from 'lucide-react';
+import { useRecentActivities } from '../../data/hooks';
+import { useSyncStatus } from '../../data/syncController';
+import { relativeTime } from '../../lib/format';
 import { UNIVERSES } from '../../domain/universes';
 import { UNIVERSE_IDS } from '../../domain/types';
 import { scopedPath, useScope } from '../../lib/scope';
 import { UniverseEmblem } from '../components/UniverseEmblem';
 import { NAV_ITEMS } from './navigation';
-import { SyncIndicator } from '../components/SyncIndicator';
 import { BloodEdge, HeaderScenery, PaintSplatter } from './Scenery';
 
 function Logo() {
-  const { universeId } = useScope();
   return (
-    <Link to="/" className="focus-ring relative flex shrink-0 flex-col items-center leading-none" aria-label="Zombicide Hub, vai alla dashboard globale">
-      <img src="/ui/logo.webp" alt="Zombicide Hub" className="h-14 w-auto drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)] sm:h-20 lg:-mb-6 lg:h-24" />
-      {universeId && <span className="title-display -mt-1 text-sm text-[var(--accent-2)]">{UNIVERSES[universeId].name.toUpperCase()}</span>}
+    <Link to="/" className="focus-ring relative z-10 -my-3 -ml-4 block shrink-0" aria-label="Zombicide Hub, vai alla dashboard globale">
+      <img src="/ui/logo-hub.webp" alt="Zombicide Hub" className="h-[72px] w-auto sm:h-[92px] lg:h-[116px]" />
     </Link>
+  );
+}
+
+/** Campanella: ultime attività registrate. */
+function Bell() {
+  const [open, setOpen] = useState(false);
+  const activities = useRecentActivities(6);
+  return (
+    <div className="relative">
+      <button type="button" className="btn focus-ring px-2.5" onClick={() => setOpen((v) => !v)} aria-label="Ultime attività" aria-expanded={open}>
+        <Bell_ className="size-5 fill-[#f5c518] text-[#f5c518]" />
+      </button>
+      {open && (
+        <>
+          <button type="button" className="fixed inset-0 z-40 cursor-default" onClick={() => setOpen(false)} aria-label="Chiudi" />
+          <div className="panel absolute right-0 z-50 mt-2 w-80 p-3">
+            <p className="mb-2 font-semibold">Ultime attività</p>
+            {activities?.length ? (
+              <ul className="flex flex-col">
+                {activities.map((a) => (
+                  <li key={a.id} className="flex gap-2 border-b border-white/10 py-1.5 text-sm last:border-0">
+                    <span className="flex-1">{a.message}</span><span className="shrink-0 text-xs text-[var(--muted)]">{relativeTime(a.at)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="text-sm text-[var(--muted)]">Nessuna attività.</p>}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Profilo: account, sincronizzazione e impostazioni. Il pallino indica lo stato della sincronizzazione. */
+function Profile() {
+  const { path } = useScope();
+  const sync = useSyncStatus();
+  const dot = sync.status === 'sincronizzato' ? 'bg-[#57c02a]' : sync.status === 'errore' ? 'bg-red-500' : sync.status === 'disattivata' ? 'hidden' : 'bg-amber-400';
+  return (
+    <NavLink to={path('impostazioni')} className={({ isActive }) => `btn focus-ring relative px-2.5 ${isActive ? 'btn-accent' : ''}`} aria-label="Account e impostazioni" title={`Account e impostazioni · sincronizzazione: ${sync.status}`}>
+      <CircleUserRound className="size-6" />
+      <span className={`absolute right-1 bottom-1 size-2.5 rounded-full ring-2 ring-black ${dot}`} aria-hidden />
+    </NavLink>
   );
 }
 
@@ -62,7 +105,7 @@ function UniverseSwitcher({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <nav aria-label="Universi" className="flex flex-col gap-1.5">
-      <h2 className="title-display flex items-center gap-2 px-1 text-2xl"><Globe className="size-5" aria-hidden /> Universi</h2>
+      <h2 className="title-display flex items-center gap-2 px-1 text-2xl"><Users className="size-6" aria-hidden /> Universi</h2>
       {UNIVERSE_IDS.map((id) => (
         <Link key={id} to={scopedPath(id, keepSection)} onClick={onNavigate} className={item(id, universeId === id)} aria-current={universeId === id || undefined}>
           <img src={`/ui/icona-${id}.webp`} alt="" className="size-9 shrink-0 rounded object-contain" />
@@ -87,18 +130,18 @@ function SideLinks({ onNavigate }: { onNavigate?: () => void }) {
     { sub: 'collezione', label: 'La mia Collezione', icon: Box },
     { sub: 'campagne', label: 'Le mie Campagne', icon: Target },
     { sub: 'partite', label: 'Registro Partite', icon: ClipboardList },
+    { sub: 'progressi', label: 'Progressi', icon: BarChart3 },
     { sub: 'statistiche', label: 'Statistiche Globali', icon: Trophy },
     { sub: 'personaggi', label: 'Sopravvissuti (tutti)', icon: Users },
     { sub: 'equipaggiamento', label: 'Equipaggiamento (tutto)', icon: Package },
     { sub: 'carte', label: 'Carte (tutte)', icon: Library },
     { sub: 'note', label: 'Note', icon: NotebookPen },
-    { sub: 'impostazioni', label: 'Impostazioni', icon: Settings },
   ];
   return (
     <nav aria-label="Collegamenti" className="flex flex-col">
       {links.map(({ sub, label, icon: Icon }) => (
         <NavLink key={sub} to={path(sub)} onClick={onNavigate}
-          className={({ isActive }) => `focus-ring flex items-center gap-3 border-b border-white/10 px-2 py-2 text-[15px] transition last:border-0 hover:bg-white/5 ${isActive ? 'text-[var(--accent-2)]' : ''}`}>
+          className={({ isActive }) => `focus-ring flex items-center gap-3 border-b border-white/10 px-2 py-2 text-[17px] transition last:border-0 hover:bg-white/5 ${isActive ? 'text-[var(--accent-2)]' : ''}`}>
           <Icon className="size-5 shrink-0" aria-hidden />{label}
         </NavLink>
       ))}
@@ -121,8 +164,13 @@ export function AppShell() {
         Vai al contenuto
       </a>
 
-      <header className="sticky top-0 z-30 border-b border-[var(--line)] bg-black">
-        <HeaderScenery universeId={universeId} />
+      <header className="sticky top-0 z-30 bg-[#0b0b0d]">
+        {universeId ? <HeaderScenery universeId={universeId} /> : (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+            <img src="/ui/schizzi-alto.webp" alt="" className="absolute inset-x-0 top-0 h-full w-full object-cover opacity-60 [mask-image:linear-gradient(90deg,#000_0,transparent_22%,transparent_70%,#000_100%)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/70" />
+          </div>
+        )}
         <div className="relative mx-auto flex max-w-[1600px] items-center gap-4 px-4 py-3">
           <Logo />
           <nav aria-label="Sezioni" className="hidden flex-1 flex-wrap gap-1.5 xl:flex">
@@ -132,16 +180,13 @@ export function AppShell() {
             <NavLink to={path('cerca')} className={({ isActive }) => `btn focus-ring px-2.5 ${isActive ? 'btn-accent' : ''}`} aria-label="Cerca" title="Cerca">
               <Search className="size-5" />
             </NavLink>
-            <SyncIndicator />
-            <NavLink to={path('impostazioni')} className={({ isActive }) => `btn focus-ring px-2.5 ${isActive ? 'btn-accent' : ''}`} aria-label="Impostazioni">
-              <Settings className="size-5" />
-            </NavLink>
+            <Bell />
+            <Profile />
             <button type="button" className="btn px-2.5 xl:hidden" onClick={() => setDrawer(true)} aria-label="Apri il menu" aria-expanded={drawer}>
               <Menu className="size-5" />
             </button>
           </div>
         </div>
-        <div className="relative h-1.5 hazard-stripe" aria-hidden />
       </header>
 
       {drawer && (
