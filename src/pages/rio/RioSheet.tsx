@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { SurvivorList } from '../../ui/components/SurvivorList';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ArrowLeft, Check, Minus, Plus, Skull, Star, Swords, Trash2, X } from 'lucide-react';
 import { StoredImage } from '../../ui/components/StoredImage';
@@ -54,6 +55,7 @@ function PendingReward({ participantId, milestone, ownedAbilities }: { participa
 
 export function RioSheet() {
   const { campaignId = '', participantId = '' } = useParams();
+  const navigate = useNavigate();
   const campaign = useLiveQuery(() => db.campaigns.get(campaignId), [campaignId]);
   const data = useRioData(campaignId);
   const products = useLiveQuery(() => db.products.toArray());
@@ -79,7 +81,25 @@ export function RioSheet() {
   const missionsPlayed = data.sessionParticipants.filter((x) => x.participantId === participant.id).length;
 
   return (
-    <div data-universe="moderno" className="flex flex-col gap-4">
+    <div data-universe="moderno" className="grid grid-cols-1 gap-4 lg:grid-cols-[250px_1fr]">
+      <SurvivorList
+        title="Sopravvissuti"
+        items={data.participants.map((p) => {
+          const ch = data.characters.find((x) => x.id === p.characterId)!;
+          const sh = sheetFor(p, data.participants, data.progress);
+          return {
+            key: p.id, character: ch, dead: sh.dead,
+            subtitle: p.playerName ? `Giocatore: ${p.playerName}` : undefined,
+            badge: <span className="flex shrink-0 flex-col items-end leading-none">
+              <span className="text-[10px] text-[var(--muted)]">PEC</span><span className="text-lg font-bold text-[var(--accent-2)]">{sh.pec}</span>
+              {sh.pendingMilestones.length > 0 && <span className="mt-0.5 size-2 rounded-full bg-amber-400" title="Ricompensa da scegliere" />}
+            </span>,
+          };
+        }).filter((i) => i.character)}
+        selectedKey={participant.id}
+        onSelect={(id) => navigate(`/campagne/${campaign.id}/scheda/${id}`)}
+      />
+      <div className="flex min-w-0 flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
         <Link to={`/campagne/${campaign.id}`} className="btn"><ArrowLeft className="size-4" /> {campaign.name}</Link>
         <h1 className="title-display -rotate-1 bg-[#f2c418] px-4 py-1 text-3xl text-black sm:text-4xl" style={{ textShadow: 'none' }}>Scheda Campagna</h1>
@@ -108,7 +128,7 @@ export function RioSheet() {
         </div>
       ))}
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[230px_1fr] 2xl:grid-cols-[260px_1fr]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[220px_1fr] 2xl:grid-cols-[250px_1fr]">
         {/* Ritratto e informazioni */}
         <div className="flex flex-col gap-3">
           <div className="hazard-frame"><div className="hazard-inner relative aspect-square">
@@ -259,6 +279,7 @@ export function RioSheet() {
             </SheetBox>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

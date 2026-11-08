@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, BarChart3, BookOpen, CheckCircle2, Dices, Heart, ImagePlus, NotebookPen, Package, Search, ShieldQuestion, UserRound, Users } from 'lucide-react';
+import { AlertTriangle, BarChart3, BookOpen, CheckCircle2, Dices, Heart, ImagePlus, NotebookPen, Package, ShieldQuestion, UserRound, Users } from 'lucide-react';
 import { db } from '../data/db';
 import { repo } from '../data/repository';
 import type { Ability, Character, Product } from '../domain/types';
@@ -13,6 +13,7 @@ import { StoredImage } from '../ui/components/StoredImage';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Badge } from '../ui/components/Badge';
 import { defaultPortraitUrl } from '../domain/portraits';
+import { SurvivorList } from '../ui/components/SurvivorList';
 
 /** Colori dei livelli di pericolo stampati sulle schede. */
 export const LEVEL_STYLE: Record<string, { color: string; label: string }> = {
@@ -246,7 +247,6 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
 export function CharactersPage() {
   const { universeId } = useScope();
   const [params, setParams] = useSearchParams();
-  const [query, setQuery] = useState('');
   const characters = useLiveQuery(() => db.characters.toArray());
   const abilityList = useLiveQuery(() => db.abilities.toArray());
   const products = useLiveQuery(() => db.products.toArray());
@@ -255,44 +255,18 @@ export function CharactersPage() {
   if (!characters || !products) return <p className="text-[var(--muted)]">Caricamento…</p>;
 
   const inScope = characters.filter((c) => !universeId || c.universeId === universeId);
-  const list = inScope.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase()));
-  const selected = inScope.find((c) => c.id === params.get('p')) ?? list[0];
+  const sorted = [...inScope].sort((a, b) => a.name.localeCompare(b.name));
+  const selected = inScope.find((c) => c.id === params.get('p')) ?? sorted[0];
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-[240px_1fr] xl:grid-cols-[260px_1fr]">
-      <aside className="panel flex max-h-[calc(100dvh-8rem)] flex-col p-3 md:sticky md:top-24">
-        <h2 className="title-display mb-2 text-2xl">Sopravvissuti ({inScope.length})</h2>
-        <label className="relative mb-2">
-          <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-[var(--muted)]" aria-hidden />
-          <input className="input pl-8 text-sm" placeholder="Cerca sopravvissuto…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Cerca sopravvissuto" />
-        </label>
-        {list.length ? (
-          <ul className="-mx-1 flex gap-1 overflow-x-auto md:flex-col md:overflow-x-visible md:overflow-y-auto">
-            {list.map((c) => {
-              const active = c.id === selected?.id;
-              const product = products.find((p) => p.id === c.productId);
-              return (
-                <li key={c.id} className="shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setParams({ p: c.id })}
-                    aria-current={active}
-                    className={`focus-ring flex w-full items-center gap-2 rounded-md border px-1.5 py-1 text-left transition ${active ? 'border-[var(--ok)] bg-[var(--ok)]/15 shadow-[0_0_12px_rgb(87_192_42/0.4)]' : 'border-transparent hover:bg-white/5'}`}
-                  >
-                    <span className="size-9 shrink-0 overflow-hidden rounded bg-black/40"><Portrait c={c} /></span>
-                    <span className="min-w-0 leading-tight">
-                      <span className="block truncate font-semibold">{c.name}</span>
-                      <span className="block truncate text-xs text-[var(--muted)]">{product?.name ?? (universeId ? 'Provenienza da indicare' : UNIVERSES[c.universeId].name)}</span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-[var(--muted)]">{inScope.length ? 'Nessun risultato.' : 'Nessun personaggio in questo universo.'}</p>
-        )}
-      </aside>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-[250px_1fr] xl:grid-cols-[270px_1fr]">
+      <SurvivorList
+        title="Sopravvissuti"
+        items={inScope.map((c) => ({ key: c.id, character: c, subtitle: products.find((p) => p.id === c.productId)?.name ?? (universeId ? 'Provenienza da indicare' : UNIVERSES[c.universeId].name) }))}
+        selectedKey={selected?.id}
+        onSelect={(id) => setParams({ p: id })}
+        groups={[...new Set(inScope.map((c) => c.productId ?? ''))].map((pid) => ({ id: pid || 'nessuno', label: products.find((p) => p.id === pid)?.name ?? 'Da indicare', match: (i) => (i.character.productId ?? '') === pid }))}
+      />
 
       {selected ? (
         <CharacterSheet key={selected.id} c={selected} abilities={abilities} products={products} />
