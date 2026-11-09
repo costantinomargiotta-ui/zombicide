@@ -47,3 +47,19 @@ export const seedFantasySurvivors: Character[] = rows.map((r) => ({
   dataStatus: 'verificato',
   origin: 'base',
 }));
+
+/**
+ * Personaggi ThunderCats indicati dall'utente (09/11/2026), con i ritratti forniti.
+ * Abilità e scatola esatta da trascrivere: servono le fotografie delle schede identità.
+ */
+export const seedThunderCats: Character[] = ['Lion-O', 'Slithe', 'Cheetara', 'Snarf'].map((name) => ({
+  id: `fantasy-${slugify(name)}`,
+  universeId: 'fantasy',
+  productId: 'thundercats',
+  name,
+  kind: 'sopravvissuto',
+  abilities: [],
+  traits: { transcriptionNotes: 'Abilità da trascrivere: servono le fotografie della scheda identità.' },
+  dataStatus: 'da-verificare',
+  origin: 'base',
+}));

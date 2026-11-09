@@ -14,7 +14,7 @@ const fresh = async () => {
 describe('repository', () => {
   it('popola il catalogo e separa la collezione', async () => {
     const { db, repo } = await fresh();
-    expect(await db.products.count()).toBe(19);
+    expect(await db.products.count()).toBe(20);
     await repo.setOwned('rio-z-janeiro', true);
     expect((await db.collection.get('rio-z-janeiro'))?.owned).toBe(true);
     expect(await db.activities.count()).toBe(1);
