@@ -71,11 +71,33 @@ export interface RioMission {
   objectives: string[];
   /** Riferimenti a PEC extra o Traguardi stampati nel testo della Missione. */
   campaignNotes?: string[];
+  /** Mappa della Missione, ritagliata dal regolamento, con gli elementi della legenda. */
+  map?: MissionMap;
+  /** Regole speciali della Missione, dal regolamento. */
+  specialRules?: string[];
+}
+
+export interface MissionMap {
+  image: string;
+  /** Elementi della legenda; count solo dove il regolamento indica il numero ("6x"). */
+  elements: { label: string; count?: number }[];
 }
 
 /** Le 10 Missioni vanno giocate in ordine (pag. 15). */
 export const RIO_MISSIONS: RioMission[] = [
-  { id: 'rio-m1', code: 'M1', title: 'Sangue e samba', difficulty: 'Medio', duration: '45 minuti', page: 15, tiles: ['6R', '7V', '23R', '24V', '25R', '28R'], objectivesInOrder: true, objectives: ['Radunare le scorte: prendere tutte le carte Obiettivo.', 'Dirigersi a Rocinha: raggiungere l\'Uscita.'] },
+  { id: 'rio-m1', code: 'M1', title: 'Sangue e samba', difficulty: 'Medio', duration: '45 minuti', page: 15, tiles: ['6R', '7V', '23R', '24V', '25R', '28R'], objectivesInOrder: true, objectives: ['Radunare le scorte: prendere tutte le carte Obiettivo.', 'Dirigersi a Rocinha: raggiungere l\'Uscita. Un Sopravvissuto può fuggire attraverso questa Zona alla fine del suo Turno, fintanto che non ci sono Zombie nella Zona.'],
+    map: {
+      image: '/mappe/rio-m1.webp',
+      elements: [
+        { label: 'Zona di Partenza dei Sopravvissuti' }, { label: 'Zone di Generazione' }, { label: 'Carte Obiettivo', count: 6 },
+        { label: 'Porta Chiusa' }, { label: 'Zona di Uscita' }, { label: 'Generazione a Sorpresa', count: 3 },
+        { label: 'Casse di Armi Pimpate', count: 6 }, { label: 'Note', count: 3 },
+      ],
+    },
+    specialRules: [
+      'Preparazione. Collocare 3 Sopravvissuti in ogni Zona di Partenza.',
+      'Se vuoi ridere anche tu, prima fammi ridere. Fintanto che su una Zona è presente una carta Obiettivo: non è possibile Cercare in quella Zona e non è possibile prendere la sua Cassa di Armi Pimpate.',
+    ] },
   { id: 'rio-m2', code: 'M2', title: 'Rocinha, il posto più sicuro sulla Terra!', difficulty: 'Medio', duration: '60 minuti', page: 16, tiles: ['22R', '23R', '24R', '25R', '26R', '27R'], objectivesInOrder: true, objectives: ['Esplorare Rocinha: prendere tutte le carte Obiettivo.', 'Fuori! Raggiungere l\'Uscita.'] },
   { id: 'rio-m3', code: 'M3', title: 'Professoressa Luana?', difficulty: 'Medio', duration: '60 minuti', page: 17, tiles: ['6R', '23R', '24R', '25R', '26R', '27R'], objectivesInOrder: false, objectives: ['Rallentarli: portare l\'Opala al luogo contrassegnato e darle fuoco.', 'Ogni Carnevale deve finire! Distruggere la Zona di Generazione di Partenza.', 'Una cura, davvero? Trovare la Professoressa Luana.'], campaignNotes: ['Preparazione: se nessun Sopravvissuto possiede il Traguardo "Rallentare l\'Invasione", pescare 1 carta Zombie per ogni Zona di Generazione.'] },
   { id: 'rio-m4', code: 'M4', title: 'Ora si balla!', difficulty: 'Medio', duration: '120 minuti', page: 18, tiles: ['2V', '3V', '6R', '9R', '22R', '23R', '26R', '27R'], objectivesInOrder: true, objectives: ['In tenuta da professionisti: raggiungere l\'Uscita con tutti i Sopravvissuti, la Professoressa Luana e l\'Opala.'], campaignNotes: ['Se i Sopravvissuti nell\'Opala possiedono almeno 4 Armi Pimpate, tutti i Sopravvissuti ottengono 1 PEC e il Traguardo "Opala Nera".', 'Invasione in corso: chi possiede "Rallentare l\'Invasione" pesca 6 carte Zombie e ne sceglie 1 per Zona di Generazione.'] },

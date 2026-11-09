@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, ChevronDown, Map, Target } from 'lucide-react';
+import { AlertTriangle, ChevronDown, Map, Maximize2, ScrollText, Target } from 'lucide-react';
 import { db } from '../data/db';
 import { SHEET_CAMPAIGNS } from '../rules/moderno/sheetCampaigns';
 import { MISSION_SERIES } from '../rules/missionSeries';
@@ -9,6 +9,54 @@ import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
 import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
+import { Modal } from '../ui/components/Modal';
+import type { RioMission } from '../rules/moderno/rioZJaneiro';
+
+/** Mappa della Missione (dal regolamento), legenda e regole speciali. */
+function MissionMapView({ m }: { m: RioMission }) {
+  const [zoom, setZoom] = useState(false);
+  if (!m.map && !m.specialRules) return null;
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,420px)_1fr]">
+      {m.map && (
+        <button type="button" onClick={() => setZoom(true)} className="focus-ring group relative overflow-hidden rounded-lg border-2 border-[#d9a521] bg-white" aria-label={`Ingrandisci la mappa di ${m.code}`}>
+          <img src={m.map.image} alt={`Mappa della Missione ${m.code} – ${m.title}`} className="block h-auto w-full" loading="lazy" />
+          <span className="absolute top-2 right-2 flex items-center gap-1 rounded-md bg-black/80 px-2 py-1 text-xs text-white"><Maximize2 className="size-3" /> Ingrandisci</span>
+        </button>
+      )}
+      <div className="flex flex-col gap-3">
+        {m.map && (
+          <div>
+            <h4 className="mb-1 font-semibold">Elementi della mappa</h4>
+            <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+              {m.map.elements.map((e) => (
+                <li key={e.label} className="flex items-center gap-2 rounded border border-[var(--line)] bg-black/30 px-2 py-1">
+                  <span className="w-8 text-right font-bold text-[var(--accent-2)]">{e.count ? `${e.count}×` : '•'}</span>{e.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {m.specialRules && (
+          <div>
+            <h4 className="mb-1 flex items-center gap-1 font-semibold"><ScrollText className="size-4" /> Regole speciali</h4>
+            <ul className="flex flex-col gap-1.5">
+              {m.specialRules.map((r) => {
+                const [title, ...rest] = r.split('. ');
+                return <li key={r}><strong>{title}.</strong> {rest.join('. ')}</li>;
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+      {zoom && m.map && (
+        <Modal open onClose={() => setZoom(false)} title={`${m.code} – ${m.title}`}>
+          <img src={m.map.image} alt={`Mappa della Missione ${m.code}`} className="mx-auto block h-auto max-h-[80vh] w-auto bg-white" />
+        </Modal>
+      )}
+    </div>
+  );
+}
 
 /** Catalogo degli scenari disponibili dai moduli regole. Oggi: le 10 Missioni di Rio Z Janeiro. */
 export function ScenariosPage() {
@@ -49,6 +97,7 @@ export function ScenariosPage() {
                           {m.campaignNotes.map((n) => <li key={n} className="flex gap-2"><AlertTriangle className="mt-0.5 size-4 shrink-0" />{n}</li>)}
                         </ul>
                       )}
+                      <MissionMapView m={m} />
                     </div>
                   )}
                 </li>
