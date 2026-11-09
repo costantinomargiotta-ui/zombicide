@@ -102,6 +102,7 @@ const CARD_CATS: Cat[] = [
   { id: 'partenza', label: 'Equipaggiamento di Partenza', icon: Package, match: (c) => c.deck === 'partenza' && inDeck(c) },
   { id: 'arma-pimpata', label: 'Armi Pimpate', icon: Flame, match: (c) => c.deck === 'arma-pimpata' && inDeck(c) },
   { id: 'avanzato', label: 'Equipaggiamento Avanzato', icon: Swords, match: (c) => c.deck === 'avanzato' && inDeck(c) },
+  { id: 'veicoli', label: 'Veicoli', icon: Car, match: (c) => !!c.profiles?.some((p) => p.kind === 'auto') },
 ];
 
 const copies = (list: EquipmentCard[]) => list.reduce((a, c) => a + c.quantity, 0);
@@ -120,7 +121,7 @@ function GridTile({ card, onOpen }: { card: EquipmentCard; onOpen: () => void })
       <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#f3e7c4] to-[#d8c493] px-2 py-1.5 text-center text-black">
         <span className="text-lg leading-tight font-semibold">{card.name}</span>
         <span className="text-xs text-black/70">
-          {p && p.dice !== undefined ? `${p.dice} ${p.dice === 1 ? 'dado' : 'dadi'} · ${p.accuracy} · ${p.damage} ${p.damage === 1 ? 'Danno' : 'Danni'}` : card.category === 'aaahh' ? 'Genera 1 Deambulante' : card.outsideDeck ? 'Fuori mazzo' : CARD_DECK_LABEL[card.deck].replace(' Avanzato', '').replace(' Avanzate', '')}
+          {p && p.dice !== undefined ? `${p.dice} ${p.dice === 1 ? 'dado' : 'dadi'} · ${p.accuracy} · ${p.damage} ${p.damage === 1 ? 'Danno' : 'Danni'}` : card.category === 'aaahh' ? 'Genera 1 Deambulante' : card.profiles?.some((x) => x.kind === 'auto') ? 'Veicolo' : card.outsideDeck ? 'Fuori mazzo' : CARD_DECK_LABEL[card.deck].replace(' Avanzato', '').replace(' Avanzate', '')}
         </span>
       </div>
     </button>
