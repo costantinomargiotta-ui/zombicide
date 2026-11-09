@@ -86,3 +86,16 @@ describe('carte di Rio Z Janeiro', () => {
     expect(seedRioCards.filter((c) => c.deck === 'partenza').every((c) => c.conservation === undefined)).toBe(true);
   });
 });
+
+import { seedFantasyAbilities, seedFantasySurvivors } from '../data/seed/survivorsFantasy';
+describe('sopravvissuti di Black Plague', () => {
+  it('6 schede con 1 blu, 1 gialla, 2 arancioni, 3 rosse e abilità esistenti', () => {
+    expect(seedFantasySurvivors).toHaveLength(6);
+    const ids = new Set(seedFantasyAbilities.map((a) => a.id));
+    for (const c of seedFantasySurvivors) {
+      expect(c.abilities.map((g) => g.abilityIds.length)).toEqual([1, 1, 2, 3]);
+      expect(c.abilities.flatMap((g) => g.abilityIds).every((id) => ids.has(id))).toBe(true);
+    }
+    expect(seedFantasySurvivors.find((c) => c.id === 'fantasy-samson')?.traits?.equipSlot).toBe('Scudo');
+  });
+});

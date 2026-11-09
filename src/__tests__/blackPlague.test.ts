@@ -11,9 +11,9 @@ describe('Black Plague', () => {
     expect(BP_MISSIONS.map((m) => m.code)).toEqual(['M0', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10']);
     expect(BP_MISSIONS.filter((m) => m.difficulty === 'Difficile')).toHaveLength(3);
   });
-  it('6 sopravvissuti senza abilità inventate', () => {
+  it('6 sopravvissuti con le abilità delle schede identità', () => {
     expect(seedFantasySurvivors.map((c) => c.name)).toEqual(['Nelly', 'Ann', 'Silas', 'Clovis', 'Baldric', 'Samson']);
-    expect(seedFantasySurvivors.every((c) => c.abilities.length === 0 && c.dataStatus === 'da-verificare')).toBe(true);
+    expect(seedFantasySurvivors.every((c) => c.abilities.length === 4 && c.dataStatus === 'verificato')).toBe(true);
   });
   it('registra e corregge una partita senza duplicare i partecipanti', async () => {
     const db = new HubDatabase(`bp-${Math.random()}`);

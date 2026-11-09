@@ -6,7 +6,7 @@ import type {
 import { seedProducts } from './seed/products';
 import type { QueueEntry } from './sync';
 import { seedRioCards } from './seed/equipmentRio';
-import { seedFantasySurvivors } from './seed/survivorsFantasy';
+import { seedFantasyAbilities, seedFantasySurvivors } from './seed/survivorsFantasy';
 import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
@@ -97,6 +97,18 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 12: abilità dei sopravvissuti di Black Plague dalle schede identità.
+    this.version(12).upgrade(async (tx) => {
+      await tx.table('abilities').bulkPut(seedFantasyAbilities);
+      for (const c of seedFantasySurvivors) {
+        const existing = await tx.table('characters').get(c.id);
+        if (existing && !existing.abilities?.length) {
+          const traits = { ...(existing.traits ?? {}), ...c.traits };
+          delete traits.transcriptionNotes;
+          await tx.table('characters').update(c.id, { abilities: c.abilities, traits, dataStatus: c.dataStatus });
+        }
+      }
+    });
     // Revisione 11: quantità delle carte di Rio secondo la lista dell'utente; Opala 78 fuori dal mazzo.
     this.version(11).upgrade(async (tx) => {
       const byId = new Map(seedRioCards.map((c) => [c.id, c]));
@@ -133,6 +145,7 @@ export async function syncBaseCatalog(database: HubDatabase) {
   await database.transaction('rw', [database.products, database.abilities, database.characters, database.cards], async () => {
     await addMissing(database.products, seedProducts);
     await addMissing(database.abilities, seedModernAbilities);
+    await addMissing(database.abilities, seedFantasyAbilities);
     await addMissing(database.characters, seedModernSurvivors);
     await addMissing(database.characters, seedFantasySurvivors);
     await addMissing(database.cards, seedRioCards);

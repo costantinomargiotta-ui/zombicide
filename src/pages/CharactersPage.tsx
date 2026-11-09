@@ -153,6 +153,12 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
                 <dd>Tracciato {Array.from({ length: woundTrack }, (_, i) => woundTrack - i).join('-')}</dd>
               </>
             )}
+            {typeof c.traits?.equipSlot === 'string' && (
+              <>
+                <dt className="flex items-center gap-2 text-[var(--muted)]"><Package className="size-4" /> Slot speciale:</dt>
+                <dd>Può contenere {['Spada'].includes(c.traits.equipSlot) ? 'una' : c.traits.equipSlot === 'Scudo' ? 'uno' : 'un'} {c.traits.equipSlot}</dd>
+              </>
+            )}
             <dt className="flex items-center gap-2 text-[var(--muted)]"><ShieldQuestion className="size-4" /> Dati:</dt>
             <dd>
               {c.dataStatus === 'verificato' ? (
