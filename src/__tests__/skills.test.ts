@@ -13,8 +13,8 @@ describe('glossario delle Abilità', () => {
     expect(findSkill('moderno', 'Benedetto')?.source.productId).toBe('rio-z-janeiro');
     expect(findSkill('moderno', 'F.I.A.: +1 Dado: Combattimento')?.skill.name).toBe('Fratelli in armi: [effetto di gioco]');
   });
-  it('tutte le abilità di Black Plague hanno una descrizione', () => {
-    expect(seedFantasyAbilities.filter((a) => !findSkill('fantasy', a.name)).map((a) => a.name)).toEqual([]);
+  it('tutte le abilità Fantasy hanno una descrizione, tranne Fratelli in armi (assente dal regolamento di Black Plague)', () => {
+    expect(seedFantasyAbilities.filter((a) => !findSkill('fantasy', a.name)).map((a) => a.name)).toEqual(['Fratelli in armi: +1 dado Combattimento']);
   });
   it('tutte le abilità Moderno hanno una descrizione', () => {
     expect(seedModernAbilities.filter((a) => !findSkill('moderno', a.name)).map((a) => a.name)).toEqual([]);

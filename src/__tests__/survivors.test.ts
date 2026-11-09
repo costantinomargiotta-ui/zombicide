@@ -96,6 +96,6 @@ describe('sopravvissuti di Black Plague', () => {
       expect(c.abilities.map((g) => g.abilityIds.length)).toEqual([1, 1, 2, 3]);
       expect(c.abilities.flatMap((g) => g.abilityIds).every((id) => ids.has(id))).toBe(true);
     }
-    expect(seedFantasySurvivors.find((c) => c.id === 'fantasy-samson')?.traits?.equipSlot).toBe('Scudo');
+    expect(seedFantasySurvivors.find((c) => c.id === 'fantasy-samson')?.traits?.equipSlot).toBe('uno Scudo');
   });
 });

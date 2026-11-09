@@ -7,6 +7,8 @@ const ALIASES: [RegExp, string][] = [
   [/^f\.i\.a\.:/, 'fratelli in armi:'],
   // Scheda di Vivi: "al tiro dei dadi" invece di "al risultato dei dadi".
   [/^\+1 al tiro dei dadi:/, '+1 al risultato dei dadi:'],
+  // Schede ThunderCats: "+1 dado Combattimento" senza "in".
+  [/^risultato 6: \+1 dado combattimento$/, 'risultato 6: +1 dado in combattimento'],
 ];
 
 export interface SkillMatch { skill: SkillEntry; source: SkillSource }

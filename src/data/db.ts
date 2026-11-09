@@ -97,6 +97,18 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 13: schede ThunderCats; slot speciale con l'articolo stampato sulla scheda.
+    this.version(13).upgrade(async (tx) => {
+      await tx.table('abilities').bulkPut(seedFantasyAbilities);
+      for (const c of [...seedFantasySurvivors, ...seedThunderCats]) {
+        const existing = await tx.table('characters').get(c.id);
+        if (!existing) continue;
+        const traits = { ...(existing.traits ?? {}), equipSlot: c.traits?.equipSlot };
+        if (existing.abilities?.length) { await tx.table('characters').update(c.id, { traits }); continue; }
+        delete traits.transcriptionNotes;
+        await tx.table('characters').update(c.id, { abilities: c.abilities, traits, dataStatus: c.dataStatus });
+      }
+    });
     // Revisione 12: abilità dei sopravvissuti di Black Plague dalle schede identità.
     this.version(12).upgrade(async (tx) => {
       await tx.table('abilities').bulkPut(seedFantasyAbilities);

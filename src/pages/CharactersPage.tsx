@@ -176,7 +176,7 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
             {typeof c.traits?.equipSlot === 'string' && (
               <>
                 <dt className="flex items-center gap-2 text-[var(--muted)]"><Package className="size-4" /> Slot speciale:</dt>
-                <dd>Può contenere {['Spada'].includes(c.traits.equipSlot) ? 'una' : c.traits.equipSlot === 'Scudo' ? 'uno' : 'un'} {c.traits.equipSlot}</dd>
+                <dd>Può contenere {c.traits.equipSlot}</dd>
               </>
             )}
             <dt className="flex items-center gap-2 text-[var(--muted)]"><ShieldQuestion className="size-4" /> Dati:</dt>
