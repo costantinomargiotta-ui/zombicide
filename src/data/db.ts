@@ -6,7 +6,7 @@ import type {
 import { seedProducts } from './seed/products';
 import type { QueueEntry } from './sync';
 import { seedRioCards } from './seed/equipmentRio';
-import { seedFantasyAbilities, seedFantasySurvivors, seedThunderCats } from './seed/survivorsFantasy';
+import { seedFantasyAbilities, seedFantasyExtra, seedFantasySurvivors, seedThunderCats } from './seed/survivorsFantasy';
 import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
@@ -161,6 +161,7 @@ export async function syncBaseCatalog(database: HubDatabase) {
     await addMissing(database.characters, seedModernSurvivors);
     await addMissing(database.characters, seedFantasySurvivors);
     await addMissing(database.characters, seedThunderCats);
+    await addMissing(database.characters, seedFantasyExtra);
     await addMissing(database.cards, seedRioCards);
   });
 }

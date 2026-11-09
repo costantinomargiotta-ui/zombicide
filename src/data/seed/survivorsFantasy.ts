@@ -58,3 +58,18 @@ const toCharacter = (productId: string) => (r: Row): Character => ({
 
 export const seedFantasySurvivors: Character[] = rows.map(toCharacter('black-plague'));
 export const seedThunderCats: Character[] = thunderCats.map(toCharacter('thundercats'));
+
+/**
+ * Personaggi aggiunti dall'utente (09/11/2026) con i ritratti forniti.
+ * Scatola di provenienza e abilità da indicare: servono le fotografie delle schede identità.
+ */
+export const seedFantasyExtra: Character[] = ['Theo', 'Ariane', 'Morrigan', 'Karl'].map((name) => ({
+  id: `fantasy-${slugify(name)}`,
+  universeId: 'fantasy',
+  name,
+  kind: 'sopravvissuto',
+  abilities: [],
+  traits: { transcriptionNotes: 'Abilità e scatola da indicare: servono le fotografie della scheda identità.' },
+  dataStatus: 'da-verificare',
+  origin: 'base',
+}));
