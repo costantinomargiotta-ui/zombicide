@@ -76,11 +76,13 @@ describe('correzione di Ney', () => {
 
 import { seedRioCards } from '../data/seed/equipmentRio';
 describe('carte di Rio Z Janeiro', () => {
-  it('6 carte di partenza e 12 Armi Pimpate, conteggiando le copie', () => {
-    const count = (deck: string) => seedRioCards.filter((c) => c.deck === deck).reduce((a, c) => a + c.quantity, 0);
+  it('6 carte di partenza, 12 Armi Pimpate e 47 Avanzate, conteggiando le copie', () => {
+    const count = (deck: string) => seedRioCards.filter((c) => c.deck === deck && !c.outsideDeck).reduce((a, c) => a + c.quantity, 0);
     expect(count('partenza')).toBe(6);
     expect(count('arma-pimpata')).toBe(12);
-    expect(seedRioCards.filter((c) => c.deck === 'avanzato')).toHaveLength(20);
+    expect(count('avanzato')).toBe(47);
+    expect(seedRioCards.find((c) => c.id === 'rio-aaahh-pimpata')?.quantity).toBe(3);
+    expect(seedRioCards.find((c) => c.id === 'rio-av-aaahh')?.quantity).toBe(6);
     expect(seedRioCards.filter((c) => c.deck === 'partenza').every((c) => c.conservation === undefined)).toBe(true);
   });
 });

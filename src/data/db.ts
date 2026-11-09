@@ -97,6 +97,16 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 11: quantità delle carte di Rio secondo la lista dell'utente; Opala 78 fuori dal mazzo.
+    this.version(11).upgrade(async (tx) => {
+      const byId = new Map(seedRioCards.map((c) => [c.id, c]));
+      await tx.table('cards').where('productId').equals('rio-z-janeiro').modify((c: EquipmentCard) => {
+        const seed = byId.get(c.id);
+        if (!seed) return;
+        c.quantity = seed.quantity;
+        if (seed.outsideDeck) c.outsideDeck = true;
+      });
+    });
     // Revisione 10: Washington Z.C. (provenienza dei 6 sopravvissuti e prodotto verificato).
     this.version(10).upgrade(async (tx) => {
       const w = seedProducts.find((x) => x.id === 'washington-zc')!;

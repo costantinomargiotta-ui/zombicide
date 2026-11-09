@@ -273,6 +273,8 @@ export interface EquipmentCard {
   opensDoors?: 'silenziosa' | 'rumorosa';
   ammo?: 'proiettili' | 'cartucce';
   surpriseSpawn?: boolean;
+  /** Carta della scatola che non fa parte del mazzo (es. carta Auto): esclusa dai conteggi del mazzo. */
+  outsideDeck?: boolean;
   text?: string;
   frontImageId?: string;
   transcriptionNotes?: string;

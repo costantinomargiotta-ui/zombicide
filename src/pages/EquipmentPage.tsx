@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, Car, CheckCircle2, Crosshair, DoorOpen, Flame, ImagePlus, Library, Lock, Package, Search, Skull, Sparkles, Swords, Volume2, VolumeX, X } from 'lucide-react';
+import { AlertTriangle, Car, CheckCircle2, Crosshair, DoorOpen, Flame, ImagePlus, Library, Lock, Package, Search, Sparkles, Swords, Volume2, VolumeX, X } from 'lucide-react';
 import { db } from '../data/db';
 import { repo } from '../data/repository';
 import { CARD_DECK_LABEL, type CardDeck, type EquipmentCard } from '../domain/types';
@@ -83,6 +83,8 @@ export function CardTile({ card }: { card: EquipmentCard }) {
 
 /** Copie previste dal regolamento di Rio Z Janeiro (pag. 3), per il completamento del catalogo. */
 const EXPECTED: Record<CardDeck, number> = { partenza: 6, 'arma-pimpata': 12, avanzato: 47 };
+/** Le carte fuori mazzo (es. Opala 78) non entrano nel conteggio dei mazzi. */
+const inDeck = (c: EquipmentCard) => !c.outsideDeck;
 
 type Cat = { id: string; label: string; icon: typeof Swords; match: (c: EquipmentCard) => boolean };
 
@@ -97,10 +99,9 @@ const EQUIP_CATS: Cat[] = [
 
 const CARD_CATS: Cat[] = [
   { id: 'tutti', label: 'Tutte le carte', icon: Library, match: () => true },
-  { id: 'partenza', label: 'Equipaggiamento di Partenza', icon: Package, match: (c) => c.deck === 'partenza' },
-  { id: 'arma-pimpata', label: 'Armi Pimpate', icon: Flame, match: (c) => c.deck === 'arma-pimpata' },
-  { id: 'avanzato', label: 'Equipaggiamento Avanzato', icon: Swords, match: (c) => c.deck === 'avanzato' },
-  { id: 'aaahh', label: 'Aaahh!!', icon: Skull, match: (c) => c.category === 'aaahh' },
+  { id: 'partenza', label: 'Equipaggiamento di Partenza', icon: Package, match: (c) => c.deck === 'partenza' && inDeck(c) },
+  { id: 'arma-pimpata', label: 'Armi Pimpate', icon: Flame, match: (c) => c.deck === 'arma-pimpata' && inDeck(c) },
+  { id: 'avanzato', label: 'Equipaggiamento Avanzato', icon: Swords, match: (c) => c.deck === 'avanzato' && inDeck(c) },
 ];
 
 const copies = (list: EquipmentCard[]) => list.reduce((a, c) => a + c.quantity, 0);
@@ -119,7 +120,7 @@ function GridTile({ card, onOpen }: { card: EquipmentCard; onOpen: () => void })
       <div className="flex flex-1 flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#f3e7c4] to-[#d8c493] px-2 py-1.5 text-center text-black">
         <span className="text-lg leading-tight font-semibold">{card.name}</span>
         <span className="text-xs text-black/70">
-          {p && p.dice !== undefined ? `${p.dice} ${p.dice === 1 ? 'dado' : 'dadi'} · ${p.accuracy} · ${p.damage} ${p.damage === 1 ? 'Danno' : 'Danni'}` : card.category === 'aaahh' ? 'Genera 1 Deambulante' : CARD_DECK_LABEL[card.deck].replace(' Avanzato', '').replace(' Avanzate', '')}
+          {p && p.dice !== undefined ? `${p.dice} ${p.dice === 1 ? 'dado' : 'dadi'} · ${p.accuracy} · ${p.damage} ${p.damage === 1 ? 'Danno' : 'Danni'}` : card.category === 'aaahh' ? 'Genera 1 Deambulante' : card.outsideDeck ? 'Fuori mazzo' : CARD_DECK_LABEL[card.deck].replace(' Avanzato', '').replace(' Avanzate', '')}
         </span>
       </div>
     </button>
@@ -151,7 +152,7 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
   const active = cats.find((c) => c.id === cat) ?? cats[0];
   const list = base.filter((c) => active.match(c) && (!onlyKeepable || c.conservation !== undefined) && c.name.toLowerCase().includes(query.trim().toLowerCase()));
   const cardProducts = products.filter((p) => cards.some((c) => c.productId === p.id));
-  const catalogued = copies(cards.filter((c) => c.productId === 'rio-z-janeiro'));
+  const catalogued = copies(cards.filter((c) => c.productId === 'rio-z-janeiro' && inDeck(c)));
   const expected = Object.values(EXPECTED).reduce((a, b) => a + b, 0);
 
   return (
