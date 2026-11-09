@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { BarChart3, Bell as Bell_, Box, CircleUserRound, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Target, Trophy, Users, X } from 'lucide-react';
+import { BarChart3, Bell as Bell_, BookOpen, Box, CircleUserRound, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Target, Trophy, Users, X } from 'lucide-react';
 import { useRecentActivities } from '../../data/hooks';
 import { useSyncStatus } from '../../data/syncController';
 import { relativeTime } from '../../lib/format';
@@ -133,6 +133,7 @@ function SideLinks({ onNavigate }: { onNavigate?: () => void }) {
     { sub: 'progressi', label: 'Progressi', icon: BarChart3 },
     { sub: 'statistiche', label: 'Statistiche Globali', icon: Trophy },
     { sub: 'personaggi', label: 'Sopravvissuti (tutti)', icon: Users },
+    { sub: 'abilita', label: 'Abilità', icon: BookOpen },
     { sub: 'equipaggiamento', label: 'Equipaggiamento (tutto)', icon: Package },
     { sub: 'carte', label: 'Carte (tutte)', icon: Library },
     { sub: 'note', label: 'Note', icon: NotebookPen },

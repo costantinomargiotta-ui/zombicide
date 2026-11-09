@@ -15,6 +15,7 @@ import { EquipmentPage } from './pages/EquipmentPage';
 import { SearchPage } from './pages/SearchPage';
 import { NotesPage } from './pages/NotesPage';
 import { ProgressPage } from './pages/ProgressPage';
+import { AbilitiesPage } from './pages/AbilitiesPage';
 import { isUniverseId } from './domain/universes';
 import { AuthGate } from './ui/auth/AuthGate';
 
@@ -32,6 +33,7 @@ const sections: RouteObject[] = [
   { path: 'note', element: <NotesPage /> },
   { path: 'progressi', element: <ProgressPage /> },
   { path: 'personaggi', element: <CharactersPage /> },
+  { path: 'abilita', element: <AbilitiesPage /> },
   { path: 'scenari', element: <ScenariosPage /> },
   { path: 'partite', element: <SessionsPage /> },
   { path: 'equipaggiamento', element: <EquipmentPage onlyEquipment /> },
