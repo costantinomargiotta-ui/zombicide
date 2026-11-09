@@ -33,10 +33,18 @@ const thunderCats: Row[] = [
   { name: 'Snarf', equipSlot: 'uno Scudo', blu: 'Turarsi il naso', giallo: '+1 Azione', arancione: ['Fratelli in armi: +1 dado Combattimento', 'Inafferrabile'], rosso: ['Fortunato', 'Risultato 6: +1 dado Combattimento', 'Salvatore'] },
 ];
 
+/** Wulfsburg: schede identità fotografate dall'utente (09/11/2026). */
+const wulfsburg: Row[] = [
+  { name: 'Theo', equipSlot: 'una Spada', blu: 'Scatto', giallo: '+1 Azione', arancione: ['+1 dado: Mischia', '+1 al risultato dei dadi: Distanza'], rosso: ['+1 Azione di Combattimento gratuita', 'Caricare', 'Occhio di falco'] },
+  { name: 'Ariane', equipSlot: 'una Balestra a Mano', blu: 'Saltare', giallo: '+1 Azione', arancione: ['+1 Azione di Movimento gratuita', '+1 Azione in Mischia gratuita'], rosso: ['+1 dado: Combattimento', '+1 al risultato dei dadi: Distanza', 'Incantatore'] },
+  { name: 'Morrigan', equipSlot: 'un Pugnale', blu: 'Mietitore: Combattimento', giallo: '+1 Azione', arancione: ['+1 Azione in Mischia gratuita', 'Incantatore'], rosso: ['+1 Danno: Mischia', '+1 al risultato dei dadi: Magia', 'Sete di sangue: Combattimento'] },
+  { name: 'Karl', equipSlot: 'una Palla di Fuoco', blu: '+1 dado: Magia', giallo: '+1 Azione', arancione: ['+1 Azione di Combattimento gratuita', 'Incantatore'], rosso: ['+1 Azione di Combattimento gratuita', '+1 Gittata massima', 'Occhio di falco'] },
+];
+
 const abilityId = (name: string) => `fantasy-${slugify(name)}`;
 
 export const seedFantasyAbilities: Ability[] = [
-  ...new Set([...rows, ...thunderCats].flatMap((r) => [r.blu, r.giallo, ...r.arancione, ...r.rosso])),
+  ...new Set([...rows, ...thunderCats, ...wulfsburg].flatMap((r) => [r.blu, r.giallo, ...r.arancione, ...r.rosso])),
 ].map((name) => ({ id: abilityId(name), universeId: 'fantasy', name, dataStatus: 'verificato', origin: 'base' }));
 
 const toCharacter = (productId: string) => (r: Row): Character => ({
@@ -58,18 +66,5 @@ const toCharacter = (productId: string) => (r: Row): Character => ({
 
 export const seedFantasySurvivors: Character[] = rows.map(toCharacter('black-plague'));
 export const seedThunderCats: Character[] = thunderCats.map(toCharacter('thundercats'));
+export const seedWulfsburg: Character[] = wulfsburg.map(toCharacter('wulfsburg'));
 
-/**
- * Personaggi aggiunti dall'utente (09/11/2026) con i ritratti forniti.
- * Scatola di provenienza e abilità da indicare: servono le fotografie delle schede identità.
- */
-export const seedFantasyExtra: Character[] = ['Theo', 'Ariane', 'Morrigan', 'Karl'].map((name) => ({
-  id: `fantasy-${slugify(name)}`,
-  universeId: 'fantasy',
-  name,
-  kind: 'sopravvissuto',
-  abilities: [],
-  traits: { transcriptionNotes: 'Abilità e scatola da indicare: servono le fotografie della scheda identità.' },
-  dataStatus: 'da-verificare',
-  origin: 'base',
-}));

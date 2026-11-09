@@ -6,7 +6,7 @@ import type {
 import { seedProducts } from './seed/products';
 import type { QueueEntry } from './sync';
 import { seedRioCards } from './seed/equipmentRio';
-import { seedFantasyAbilities, seedFantasyExtra, seedFantasySurvivors, seedThunderCats } from './seed/survivorsFantasy';
+import { seedFantasyAbilities, seedFantasySurvivors, seedThunderCats, seedWulfsburg } from './seed/survivorsFantasy';
 import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern';
 
 /**
@@ -97,6 +97,21 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 14: schede di Wulfsburg (Theo, Ariane, Morrigan, Karl).
+    this.version(14).upgrade(async (tx) => {
+      await tx.table('abilities').bulkPut(seedFantasyAbilities);
+      for (const c of seedWulfsburg) {
+        const existing = await tx.table('characters').get(c.id);
+        if (!existing) continue;
+        const patch: Record<string, unknown> = { productId: existing.productId ?? c.productId };
+        if (!existing.abilities?.length) {
+          const traits = { ...(existing.traits ?? {}), equipSlot: c.traits?.equipSlot };
+          delete traits.transcriptionNotes;
+          Object.assign(patch, { abilities: c.abilities, traits, dataStatus: c.dataStatus });
+        }
+        await tx.table('characters').update(c.id, patch);
+      }
+    });
     // Revisione 13: schede ThunderCats; slot speciale con l'articolo stampato sulla scheda.
     this.version(13).upgrade(async (tx) => {
       await tx.table('abilities').bulkPut(seedFantasyAbilities);
@@ -161,7 +176,7 @@ export async function syncBaseCatalog(database: HubDatabase) {
     await addMissing(database.characters, seedModernSurvivors);
     await addMissing(database.characters, seedFantasySurvivors);
     await addMissing(database.characters, seedThunderCats);
-    await addMissing(database.characters, seedFantasyExtra);
+    await addMissing(database.characters, seedWulfsburg);
     await addMissing(database.cards, seedRioCards);
   });
 }
