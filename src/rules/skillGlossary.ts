@@ -188,4 +188,10 @@ export const SKILL_SOURCES: SkillSource[] = [
       { name: "Tutto qui?", description: "Un Sopravvissuto può usare questa Abilità ogni volta che sta per ricevere delle Ferite. Scarta una carta Equipaggiamento contenuta nel suo inventario per ogni Ferita che sta per ricevere, negando una Ferita per ogni carta Equipaggiamento scartata." },
     ],
   },
+{
+    universeId: "fantasy", productId: "thundercats", source: "ThunderCats – descrizione fornita dall'utente (09/11/2026)",
+    skills: [
+      { name: "Fratelli in armi: +1 dado Combattimento", description: "Si attiva solo se Lion-O e Snarf si trovano nella stessa Zona. Finché sono insieme nella stessa Zona, entrambi ottengono +1 dado Combattimento su tutti i loro attacchi (in Mischia, a Distanza o di Magia)." },
+    ],
+  },
 ];
