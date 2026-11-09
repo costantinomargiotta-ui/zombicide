@@ -10,48 +10,51 @@ import { Panel } from '../ui/components/Panel';
 import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Modal } from '../ui/components/Modal';
-import type { RioMission } from '../rules/moderno/rioZJaneiro';
+import { MISSION_EXTRAS } from '../rules/moderno/missionMaps';
 
 /** Mappa della Missione (dal regolamento), legenda e regole speciali. */
-function MissionMapView({ m }: { m: RioMission }) {
+function MissionMapView({ m }: { m: { id: string; code: string; title: string } }) {
   const [zoom, setZoom] = useState(false);
-  if (!m.map && !m.specialRules) return null;
+  const extra = MISSION_EXTRAS[m.id];
+  if (!extra) return null;
+  const map = { image: extra.image, elements: extra.elements };
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,420px)_1fr]">
-      {m.map && (
+      {(
         <button type="button" onClick={() => setZoom(true)} className="focus-ring group relative overflow-hidden rounded-lg border-2 border-[#d9a521] bg-white" aria-label={`Ingrandisci la mappa di ${m.code}`}>
-          <img src={m.map.image} alt={`Mappa della Missione ${m.code} – ${m.title}`} className="block h-auto w-full" loading="lazy" />
+          <img src={map.image} alt={`Mappa della Missione ${m.code} – ${m.title}`} className="block h-auto w-full" loading="lazy" />
           <span className="absolute top-2 right-2 flex items-center gap-1 rounded-md bg-black/80 px-2 py-1 text-xs text-white"><Maximize2 className="size-3" /> Ingrandisci</span>
         </button>
       )}
       <div className="flex flex-col gap-3">
-        {m.map && (
-          <div>
-            <h4 className="mb-1 font-semibold">Elementi della mappa</h4>
-            <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-              {m.map.elements.map((e) => (
-                <li key={e.label} className="flex items-center gap-2 rounded border border-[var(--line)] bg-black/30 px-2 py-1">
-                  <span className="w-8 text-right font-bold text-[var(--accent-2)]">{e.count ? `${e.count}×` : '•'}</span>{e.label}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {m.specialRules && (
+        <div>
+          <h4 className="mb-1 font-semibold">Elementi della mappa</h4>
+          <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+            {map.elements.map((e) => (
+              <li key={e.label} className="flex items-center gap-2 rounded border border-[var(--line)] bg-white/95 px-2 py-1 text-black">
+                <span className="grid h-11 w-16 shrink-0 place-items-center">{e.icon && <img src={e.icon} alt="" className="max-h-11 max-w-16 object-contain" loading="lazy" />}</span>
+                <span className="flex-1 leading-tight font-medium">{e.label}</span>
+                {e.count && <span className="text-lg font-bold">{e.count}×</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {extra.specialRules.length > 0 && (
           <div>
             <h4 className="mb-1 flex items-center gap-1 font-semibold"><ScrollText className="size-4" /> Regole speciali</h4>
             <ul className="flex flex-col gap-1.5">
-              {m.specialRules.map((r) => {
-                const [title, ...rest] = r.split('. ');
-                return <li key={r}><strong>{title}.</strong> {rest.join('. ')}</li>;
+              {extra.specialRules.map((r) => {
+                const cut = r.search(/[.!?](\s|$)/);
+                const title = cut > 0 ? r.slice(0, cut + 1) : r;
+                return <li key={r} className="whitespace-pre-line"><strong>{title}</strong>{r.slice(title.length)}</li>;
               })}
             </ul>
           </div>
         )}
       </div>
-      {zoom && m.map && (
+      {zoom && (
         <Modal open onClose={() => setZoom(false)} title={`${m.code} – ${m.title}`}>
-          <img src={m.map.image} alt={`Mappa della Missione ${m.code}`} className="mx-auto block h-auto max-h-[80vh] w-auto bg-white" />
+          <img src={map.image} alt={`Mappa della Missione ${m.code}`} className="mx-auto block h-auto max-h-[80vh] w-auto bg-white" />
         </Modal>
       )}
     </div>
