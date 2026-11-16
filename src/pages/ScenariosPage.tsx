@@ -10,7 +10,10 @@ import { Panel } from '../ui/components/Panel';
 import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Modal } from '../ui/components/Modal';
-import { MISSION_EXTRAS } from '../rules/moderno/missionMaps';
+import { MISSION_EXTRAS as MODERN_EXTRAS } from '../rules/moderno/missionMaps';
+import { BP_MISSION_EXTRAS } from '../rules/fantasy/bpMissionMaps';
+
+const MISSION_EXTRAS = { ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS };
 
 /** Mappa della Missione (dal regolamento), legenda e regole speciali. */
 function MissionMapView({ m }: { m: { id: string; code: string; title: string } }) {
@@ -21,7 +24,7 @@ function MissionMapView({ m }: { m: { id: string; code: string; title: string } 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,420px)_1fr]">
       {(
-        <button type="button" onClick={() => setZoom(true)} className="focus-ring group relative overflow-hidden rounded-lg border-2 border-[#d9a521] bg-white" aria-label={`Ingrandisci la mappa di ${m.code}`}>
+        <button type="button" onClick={() => setZoom(true)} className="focus-ring group relative self-start overflow-hidden rounded-lg border-2 border-[#d9a521] bg-white" aria-label={`Ingrandisci la mappa di ${m.code}`}>
           <img src={map.image} alt={`Mappa della Missione ${m.code} – ${m.title}`} className="block h-auto w-full" loading="lazy" />
           <span className="absolute top-2 right-2 flex items-center gap-1 rounded-md bg-black/80 px-2 py-1 text-xs text-white"><Maximize2 className="size-3" /> Ingrandisci</span>
         </button>
@@ -44,7 +47,7 @@ function MissionMapView({ m }: { m: { id: string; code: string; title: string } 
             <h4 className="mb-1 flex items-center gap-1 font-semibold"><ScrollText className="size-4" /> Regole speciali</h4>
             <ul className="flex flex-col gap-1.5">
               {extra.specialRules.map((r) => {
-                const cut = r.search(/[.!?](\s|$)/);
+                const cut = r.search(/[.!?](\s|$)|:\n/);
                 const title = cut > 0 ? r.slice(0, cut + 1) : r;
                 return <li key={r} className="whitespace-pre-line"><strong>{title}</strong>{r.slice(title.length)}</li>;
               })}
@@ -61,7 +64,7 @@ function MissionMapView({ m }: { m: { id: string; code: string; title: string } 
   );
 }
 
-/** Catalogo degli scenari disponibili dai moduli regole. Oggi: le 10 Missioni di Rio Z Janeiro. */
+/** Catalogo degli scenari dai moduli regole, con mappe e regole speciali dove trascritte. */
 export function ScenariosPage() {
   const { universeId } = useScope();
   const [open, setOpen] = useState<string | null>(null);
@@ -131,6 +134,7 @@ export function ScenariosPage() {
                     <div className="flex flex-col gap-2 border-t border-[var(--line)] px-3 py-3 text-sm">
                       {m.tiles.length > 0 && <p className="flex items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · pag. {m.page}</p>}
                       <div><h4 className="font-semibold">Obiettivi {m.objectivesInOrder ? '' : '(in qualsiasi ordine)'}</h4><ol className="list-decimal pl-5">{m.objectives.map((o) => <li key={o}>{o}</li>)}</ol></div>
+                      <MissionMapView m={m} />
                     </div>
                   )}
                 </li>

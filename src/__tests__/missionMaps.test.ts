@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
 import { SHEET_CAMPAIGNS } from '../rules/moderno/sheetCampaigns';
 import { MISSION_EXTRAS } from '../rules/moderno/missionMaps';
+import { BP_MISSIONS } from '../rules/fantasy/blackPlague';
+import { BP_MISSION_EXTRAS } from '../rules/fantasy/bpMissionMaps';
 
 describe('mappe delle Missioni', () => {
   it('ogni Missione di Rio e Washington ha mappa, legenda con icone e regole speciali', () => {
@@ -11,6 +13,15 @@ describe('mappe delle Missioni', () => {
       expect(x, m.id).toBeDefined();
       expect(existsSync(`public${x.image}`), x.image).toBe(true);
       expect(x.elements.length).toBeGreaterThan(3);
+      for (const e of x.elements) expect(e.icon && existsSync(`public${e.icon}`), `${m.id} ${e.label}`).toBe(true);
+      expect(x.specialRules.length).toBeGreaterThan(0);
+    }
+  });
+  it('ogni Missione di Black Plague ha mappa, legenda con icone e regole speciali', () => {
+    for (const m of BP_MISSIONS) {
+      const x = BP_MISSION_EXTRAS[m.id];
+      expect(x, m.id).toBeDefined();
+      expect(existsSync(`public${x.image}`), x.image).toBe(true);
       for (const e of x.elements) expect(e.icon && existsSync(`public${e.icon}`), `${m.id} ${e.label}`).toBe(true);
       expect(x.specialRules.length).toBeGreaterThan(0);
     }
