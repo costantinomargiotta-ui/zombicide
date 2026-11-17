@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { AlertTriangle, ChevronDown, Map, Maximize2, ScrollText, Target } from 'lucide-react';
+import { AlertTriangle, BookOpen, ChevronDown, Map, Maximize2, ScrollText, Target } from 'lucide-react';
 import { db } from '../data/db';
 import { SHEET_CAMPAIGNS } from '../rules/moderno/sheetCampaigns';
 import { MISSION_SERIES } from '../rules/missionSeries';
@@ -11,6 +11,53 @@ import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Modal } from '../ui/components/Modal';
 import { ALL_MISSION_EXTRAS as MISSION_EXTRAS } from '../rules/missionExtras';
+import { missionGuide, type GuideMission } from '../services/missionGuide';
+
+/** «Come si gioca»: obiettivi e regole della Missione riscritti in passi, avvisi e consigli. */
+function HowToPlay({ m }: { m: GuideMission & { id: string } }) {
+  const g = missionGuide(m, MISSION_EXTRAS[m.id]);
+  return (
+    <details className="rounded-lg border border-[#d9a521]/60 bg-[#d9a521]/5 open:bg-[#d9a521]/10">
+      <summary className="cursor-pointer list-none px-3 py-2 font-semibold text-[var(--accent-2)] [&::-webkit-details-marker]:hidden">
+        <span className="flex items-center gap-2"><BookOpen className="size-4" /> Come si gioca <ChevronDown className="ml-auto size-4" /></span>
+      </summary>
+      <div className="flex flex-col gap-3 px-3 pb-3 text-sm">
+        <p>{g.summary}</p>
+        <div>
+          <h4 className="font-semibold">Cosa dovete fare</h4>
+          <ol className="mt-1 flex flex-col gap-1.5">
+            {g.steps.map((s, i) => (
+              <li key={i} className="flex gap-2">
+                <span className="grid size-6 shrink-0 place-items-center rounded-full bg-[var(--accent-2)] text-xs font-bold text-black">{m.objectivesInOrder || g.steps.length === 1 ? i + 1 : '•'}</span>
+                <span><strong>{s.title}{/[!?]$/.test(s.title) ? '' : '.'}</strong>{s.detail ? ` ${s.detail}` : ''}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+        {g.setup.length > 0 && (
+          <div>
+            <h4 className="font-semibold">Prima di iniziare</h4>
+            <ul className="mt-1 flex flex-col gap-1">{g.setup.map((x) => <li key={x} className="whitespace-pre-line">{x}</li>)}</ul>
+          </div>
+        )}
+        {g.watchOut.length > 0 && (
+          <div className="rounded-md border border-red-800 bg-red-900/20 p-2">
+            <h4 className="flex items-center gap-1 font-semibold text-red-200"><AlertTriangle className="size-4" /> Attenzione</h4>
+            <ul className="mt-1 flex list-disc flex-col gap-1 pl-5">{g.watchOut.map((x) => <li key={x} className="whitespace-pre-line">{x}</li>)}</ul>
+          </div>
+        )}
+        {g.tips.length > 0 && (
+          <div>
+            <h4 className="font-semibold">Consigli</h4>
+            <ul className="mt-1 flex list-disc flex-col gap-1 pl-5">{g.tips.map((x) => <li key={x}>{x}</li>)}</ul>
+          </div>
+        )}
+        {g.materials.length > 0 && <p className="text-xs text-[var(--muted)]">Da preparare: {g.materials.join(' · ')}.</p>}
+        <p className="text-xs text-[var(--muted)]">Ricavato dagli obiettivi e dalle regole speciali del regolamento: in caso di dubbio fa fede il libretto (pag. {(m as { page?: number }).page ?? '–'}).</p>
+      </div>
+    </details>
+  );
+}
 
 /** Mappa della Missione (dal regolamento), legenda e regole speciali. */
 function MissionMapView({ m }: { m: { id: string; code: string; title: string } }) {
@@ -100,6 +147,7 @@ export function ScenariosPage() {
                           {m.campaignNotes.map((n) => <li key={n} className="flex gap-2"><AlertTriangle className="mt-0.5 size-4 shrink-0" />{n}</li>)}
                         </ul>
                       )}
+                      <HowToPlay m={m} />
                       <MissionMapView m={m} />
                     </div>
                   )}
@@ -131,6 +179,7 @@ export function ScenariosPage() {
                     <div className="flex flex-col gap-2 border-t border-[var(--line)] px-3 py-3 text-sm">
                       {m.tiles.length > 0 && <p className="flex items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · pag. {m.page}</p>}
                       <div><h4 className="font-semibold">Obiettivi {m.objectivesInOrder ? '' : '(in qualsiasi ordine)'}</h4><ol className="list-decimal pl-5">{m.objectives.map((o) => <li key={o}>{o}</li>)}</ol></div>
+                      <HowToPlay m={m} />
                       <MissionMapView m={m} />
                     </div>
                   )}
