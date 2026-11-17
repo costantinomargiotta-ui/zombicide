@@ -10,6 +10,7 @@ import { Z2_MISSION_EXTRAS } from '../rules/moderno/z2MissionMaps';
 import { WU_MISSIONS } from '../rules/fantasy/wulfsburg';
 import { WU_MISSION_EXTRAS } from '../rules/fantasy/wuMissionMaps';
 import { MZ_MISSIONS, MZ_MISSION_EXTRAS } from '../rules/marvel/marvelZombies';
+import { XM_MISSIONS, XM_MISSION_EXTRAS } from '../rules/marvel/xmenResistance';
 
 describe('mappe delle Missioni', () => {
   it('ogni Missione di Rio e Washington ha mappa, legenda con icone e regole speciali', () => {
@@ -23,8 +24,8 @@ describe('mappe delle Missioni', () => {
     }
   });
   it('ogni Missione di Black Plague e Zombicide 2ª edizione ha mappa, legenda con icone e regole speciali', () => {
-    for (const m of [...BP_MISSIONS, ...Z2_MISSIONS, ...WU_MISSIONS, ...MZ_MISSIONS]) {
-      const x = BP_MISSION_EXTRAS[m.id] ?? Z2_MISSION_EXTRAS[m.id] ?? WU_MISSION_EXTRAS[m.id] ?? MZ_MISSION_EXTRAS[m.id];
+    for (const m of [...BP_MISSIONS, ...Z2_MISSIONS, ...WU_MISSIONS, ...MZ_MISSIONS, ...XM_MISSIONS]) {
+      const x = BP_MISSION_EXTRAS[m.id] ?? Z2_MISSION_EXTRAS[m.id] ?? WU_MISSION_EXTRAS[m.id] ?? MZ_MISSION_EXTRAS[m.id] ?? XM_MISSION_EXTRAS[m.id];
       expect(x, m.id).toBeDefined();
       expect(existsSync(`public${x.image}`), x.image).toBe(true);
       for (const e of x.elements) expect(e.icon && existsSync(`public${e.icon}`), `${m.id} ${e.label}`).toBe(true);

@@ -15,8 +15,9 @@ import { BP_MISSION_EXTRAS } from '../rules/fantasy/bpMissionMaps';
 import { Z2_MISSION_EXTRAS } from '../rules/moderno/z2MissionMaps';
 import { WU_MISSION_EXTRAS } from '../rules/fantasy/wuMissionMaps';
 import { MZ_MISSION_EXTRAS } from '../rules/marvel/marvelZombies';
+import { XM_MISSION_EXTRAS } from '../rules/marvel/xmenResistance';
 
-const MISSION_EXTRAS = { ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...MZ_MISSION_EXTRAS };
+const MISSION_EXTRAS = { ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS };
 
 /** Mappa della Missione (dal regolamento), legenda e regole speciali. */
 function MissionMapView({ m }: { m: { id: string; code: string; title: string } }) {

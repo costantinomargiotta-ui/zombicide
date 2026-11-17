@@ -1,5 +1,6 @@
 import type { UniverseRules } from './types';
 import { MZ_TEMPLATE_ID } from './marvel/marvelZombies';
+import { XM_TEMPLATE_ID } from './marvel/xmenResistance';
 
 const MARVEL = 'Marvel Zombies – Un gioco Zombicide – Regolamento (ITA)';
 
@@ -22,6 +23,7 @@ export const marvelRules: UniverseRules = {
   },
   campaignTemplates: [
     { id: MZ_TEMPLATE_ID, name: 'Missioni di Marvel Zombies', productId: 'marvel-zombies', status: 'pronto', missingMaterials: [] },
+    { id: XM_TEMPLATE_ID, name: 'Missioni di X-Men Resistance', productId: 'x-men-resistance', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
     'Regole delle espansioni: Fantastic 4: Under Siege, Clash of the Sinister Six, Hydra Resurrection',
