@@ -18,12 +18,12 @@ describe('moduli regole', () => {
     expect(m.progression?.levels.find((l) => l.id === 'rosso')?.effect).toMatch(/Tutte le Abilità/);
   });
 
-  it('Moderno usa le soglie della 2ª edizione (pag. 15), Western resta non documentato', () => {
+  it('Moderno usa le soglie della 2ª edizione (pag. 15), Western dal regolamento di Undead or Alive (pag. 18)', () => {
     const t = rulesFor('moderno').progression!;
     expect(t.source.page).toBe(15);
     expect(dangerLevelFor(t, 18).id).toBe('giallo');
     expect(dangerLevelFor(t, 19).id).toBe('arancione');
-    expect(rulesFor('western').progression).toBeNull();
+    expect(rulesFor('western').progression?.levels.map((l) => l.minXp)).toEqual([0, 7, 19, 43]);
     expect(rulesFor('moderno').campaignTemplates[0].status).toBe('pronto');
   });
 });

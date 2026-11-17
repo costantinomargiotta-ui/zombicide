@@ -9,7 +9,6 @@ import { EmptyState } from '../ui/components/EmptyState';
 
 /** Perché un universo non ha ancora un glossario. */
 const MISSING: Partial<Record<UniverseId, string>> = {
-  western: 'Regolamento di Zombicide: Undead or Alive non ancora disponibile: mandamelo e trascrivo le Abilità.',
   marvel: 'Marvel Zombies non ha un elenco di Abilità nel regolamento: ogni Eroe Zombie ha Abilità uniche stampate sulla sua scheda (Regolamento, pag. 11).',
 };
 

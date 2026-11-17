@@ -12,6 +12,7 @@ import { WU_MISSION_EXTRAS } from '../rules/fantasy/wuMissionMaps';
 import { MZ_MISSIONS, MZ_MISSION_EXTRAS } from '../rules/marvel/marvelZombies';
 import { XM_MISSIONS, XM_MISSION_EXTRAS } from '../rules/marvel/xmenResistance';
 import { HR_MISSIONS, HR_MISSION_EXTRAS } from '../rules/marvel/heroesResistance';
+import { UO_MISSIONS, UO_MISSION_EXTRAS } from '../rules/western/undeadOrAlive';
 
 describe('mappe delle Missioni', () => {
   it('ogni Missione di Rio e Washington ha mappa, legenda con icone e regole speciali', () => {
@@ -25,8 +26,8 @@ describe('mappe delle Missioni', () => {
     }
   });
   it('ogni Missione di Black Plague e Zombicide 2ª edizione ha mappa, legenda con icone e regole speciali', () => {
-    for (const m of [...BP_MISSIONS, ...Z2_MISSIONS, ...WU_MISSIONS, ...MZ_MISSIONS, ...XM_MISSIONS, ...HR_MISSIONS]) {
-      const x = BP_MISSION_EXTRAS[m.id] ?? Z2_MISSION_EXTRAS[m.id] ?? WU_MISSION_EXTRAS[m.id] ?? MZ_MISSION_EXTRAS[m.id] ?? XM_MISSION_EXTRAS[m.id] ?? HR_MISSION_EXTRAS[m.id];
+    for (const m of [...BP_MISSIONS, ...Z2_MISSIONS, ...WU_MISSIONS, ...MZ_MISSIONS, ...XM_MISSIONS, ...HR_MISSIONS, ...UO_MISSIONS]) {
+      const x = BP_MISSION_EXTRAS[m.id] ?? Z2_MISSION_EXTRAS[m.id] ?? WU_MISSION_EXTRAS[m.id] ?? MZ_MISSION_EXTRAS[m.id] ?? XM_MISSION_EXTRAS[m.id] ?? HR_MISSION_EXTRAS[m.id] ?? UO_MISSION_EXTRAS[m.id];
       expect(x, m.id).toBeDefined();
       expect(existsSync(`public${x.image}`), x.image).toBe(true);
       for (const e of x.elements) expect(e.icon && existsSync(`public${e.icon}`), `${m.id} ${e.label}`).toBe(true);

@@ -9,6 +9,7 @@ import { WU_MISSIONS, WU_TEMPLATE_ID } from './fantasy/wulfsburg';
 import { MZ_MISSIONS, MZ_TEMPLATE_ID } from './marvel/marvelZombies';
 import { XM_MISSIONS, XM_TEMPLATE_ID } from './marvel/xmenResistance';
 import { HR_MISSIONS, HR_TEMPLATE_ID } from './marvel/heroesResistance';
+import { UO_MISSIONS, UO_TEMPLATE_ID } from './western/undeadOrAlive';
 
 export interface SeriesMission {
   id: string;
@@ -43,6 +44,7 @@ export const MISSION_SERIES: MissionSeries[] = [
   { templateId: MZ_TEMPLATE_ID, universeId: 'marvel', productId: 'marvel-zombies', gameName: 'Marvel Zombies', source: 'Marvel Zombies – Regolamento, pag. 23–42 (MZ: Modalità Zombie, MH: Modalità Eroe)', image: '/ui/universo-marvel.webp', color: '#3b82f6', difficulties: ['Facile', 'Medio', 'Difficile', 'Molto difficile'], missions: MZ_MISSIONS },
   { templateId: XM_TEMPLATE_ID, universeId: 'marvel', productId: 'x-men-resistance', gameName: 'X-Men Resistance', source: 'X-Men Resistance – Regolamento, pag. 26–46 (ME: Modalità Eroe, MZ: Modalità Zombie)', image: '/ui/universo-marvel.webp', color: '#eab308', difficulties: ['Facile', 'Medio', 'Difficile', 'Molto difficile'], missions: XM_MISSIONS },
   { templateId: HR_TEMPLATE_ID, universeId: 'marvel', productId: 'heroes-resistance', gameName: "Heroes' Resistance", source: "Heroes' Resistance – Regolamento, pag. 21–30", image: '/ui/universo-marvel.webp', color: '#ef4444', difficulties: ['Facile', 'Medio', 'Difficile'], missions: HR_MISSIONS },
+  { templateId: UO_TEMPLATE_ID, universeId: 'western', productId: 'undead-or-alive', gameName: 'Undead or Alive', source: 'Undead or Alive – Regolamento, pag. 44–55', image: '/ui/universo-western.webp', color: '#c2410c', difficulties: ['Facile', 'Medio', 'Difficile', 'Molto difficile'], missions: UO_MISSIONS },
 ];
 
 export const seriesFor = (templateId?: string) => MISSION_SERIES.find((s) => s.templateId === templateId);

@@ -97,9 +97,14 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 16: Undead or Alive confermato dal regolamento.
+    this.version(16).upgrade(async (tx) => {
+      const u = await tx.table('products').get('undead-or-alive');
+      if (u && u.dataStatus !== 'verificato') await tx.table('products').update('undead-or-alive', { dataStatus: 'verificato' });
+    });
     // Revisione 15: espansioni Fantasy confermate dai regolamenti (Wulfsburg, Friends and Foes, No Rest for the Wicked).
     this.version(15).upgrade(async (tx) => {
-      for (const id of ['wulfsburg', 'friends-and-foes', 'no-rest-for-the-wicked']) {
+      for (const id of ['wulfsburg', 'friends-and-foes', 'no-rest-for-the-wicked', 'undead-or-alive']) {
         const existing = await tx.table('products').get(id);
         if (existing && existing.dataStatus !== 'verificato') await tx.table('products').update(id, { dataStatus: 'verificato' });
       }
