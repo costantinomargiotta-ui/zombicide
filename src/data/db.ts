@@ -97,6 +97,11 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 18: White Death confermato dal regolamento.
+    this.version(18).upgrade(async (tx) => {
+      const w = await tx.table('products').get('white-death');
+      if (w) await tx.table('products').update('white-death', { dataStatus: 'verificato', name: w.name === 'White Death' ? 'Zombicide: White Death' : w.name });
+    });
     // Revisione 17: Green Horde confermato dal regolamento.
     this.version(17).upgrade(async (tx) => {
       const g = await tx.table('products').get('green-horde');

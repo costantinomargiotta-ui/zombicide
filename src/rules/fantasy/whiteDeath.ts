@@ -1,0 +1,225 @@
+/** Zombicide: White Death – Missioni del Regolamento ITA, pag. 40–50: dati, mappe, legenda (icone ufficiali) e regole speciali. */
+import type { SeriesMission } from '../missionSeries';
+import type { MissionExtra } from '../moderno/missionMaps';
+
+export const WD_TEMPLATE_ID = 'white-death-missioni';
+
+export const WD_MISSIONS: SeriesMission[] = [
+  { id: 'wd-m0', code: "M0", title: "Prepararsi alla battaglia", difficulty: "Facile", survivors: "6", duration: "durata breve", page: 40, tiles: ["31R", "32R"], objectivesInOrder: false, objectives: ["Recuperare l’equipaggiamento. La Missione è completata con successo non appena entrambi gli Obiettivi vengono presi."] },
+  { id: 'wd-m1', code: "M1", title: "Suonate l’allarme!", difficulty: "Facile", survivors: "6", duration: "durata media", page: 41, tiles: ["27V", "28R", "29R", "31V", "32R", "34R"], objectivesInOrder: false, objectives: ["Difendere la città! La Missione è completata con successo non appena vengono soddisfatte tutte le seguenti condizioni simultaneamente:", "Tutti gli Obiettivi sono stati presi.", "I Sopravvissuti hanno collettivamente 4 carte Bile di Drago nei loro inventari.", "Tutti i Sopravvissuti si trovano sui Cammini di Ronda (incluse le Guardie).", "Non ci sono Zombie sui Cammini di Ronda."] },
+  { id: 'wd-m2', code: "M2", title: "Gli ultimi tomi", difficulty: "Facile", survivors: "6", duration: "durata moderata", page: 42, tiles: ["26V", "28V", "29R", "32R", "33V", "34R"], objectivesInOrder: false, objectives: ["Bandire la corruzione. La Missione è completata con successo non appena tutti i segnalini Corruzione vengono rimossi (vedi Regole Speciali)."] },
+  { id: 'wd-m3', code: "M3", title: "L’eredità dell’alba", difficulty: "Medio", survivors: "6", duration: "durata moderata", page: 43, tiles: ["26R", "28R", "29R", "30V", "31R", "32R"], objectivesInOrder: false, objectives: ["Recuperare le Armi della Cripta. La Missione è completata con successo non appena i Sopravvissuti hanno preso 8 Armi della Cripta dal mazzo delle Armi della Cripta, prendendo Obiettivi o eliminando Abomini e Necromanti Profanatori."] },
+  { id: 'wd-m4', code: "M4", title: "Terra bruciata", difficulty: "Medio", survivors: "6", duration: "durata lunga", page: 44, tiles: ["26V", "27R", "29R", "31R", "32V", "33V"], objectivesInOrder: false, objectives: ["Non concedere niente! La Missione è conclusa con successo non appena tutti e 3 gli edifici sono in fiamme (vedi Regole Speciali). NOTA: La Missione fallisce se una o più Guardie vengono eliminate."] },
+  { id: 'wd-m5', code: "M5", title: "L’Imperatrice di Spine", difficulty: "Medio", survivors: "6", duration: "durata lunga", page: 45, tiles: ["26R", "27R", "28R", "29V", "30V", "33V"], objectivesInOrder: false, objectives: ["Salvare l’Imperatrice di Spine. Prendere il Segnalatore (vedere Regole Speciali). La partita è vinta non appena il Segnalatore si trova nella Zona di Uscita."] },
+  { id: 'wd-m6', code: "M6", title: "Un bastione di troppo", difficulty: "Medio", survivors: "6", duration: "durata lunga", page: 46, tiles: ["26V", "27R", "28R", "30V", "31V", "32V", "33V", "34V"], objectivesInOrder: false, objectives: ["Salvare le Guardie: trovare 2 Scale di Corda. Prendere gli Obiettivi Blu e Verde.", "Fuggire con tutte le Guardie. Uscire attraverso la Zona di Uscita con tutte le Guardie. Ogni Sopravvissuto può uscire attraverso questa Zona alla fine del proprio Turno con tutte le Guardie che si trovano su di essa, fintanto che non ci sono Zombie nella Zona. NOTA: La Missione fallisce se una o più Guardie vengono eliminate."] },
+  { id: 'wd-m7', code: "M7", title: "Insegne imperiali", difficulty: "Difficile", survivors: "6", duration: "durata lunga", page: 47, tiles: ["26V", "27R", "28R", "29R", "30R", "31R", "32R", "33V", "34V"], objectivesInOrder: false, objectives: ["Mettere al sicuro le insegne imperiali e i loro difensori: prendere la corona e lo scettro. Prendere gli Obiettivi Blu e Verde.", "Fuggire con tutte le Guardie. Uscire attraverso la Zona di Uscita con tutte le Guardie. Ogni Sopravvissuto può uscire attraverso questa Zona alla fine del proprio Turno con tutte le Guardie che si trovano su di essa, fintanto che non ci sono Zombie nella Zona. NOTA: La Missione fallisce se una o più Guardie vengono eliminate."] },
+  { id: 'wd-m8', code: "M8", title: "Il muro degli eroi", difficulty: "Difficile", survivors: "6", duration: "durata breve", page: 48, tiles: ["26R", "28V", "29R", "30V", "32V", "33V"], objectivesInOrder: false, objectives: ["Respingere gli zombie oltre le mura. La Missione è completata con successo non appena tutti i segnalini Generazione di Zombie sono nella Zona Stendardo (vedi Regole Speciali). Questo include la Zona di Generazione di Profanatori. Il segnalino può essere collocato sulla Zona Stendardo o rimosso eliminando il Necromante per ottenere la vittoria."] },
+  { id: 'wd-m9', code: "M9", title: "Difensori del regno", difficulty: "Difficile", survivors: "6", duration: "durata lunga", page: 49, tiles: ["26V", "27V", "28V", "29R", "32R", "33V"], objectivesInOrder: false, objectives: ["Portare l’Imperatrice nella Zona di Uscita (vedi Regole Speciali). Il Segnalatore rappresenta lʼImperatrice di Spine. La missione è completata con successo non appena lʼImperatrice si trova nella Zona di Uscita, purché non ci siano Zombie in essa. La Missione fallisce quando lʼImperatrice subisce 1 o più Ferite."] },
+  { id: 'wd-m10', code: "M10", title: "Un’ultima battaglia", difficulty: "Difficile", survivors: "6", duration: "durata lunga", page: 50, tiles: ["28V", "29V", "30V", "31V", "33R", "34V"], objectivesInOrder: false, objectives: ["La caduta di Wintergrad: prendere armi eroiche. Ottenere 8 Armi della Cripta, prendendo Obiettivi o eliminando Abomini e Necromanti Profanatori.", "Fuggire con tutte le Guardie. Uscire attraverso la Zona di Uscita con tutte le Guardie. Ogni Sopravvissuto può uscire attraverso questa Zona alla fine del proprio Turno con tutte le Guardie che si trovano su di essa, fintanto che non ci sono Zombie nella Zona. NOTA: La Missione fallisce se una o più Guardie vengono eliminate."] },
+];
+
+export const WD_MISSION_EXTRAS: Record<string, MissionExtra> = {
+  "wd-m0": {
+    image: "/mappe/wd-m0.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m0-0.webp" },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m0-1.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m0-2.webp", count: 2 },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m0-3.webp" },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m0-4.webp", count: 2 },
+      { label: "Carte Equipaggiamento", icon: "/mappe/icone/wd-m0-5.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Pescare un numero di carte Equipaggiamento pari al numero dei Sopravvissuti e collocarle a faccia in giù nella Zona con lʼObiettivo sulla tessera 31R. Ripetere con la Zona con lʼObiettivo sulla tessera 32R.",
+      "Sono venuto con la mia armatura. Un Sopravvissuto può spendere 1 Azione per Cercare in una Zona con un Obiettivo per prendere una carta Equipaggiamento dalla pila. Questa azione può essere ripetuta diverse volte per Turno. Un Obiettivo non può essere preso finché ci sono carte Equipaggiamento nella sua Zona. Ogni Obiettivo fornisce 5 PA al Sopravvissuto che lo prende.",
+    ],
+  },
+  "wd-m1": {
+    image: "/mappe/wd-m1.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m1-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m1-1.webp" },
+      { label: "Zona Stendardo", icon: "/mappe/icone/wd-m1-2.webp" },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m1-3.webp", count: 6 },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m1-4.webp", count: 3 },
+      { label: "Scale di Corda", icon: "/mappe/icone/wd-m1-5.webp", count: 2 },
+      { label: "Guardie", icon: "/mappe/icone/wd-m1-6.webp", count: 12 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m1-7.webp", count: 4 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m1-8.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.",
+      "Attrezzature di sopravvivenza. Ogni Obiettivo Rosso fornisce 5 PA al Sopravvissuto che lo prende.",
+      "Armi rare. LʼObiettivo Blu e lʼObiettivo Verde forniscono unʼArma della Cripta casuale ognuno al Sopravvissuto che li prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Scorta di bile di drago. Un Sopravvissuto che si trova nella Zona con il segnalino Stendardo può spendere unʼAzione per ottenere una carta Bile di Drago da un qualsiasi mazzo o pila degli scarti. Poi, mescolare il mazzo. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Questa non è unʼAzione di Cercare e può essere effettuata diverse volte durante lo stesso Turno.",
+      "Tessere richieste: 27V, 28R, 29R, 31V, 32R e 34R.",
+    ],
+  },
+  "wd-m2": {
+    image: "/mappe/wd-m2.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m2-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m2-1.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m2-2.webp", count: 6 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m2-3.webp", count: 4 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m2-4.webp" },
+      { label: "Guardie", icon: "/mappe/icone/wd-m2-5.webp", count: 12 },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m2-6.webp", count: 6 },
+    ],
+    specialRules: [
+      "Preparazione.\n- Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.\n- Suddividere la squadra dei Sopravvissuti il più equamente possibile fra le due Zone di Partenza dei Sopravvissuti.",
+      "Gli ultimi Tomi dellʼEpurazione. Ogni Obiettivo fornisce 5 PA al Sopravvissuto che lo prende.\n- Gli Obiettivi Blu e Verde rappresentano i Tomi dellʼEpurazione intatti. Collocare il segnalino Obiettivo sulla plancia del Sopravvissuto. Non occupa uno slot inventario e può essere scambiato come una carta Equipaggiamento.\n- Ogni Obiettivo Rosso rappresenta un frammento dellʼultimo Tomo dellʼEpurazione. Vengono collocati sulla plancia del Sopravvissuto come descritto sopra e possono essere scambiati nello stesso modo. Un Sopravvissuto può radunare tutti i frammenti sulla propria plancia per ripristinare lʼultimo Tomo. Poi, scarta tutti gli Obiettivi Rossi tranne uno.",
+      "Sbarazzarsi della Corruzione. Per 1 Azione, un Sopravvissuto che si trova a Gittata 0-1 da un segnalino Generazione di Zombie (NON un segnalino Generazione di Profanatori) può scartare un Tomo dellʼEpurazione dal proprio inventario. Poi, risolvere questi effetti nellʼordine seguente: 1. Il segnalino Generazione di Zombie viene spostato nella Zona di Generazione di Partenza, aumentando il ritmo di Generazione. .",
+    ],
+  },
+  "wd-m3": {
+    image: "/mappe/wd-m3.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m3-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m3-1.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m3-2.webp", count: 5 },
+      { label: "Scale di Corda", icon: "/mappe/icone/wd-m3-3.webp", count: 2 },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m3-4.webp", count: 7 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m3-5.webp", count: 2 },
+      { label: "Guardie", icon: "/mappe/icone/wd-m3-6.webp", count: 12 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m3-7.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.",
+      "Reliquie. LʼObiettivo Blu e lʼObiettivo Verde forniscono 5 PA ognuno al Sopravvissuto che li prende.",
+      "Le armi perse. Ogni Obiettivo Rosso fornisce unʼArma della Cripta casuale al Sopravvissuto che lo prende. Il Sopravvissuto può riorganizzare il proprio inventario gratuitamente.",
+    ],
+  },
+  "wd-m4": {
+    image: "/mappe/wd-m4.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m4-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m4-1.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m4-2.webp", count: 6 },
+      { label: "Scala di Corda", icon: "/mappe/icone/wd-m4-3.webp", count: 1 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m4-4.webp", count: 4 },
+      { label: "Guardie", icon: "/mappe/icone/wd-m4-5.webp", count: 12 },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m4-6.webp", count: 5 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m4-7.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Collocare gli Obiettivi Blu e Verde nelle Zone indicate. Tenere presente che non ci sono segnalini Obiettivo sulla tessera 26V.",
+      "Armi rare. LʼObiettivo Blu e lʼObiettivo Verde forniscono unʼArma della Cripta casuale ognuno al Sopravvissuto che li prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Terra bruciata. Gli Obiettivi Rossi non possono essere presi normalmente. Un edificio viene dato alle fiamme non appena un effetto Fuoco di Drago si verifica nella sua Zona Obiettivo. Poi, applicare questi effetti:\n- Rimuovere il segnalino Obiettivo. Il Sopravvissuto che ha creato il Fuoco di Drago ottiene 5 PA.\n- Tutti i Personaggi nellʼedificio sono eliminati. Il Sopravvissuto che ha creato lʼeffetto Fuoco di Drago ottiene i PA corrispondenti.\n- Da questo momento in avanti, tutte le Zone dellʼedificio sono considerate Zone di Rovine.",
+    ],
+  },
+  "wd-m5": {
+    image: "/mappe/wd-m5.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m5-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m5-1.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m5-2.webp", count: 4 },
+      { label: "Scale di Corda", icon: "/mappe/icone/wd-m5-3.webp", count: 2 },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m5-4.webp", count: 6 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m5-5.webp", count: 2 },
+      { label: "Zona di Uscita", icon: "/mappe/icone/wd-m5-6.webp" },
+      { label: "Guardie", icon: "/mappe/icone/wd-m5-7.webp", count: 12 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m5-8.webp" },
+    ],
+    specialRules: [
+      "Armi nobili. Ogni Obiettivo fornisce unʼArma della Cripta casuale al Sopravvissuto che lo prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Sua Maestà. Il Segnalatore rappresenta lʼImperatrice di Spine. Un Sopravvissuto che si trova nella sua Zona può spendere unʼAzione e prendere il Segnalatore. Collocarlo sulla plancia del Sopravvissuto. Non occupa uno slot inventario e può essere scambiato come un Equipaggiamento. Da quel momento in poi, il Sopravvissuto che possiede il segnalino viene considerato come il Segnalatore stesso.",
+      "Guardie imperiali. Fino a quando il Segnalatore non viene preso, le Guardie nella sua Zona non possono Muoversi (ma possono comunque combattere).",
+      "Tessere richieste: 26R, 27R, 28R, 29V, 30V e 33V.",
+    ],
+  },
+  "wd-m6": {
+    image: "/mappe/wd-m6.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m6-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m6-1.webp" },
+      { label: "Guardie", icon: "/mappe/icone/wd-m6-2.webp", count: 12 },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m6-3.webp", count: 9 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m6-4.webp", count: 2 },
+      { label: "Zona di Uscita", icon: "/mappe/icone/wd-m6-5.webp" },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m6-6.webp", count: 8 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m6-7.webp" },
+    ],
+    specialRules: [
+      "Preparazione.\n- 2 segnalini Obiettivo aggiuntivi vengono posizionati sulle tessere 30V e 31V nelle Zone evidenziate sulla mappa.\n- Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.",
+      "Armi eroiche. Ogni Obiettivo Rosso fornisce unʼArma della Cripta casuale al Sopravvissuto che lo prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Cercare scale di corda. LʼObiettivo Blu e lʼObiettivo Verde assegnano 5 PA ognuno ai Sopravvissuti che li prendono, insieme a un segnalino Scala di Corda.",
+    ],
+  },
+  "wd-m7": {
+    image: "/mappe/wd-m7.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m7-0.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m7-1.webp", count: 4 },
+      { label: "Guardie", icon: "/mappe/icone/wd-m7-2.webp", count: 12 },
+      { label: "Scale di Corda", icon: "/mappe/icone/wd-m7-3.webp", count: 2 },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m7-4.webp" },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m7-5.webp" },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m7-6.webp", count: 4 },
+      { label: "Zona di Uscita", icon: "/mappe/icone/wd-m7-7.webp" },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m7-8.webp", count: 9 },
+    ],
+    specialRules: [
+      "Preparazione. Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.",
+      "Non pensavo che una corona fosse così pesante! LʼObiettivo Blu e lʼObiettivo Verde forniscono 5 PA ognuno al Sopravvissuto che li prende. Rappresentano la corona e lo scettro.",
+      "Armi imperiali. Ogni Obiettivo Rosso fornisce unʼArma della Cripta casuale al Sopravvissuto che lo prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Tessere richieste: 26V, 27R, 28R, 29R, 30R, 31R, 32R, 33V e 34V.",
+    ],
+  },
+  "wd-m8": {
+    image: "/mappe/wd-m8.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m8-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m8-1.webp" },
+      { label: "Zona Stendardo", icon: "/mappe/icone/wd-m8-2.webp" },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m8-3.webp", count: 6 },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m8-4.webp", count: 4 },
+      { label: "Guardie", icon: "/mappe/icone/wd-m8-5.webp", count: 12 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m8-6.webp", count: 4 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m8-7.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.",
+      "Reliquie di fede e gloria. Ogni Obiettivo Rosso fornisce 5 PA al Sopravvissuto che lo prende. Il segnalino viene collocato sulla plancia del Sopravvissuto. Non occupa spazio nel suo inventario e può essere scambiato come Equipaggiamento. Per 1 Azione, un Sopravvissuto che si trova a Gittata 0-1 da un segnalino Generazione di Zombie (NON un segnalino Generazione di Profanatori) può scartare un Obiettivo Rosso dal proprio inventario. Poi, il segnalino Zona di Generazione viene spostato nella Zona Stendardo.",
+      "Armi ancestrali. LʼObiettivo Blu e lʼObiettivo Verde forniscono unʼArma della Cripta casuale ognuno al Sopravvissuto che li prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+    ],
+  },
+  "wd-m9": {
+    image: "/mappe/wd-m9.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m9-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m9-1.webp" },
+      { label: "Zona di Uscita", icon: "/mappe/icone/wd-m9-2.webp" },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m9-3.webp", count: 6 },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m9-4.webp", count: 7 },
+      { label: "Scala di Corda", icon: "/mappe/icone/wd-m9-5.webp", count: 1 },
+      { label: "Guardie", icon: "/mappe/icone/wd-m9-6.webp", count: 12 },
+      { label: "Calderoni", icon: "/mappe/icone/wd-m9-7.webp", count: 3 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m9-8.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Suddividere la squadra dei Sopravvissuti il più equamente possibile fra le due Zone di Partenza dei Sopravvissuti.",
+      "Scortare l’Imperatrice. Il Segnalatore viene considerato un Sopravvissuto. Conta come un segnalino Rumore, viene eliminato dopo aver subito una sola Ferita e può effettuare solo Azioni di Movimento. Allʼinizio di ogni Fase dei Giocatori, il Segnalatore può Muoversi di 1 Zona in qualsiasi direzione scelta dai giocatori. Per farlo, deve esserci almeno 1 Sopravvissuto e nessuno Zombie nella sua Zona.",
+      "Una collezione impressionante! Ogni Obiettivo fornisce unʼArma della Cripta casuale al Sopravvissuto che lo prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Tessere richieste: 26V, 27V, 28V, 29R, 32R e 33V.",
+    ],
+  },
+  "wd-m10": {
+    image: "/mappe/wd-m10.webp",
+    elements: [
+      { label: "Zona di Partenza dei Sopravvissuti", icon: "/mappe/icone/wd-m10-0.webp" },
+      { label: "Segnalatore", icon: "/mappe/icone/wd-m10-1.webp" },
+      { label: "Corruzione", icon: "/mappe/icone/wd-m10-2.webp", count: 4 },
+      { label: "Zona di Uscita", icon: "/mappe/icone/wd-m10-3.webp" },
+      { label: "Guardie", icon: "/mappe/icone/wd-m10-4.webp", count: 12 },
+      { label: "Obiettivi", icon: "/mappe/icone/wd-m10-5.webp", count: 6 },
+      { label: "Zone di Generazione", icon: "/mappe/icone/wd-m10-6.webp" },
+    ],
+    specialRules: [
+      "Preparazione. Mescolare in modo casuale gli Obiettivi Blu e Verde tra gli Obiettivi Rossi, a faccia in giù.",
+      "Salvare sopravvissuti. Gli Obiettivi Blu e Verde forniscono 5 PA ognuno al Sopravvissuto che li prende. Rappresentano i cittadini che sono intrappolati e hanno bisogno di essere salvati.",
+      "Ricordi di Wintergrad. Ogni Obiettivo Rosso assegna unʼArma della Cripta casuale al Sopravvissuto che lo prende. Il Sopravvissuto può poi riorganizzare il proprio inventario gratuitamente. Se non sono disponibili Armi della Cripta, il Sopravvissuto ottiene invece 5 PA.",
+      "Tessere richieste: 28V, 29V, 30V, 31V, 33R e 34V.",
+    ],
+  },
+};
