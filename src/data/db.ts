@@ -97,6 +97,11 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 17: Green Horde confermato dal regolamento.
+    this.version(17).upgrade(async (tx) => {
+      const g = await tx.table('products').get('green-horde');
+      if (g && g.dataStatus !== 'verificato') await tx.table('products').update('green-horde', { dataStatus: 'verificato' });
+    });
     // Revisione 16: Undead or Alive confermato dal regolamento.
     this.version(16).upgrade(async (tx) => {
       const u = await tx.table('products').get('undead-or-alive');

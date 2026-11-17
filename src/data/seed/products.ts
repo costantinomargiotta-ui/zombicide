@@ -9,7 +9,7 @@ type SeedRow = [id: string, universe: UniverseId, name: string, kind: ProductKin
 
 const rows: SeedRow[] = [
   ['black-plague', 'fantasy', 'Zombicide: Black Plague', 'gioco-base', 'verificato'],
-  ['green-horde', 'fantasy', 'Zombicide: Green Horde', 'gioco-base', 'da-verificare'],
+  ['green-horde', 'fantasy', 'Zombicide: Green Horde', 'gioco-base', 'verificato'],
   ['wulfsburg', 'fantasy', 'Wulfsburg', 'espansione', 'verificato'],
   ['friends-and-foes', 'fantasy', 'Friends and Foes', 'espansione', 'verificato'],
   ['no-rest-for-the-wicked', 'fantasy', 'No Rest for the Wicked', 'espansione', 'verificato'],

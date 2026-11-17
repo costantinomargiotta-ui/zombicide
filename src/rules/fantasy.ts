@@ -1,6 +1,7 @@
 import type { UniverseRules } from './types';
 import { BP_TEMPLATE_ID } from './fantasy/blackPlague';
 import { WU_TEMPLATE_ID } from './fantasy/wulfsburg';
+import { GH_TEMPLATE_ID } from './fantasy/greenHorde';
 
 const BLACK_PLAGUE = 'Zombicide: Black Plague – Regolamento (ITA)';
 
@@ -20,10 +21,11 @@ export const fantasyRules: UniverseRules = {
   campaignTemplates: [
     { id: BP_TEMPLATE_ID, name: 'Missioni di Black Plague', productId: 'black-plague', status: 'pronto', missingMaterials: [] },
     { id: WU_TEMPLATE_ID, name: 'Missioni di Wulfsburg', productId: 'wulfsburg', status: 'pronto', missingMaterials: [] },
+    { id: GH_TEMPLATE_ID, name: 'Missioni di Green Horde', productId: 'green-horde', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
     'Fotografie delle carte Equipaggiamento di Black Plague (71 carte)',
-    'Regolamenti di Green Horde e White Death; pagine delle Missioni di Friends and Foes (pag. 12–23, assenti nel PDF fornito)',
+    'Regolamento di White Death; pagine delle Missioni di Friends and Foes (pag. 12–23, assenti nel PDF fornito)',
   ],
   sources: [{ document: BLACK_PLAGUE }],
 };

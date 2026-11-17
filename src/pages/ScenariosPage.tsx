@@ -18,8 +18,9 @@ import { MZ_MISSION_EXTRAS } from '../rules/marvel/marvelZombies';
 import { XM_MISSION_EXTRAS } from '../rules/marvel/xmenResistance';
 import { HR_MISSION_EXTRAS } from '../rules/marvel/heroesResistance';
 import { UO_MISSION_EXTRAS } from '../rules/western/undeadOrAlive';
+import { GH_MISSION_EXTRAS } from '../rules/fantasy/ghMissionMaps';
 
-const MISSION_EXTRAS = { ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS };
+const MISSION_EXTRAS = { ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS, ...GH_MISSION_EXTRAS };
 
 /** Mappa della Missione (dal regolamento), legenda e regole speciali. */
 function MissionMapView({ m }: { m: { id: string; code: string; title: string } }) {
