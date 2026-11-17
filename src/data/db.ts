@@ -97,6 +97,13 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 15: espansioni Fantasy confermate dai regolamenti (Wulfsburg, Friends and Foes, No Rest for the Wicked).
+    this.version(15).upgrade(async (tx) => {
+      for (const id of ['wulfsburg', 'friends-and-foes', 'no-rest-for-the-wicked']) {
+        const existing = await tx.table('products').get(id);
+        if (existing && existing.dataStatus !== 'verificato') await tx.table('products').update(id, { dataStatus: 'verificato' });
+      }
+    });
     // Revisione 14: schede di Wulfsburg (Theo, Ariane, Morrigan, Karl).
     this.version(14).upgrade(async (tx) => {
       await tx.table('abilities').bulkPut(seedFantasyAbilities);

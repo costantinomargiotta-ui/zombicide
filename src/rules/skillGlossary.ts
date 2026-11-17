@@ -194,4 +194,12 @@ export const SKILL_SOURCES: SkillSource[] = [
       { name: "Fratelli in armi: +1 dado Combattimento", description: "Si attiva solo se Lion-O e Snarf si trovano nella stessa Zona. Finché sono insieme nella stessa Zona, entrambi ottengono +1 dado Combattimento su tutti i loro attacchi (in Mischia, a Distanza o di Magia)." },
     ],
   },
+  {
+    universeId: "fantasy", productId: "friends-and-foes", source: "Friends and Foes – Regolamento, pag. 11 (Abilità aggiuntive dei Famigli)",
+    skills: [
+      { name: "3 Zone per Azione di Movimento", description: "Questa Abilità è simile a 2 Zone per Azione di Movimento, ma permette di muoversi invece fino a 3 Zone." },
+      { name: "+2 dadi: Mischia", description: "Questa Abilità funziona come +1 dado: Mischia, ma conferisce invece 2 dadi bonus." },
+      { name: "Visuale a volo d’uccello", description: "Il Sopravvissuto può tracciare le Linee di Vista oltre gli edifici e le Siepi, fino alle Zone oltre di essi. La Linea di Vista non può essere tracciata fino all’interno di un edificio, attraverso muri o porte chiuse. Il Sopravvissuto può usare questa Linea di Vista speciale per effettuare Attacchi." },
+    ],
+  },
 ];

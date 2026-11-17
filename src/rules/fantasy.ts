@@ -23,7 +23,7 @@ export const fantasyRules: UniverseRules = {
   ],
   missingMaterials: [
     'Fotografie delle carte Equipaggiamento di Black Plague (71 carte)',
-    'Regolamenti di Green Horde, Friends and Foes, No Rest for the Wicked, White Death',
+    'Regolamenti di Green Horde e White Death; pagine delle Missioni di Friends and Foes (pag. 12–23, assenti nel PDF fornito)',
   ],
   sources: [{ document: BLACK_PLAGUE }],
 };
