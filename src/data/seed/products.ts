@@ -28,6 +28,7 @@ const rows: SeedRow[] = [
 
   ['marvel-zombies', 'marvel', 'Marvel Zombies', 'gioco-base', 'verificato'],
   ['x-men-resistance', 'marvel', 'X-Men Resistance', 'gioco-base', 'verificato'],
+  ['heroes-resistance', 'marvel', "Heroes' Resistance", 'gioco-base', 'verificato'],
   ['fantastic-4-under-siege', 'marvel', 'Fantastic 4: Under Siege', 'espansione', 'da-verificare'],
   ['clash-of-the-sinister-six', 'marvel', 'Clash of the Sinister Six', 'espansione', 'da-verificare'],
   ['hydra-resurrection', 'marvel', 'Hydra Resurrection', 'espansione', 'da-verificare'],
