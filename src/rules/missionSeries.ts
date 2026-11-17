@@ -5,6 +5,7 @@
 import type { UniverseId } from '../domain/types';
 import { BP_MISSIONS, BP_TEMPLATE_ID } from './fantasy/blackPlague';
 import { Z2_MISSIONS, Z2_TEMPLATE_ID } from './moderno/zombicide2e';
+import { WU_MISSIONS, WU_TEMPLATE_ID } from './fantasy/wulfsburg';
 
 export interface SeriesMission {
   id: string;
@@ -34,6 +35,7 @@ export interface MissionSeries {
 
 export const MISSION_SERIES: MissionSeries[] = [
   { templateId: BP_TEMPLATE_ID, universeId: 'fantasy', productId: 'black-plague', gameName: 'Black Plague', source: 'Black Plague – Regole e Missioni, pag. 38–50', image: '/ui/universo-fantasy.webp', color: '#9b4de0', difficulties: ['Facile', 'Medio', 'Difficile'], missions: BP_MISSIONS },
+  { templateId: WU_TEMPLATE_ID, universeId: 'fantasy', productId: 'wulfsburg', gameName: 'Wulfsburg', source: 'Wulfsburg – Missioni aggiuntive, pag. 11–23', image: '/ui/universo-fantasy.webp', color: '#2a9d8f', difficulties: ['Facile', 'Medio', 'Difficile'], missions: WU_MISSIONS },
   { templateId: Z2_TEMPLATE_ID, universeId: 'moderno', productId: 'zombicide-2e', gameName: 'Zombicide 2ª edizione', source: 'Zombicide 2ª edizione – Regole e Missioni, pag. 36–62', image: '/ui/universo-moderno.webp', color: '#57c02a', difficulties: ['Facile', 'Medio', 'Difficile'], missions: Z2_MISSIONS },
 ];
 
