@@ -5,6 +5,7 @@
  */
 import { CAMPAIGN_ABILITIES, KNOWN_MILESTONES, RIO_MISSIONS, RIO_TEMPLATE_ID, type CampaignAbility, type RioMission } from './rioZJaneiro';
 import { WZC_ABILITIES, WZC_KNOWN_MILESTONES, WZC_MISSIONS, WZC_TEMPLATE_ID } from './washingtonZC';
+import { FH_KNOWN_MILESTONES, FH_MISSIONS, FH_TEMPLATE_ID } from './fortHendrix';
 
 export interface SheetCampaign {
   templateId: string;
@@ -33,6 +34,12 @@ export const SHEET_CAMPAIGNS: SheetCampaign[] = [
     rulebook: 'Zombicide: Washington Z.C. – Regole e Missioni (ITA)', sheetPages: '13–15',
     abilities: WZC_ABILITIES, missions: WZC_MISSIONS, knownMilestones: WZC_KNOWN_MILESTONES,
     image: '/ui/campagna-wzc.webp', scenarioImage: '/ui/campagna-wzc.webp', survivorsAdvice: 'Stato Infetto è una campagna per 6 Sopravvissuti (pag. 18).',
+  },
+  {
+    templateId: FH_TEMPLATE_ID, productId: 'fort-hendrix', gameName: 'Fort Hendrix', campaignName: 'Bandiera a Stelle e Strisce',
+    rulebook: 'Zombicide: Fort Hendrix – Regolamento (ITA)', sheetPages: '14–18',
+    abilities: WZC_ABILITIES, missions: FH_MISSIONS, knownMilestones: FH_KNOWN_MILESTONES,
+    image: '/scatole/fort-hendrix.webp', scenarioImage: '/scatole/fort-hendrix.webp', survivorsAdvice: 'Bandiera a Stelle e Strisce è una campagna per 6 Sopravvissuti, con Penny come Compagno della campagna (pag. 19).',
   },
 ];
 

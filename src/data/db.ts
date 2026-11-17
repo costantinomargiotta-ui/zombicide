@@ -97,6 +97,11 @@ export class HubDatabase extends Dexie {
         if (c.id === 'rio-av-sub-mg') c.conservation = 4;
       });
     });
+    // Revisione 19: Fort Hendrix confermato dal regolamento (richiede la 2ª edizione).
+    this.version(19).upgrade(async (tx) => {
+      const f = await tx.table('products').get('fort-hendrix');
+      if (f) await tx.table('products').update('fort-hendrix', { dataStatus: 'verificato', requires: f.requires?.length ? f.requires : ['zombicide-2e'] });
+    });
     // Revisione 18: White Death confermato dal regolamento.
     this.version(18).upgrade(async (tx) => {
       const w = await tx.table('products').get('white-death');

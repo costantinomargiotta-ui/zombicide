@@ -57,7 +57,7 @@ export const CAMPAIGN_ABILITIES: CampaignAbility[] = [
   ab('cintura-portaoggetti', 'Cintura portaoggetti', 'Tutto l\'Equipaggiamento nell\'inventario è considerato equipaggiato in Mano.'),
 ];
 
-export type MissionDifficulty = 'Medio' | 'Difficile' | 'Molto Difficile';
+export type MissionDifficulty = 'Medio' | 'Difficile' | 'Molto Difficile' | 'Speciale';
 
 export interface RioMission {
   id: string;

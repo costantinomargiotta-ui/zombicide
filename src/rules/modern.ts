@@ -2,6 +2,7 @@ import type { UniverseRules } from './types';
 import { RIO_TEMPLATE_ID } from './moderno/rioZJaneiro';
 import { Z2_TEMPLATE_ID } from './moderno/zombicide2e';
 import { WZC_TEMPLATE_ID } from './moderno/washingtonZC';
+import { FH_TEMPLATE_ID } from './moderno/fortHendrix';
 
 const Z2 = 'Zombicide 2ª Edizione – Regolamento (ITA)';
 
@@ -28,6 +29,7 @@ export const modernRules: UniverseRules = {
       missingMaterials: [],
     },
     { id: WZC_TEMPLATE_ID, name: 'Stato Infetto (Washington Z.C.)', productId: 'washington-zc', status: 'pronto', missingMaterials: [] },
+    { id: FH_TEMPLATE_ID, name: 'Bandiera a Stelle e Strisce (Fort Hendrix)', productId: 'fort-hendrix', status: 'pronto', missingMaterials: [] },
     { id: Z2_TEMPLATE_ID, name: 'Missioni di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [

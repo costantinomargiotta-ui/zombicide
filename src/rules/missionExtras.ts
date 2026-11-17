@@ -9,8 +9,9 @@ import { XM_MISSION_EXTRAS } from './marvel/xmenResistance';
 import { HR_MISSION_EXTRAS } from './marvel/heroesResistance';
 import { UO_MISSION_EXTRAS } from './western/undeadOrAlive';
 import { WD_MISSION_EXTRAS } from './fantasy/whiteDeath';
+import { FH_MISSION_EXTRAS } from './moderno/fortHendrix';
 
 export const ALL_MISSION_EXTRAS: Record<string, MissionExtra> = {
   ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...GH_MISSION_EXTRAS,
-  ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS, ...WD_MISSION_EXTRAS,
+  ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS, ...WD_MISSION_EXTRAS, ...FH_MISSION_EXTRAS,
 };

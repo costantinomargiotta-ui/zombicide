@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 // @ts-ignore: modulo Node disponibile solo nei test
 import { existsSync } from 'node:fs';
 import { SHEET_CAMPAIGNS } from '../rules/moderno/sheetCampaigns';
-import { MISSION_EXTRAS } from '../rules/moderno/missionMaps';
+import { ALL_MISSION_EXTRAS as MISSION_EXTRAS } from '../rules/missionExtras';
 import { BP_MISSIONS } from '../rules/fantasy/blackPlague';
 import { BP_MISSION_EXTRAS } from '../rules/fantasy/bpMissionMaps';
 import { Z2_MISSIONS } from '../rules/moderno/zombicide2e';
@@ -18,7 +18,7 @@ import { WD_MISSIONS, WD_MISSION_EXTRAS } from '../rules/fantasy/whiteDeath';
 import { GH_MISSION_EXTRAS } from '../rules/fantasy/ghMissionMaps';
 
 describe('mappe delle Missioni', () => {
-  it('ogni Missione di Rio e Washington ha mappa, legenda con icone e regole speciali', () => {
+  it('ogni Missione delle campagne con scheda (Rio, Washington, Fort Hendrix) ha mappa, legenda con icone e regole speciali', () => {
     for (const sc of SHEET_CAMPAIGNS) for (const m of sc.missions) {
       const x = MISSION_EXTRAS[m.id];
       expect(x, m.id).toBeDefined();
