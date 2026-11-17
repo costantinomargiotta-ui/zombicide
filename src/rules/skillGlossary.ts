@@ -441,4 +441,18 @@ export const SKILL_SOURCES: SkillSource[] = [
       { name: "Vista sulle Rovine", description: "Il Sopravvissuto considera le Zone di Rovine come Zone di strada quando traccia le Linee di Vista." },
     ],
   },
+  {
+    universeId: "fantasy", productId: "eternal-empire", source: "White Death – The Eternal Empire, Regolamento, pag. 26 (Nuove Abilità; per ogni Azione si spende un solo segnalino Chi)",
+    skills: [
+      { name: "+2 dadi: [Azione] (spendendo 1 Chi)", description: "Ogni volta che il Sopravvissuto risolve un’Azione del tipo specificato (di Combattimento, di Magia, in Mischia o a Distanza), può spendere 1 Chi per ricevere +2 dadi con l’arma che usa." },
+      { name: "[Abilità] (spendendo 1 Chi)", description: "Il Sopravvissuto può spendere 1 Chi per usare l’Abilità specificata." },
+      { name: "Saltare (spendendo 1 Chi)", description: "Il Sopravvissuto può spendere 1 Chi per usare l’Abilità Saltare gratuitamente. Il Sopravvissuto può usare questa Abilità una volta durante ogni suo Turno. Si muove di 2 Zone fino a una Zona su cui ha Linea di Vista. Ignora tutto nelle Zone interposte, tranne i muri e le porte chiuse. Questa Abilità può essere utilizzata per saltare su un Cammino di Ronda su cui il Sopravvissuto ha Linea di Vista. Le Abilità correlate al Movimento (come +1 Zona per Movimento o Inafferrabile) vengono ignorate, mentre le penalità al Movimento (come avere degli Zombie nella Zona di partenza) vanno applicate." },
+      { name: "Dio Interiore", description: "Il Sopravvissuto non perde alcun segnalino Chi quando una carta Abominio Divora-Dei viene pescata." },
+      { name: "Guardie: Uccisori di Guardiani", description: "Questa Abilità può essere utilizzata ogni volta che il Sopravvissuto effettua un’Azione delle Guardie in Mischia o a Distanza. Le Guardie considerano i Bruti Guardiani come Bruti standard per quell’Azione in Mischia o a Distanza. Possono uccidere gli Zombie senza che nessuno spenda Chi!" },
+      { name: "Guerriero del Ghiaccio", description: "Il Sopravvissuto può effettuare Azioni di Combattimento mentre si trova in Zone di Ghiaccio." },
+      { name: "Risultato 6: +1 Chi", description: "Il Sopravvissuto riceve 1 Chi per ogni 6 che ottiene al tiro in un’Azione di Combattimento." },
+      { name: "Viandante dei Ponti", description: "Il Sopravvissuto può entrare o uscire da una Zona di Ponte dai suoi lati (non soltanto dagli ingressi)." },
+      { name: "Viandante del Ghiaccio", description: "Una volta per Turno, il Sopravvissuto può effettuare 1 Azione di Movimento gratuita quando si trova in una Zona di Ghiaccio." },
+    ],
+  },
 ];

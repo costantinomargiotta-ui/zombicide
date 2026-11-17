@@ -14,6 +14,7 @@ const rows: SeedRow[] = [
   ['friends-and-foes', 'fantasy', 'Friends and Foes', 'espansione', 'verificato'],
   ['no-rest-for-the-wicked', 'fantasy', 'No Rest for the Wicked', 'espansione', 'verificato'],
   ['white-death', 'fantasy', 'Zombicide: White Death', 'gioco-base', 'verificato'],
+  ['eternal-empire', 'fantasy', 'The Eternal Empire', 'espansione', 'verificato', ['white-death']],
   ['thundercats', 'fantasy', 'ThunderCats', 'contenuto-aggiuntivo', 'da-verificare', ['black-plague']],
 
   ['zombicide-1e', 'moderno', 'Zombicide 1ª edizione', 'gioco-base', 'da-verificare'],

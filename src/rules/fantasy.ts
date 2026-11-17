@@ -3,6 +3,7 @@ import { BP_TEMPLATE_ID } from './fantasy/blackPlague';
 import { WU_TEMPLATE_ID } from './fantasy/wulfsburg';
 import { GH_TEMPLATE_ID } from './fantasy/greenHorde';
 import { WD_TEMPLATE_ID } from './fantasy/whiteDeath';
+import { EE_TEMPLATE_ID } from './fantasy/eternalEmpire';
 
 const BLACK_PLAGUE = 'Zombicide: Black Plague – Regolamento (ITA)';
 
@@ -24,6 +25,7 @@ export const fantasyRules: UniverseRules = {
     { id: WU_TEMPLATE_ID, name: 'Missioni di Wulfsburg', productId: 'wulfsburg', status: 'pronto', missingMaterials: [] },
     { id: GH_TEMPLATE_ID, name: 'Missioni di Green Horde', productId: 'green-horde', status: 'pronto', missingMaterials: [] },
     { id: WD_TEMPLATE_ID, name: 'Missioni di White Death', productId: 'white-death', status: 'pronto', missingMaterials: [] },
+    { id: EE_TEMPLATE_ID, name: 'Missioni di The Eternal Empire', productId: 'eternal-empire', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
     'Fotografie delle carte Equipaggiamento di Black Plague (71 carte)',
