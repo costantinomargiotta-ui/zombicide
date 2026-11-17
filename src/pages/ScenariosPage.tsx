@@ -10,17 +10,7 @@ import { Panel } from '../ui/components/Panel';
 import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Modal } from '../ui/components/Modal';
-import { MISSION_EXTRAS as MODERN_EXTRAS } from '../rules/moderno/missionMaps';
-import { BP_MISSION_EXTRAS } from '../rules/fantasy/bpMissionMaps';
-import { Z2_MISSION_EXTRAS } from '../rules/moderno/z2MissionMaps';
-import { WU_MISSION_EXTRAS } from '../rules/fantasy/wuMissionMaps';
-import { MZ_MISSION_EXTRAS } from '../rules/marvel/marvelZombies';
-import { XM_MISSION_EXTRAS } from '../rules/marvel/xmenResistance';
-import { HR_MISSION_EXTRAS } from '../rules/marvel/heroesResistance';
-import { UO_MISSION_EXTRAS } from '../rules/western/undeadOrAlive';
-import { GH_MISSION_EXTRAS } from '../rules/fantasy/ghMissionMaps';
-
-const MISSION_EXTRAS = { ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS, ...GH_MISSION_EXTRAS };
+import { ALL_MISSION_EXTRAS as MISSION_EXTRAS } from '../rules/missionExtras';
 
 /** Mappa della Missione (dal regolamento), legenda e regole speciali. */
 function MissionMapView({ m }: { m: { id: string; code: string; title: string } }) {

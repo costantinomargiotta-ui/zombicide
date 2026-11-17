@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { BarChart3, Bell as Bell_, BookOpen, Box, CircleUserRound, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Target, Trophy, Users, X } from 'lucide-react';
+import { BarChart3, Bell as Bell_, BookOpen, Box, LayoutDashboard, CircleUserRound, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Target, Trophy, Users, X } from 'lucide-react';
 import { useRecentActivities } from '../../data/hooks';
 import { useSyncStatus } from '../../data/syncController';
 import { relativeTime } from '../../lib/format';
@@ -128,6 +128,7 @@ function SideLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { path } = useScope();
   const links = [
     { sub: 'collezione', label: 'La mia Collezione', icon: Box },
+    { sub: 'copertura', label: 'Copertura', icon: LayoutDashboard },
     { sub: 'campagne', label: 'Le mie Campagne', icon: Target },
     { sub: 'partite', label: 'Registro Partite', icon: ClipboardList },
     { sub: 'progressi', label: 'Progressi', icon: BarChart3 },

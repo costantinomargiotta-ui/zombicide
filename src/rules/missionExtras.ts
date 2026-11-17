@@ -1,0 +1,15 @@
+/** Tutte le mappe/legende/regole speciali delle Missioni, indicizzate per id missione. */
+import { MISSION_EXTRAS as MODERN_EXTRAS, type MissionExtra } from './moderno/missionMaps';
+import { BP_MISSION_EXTRAS } from './fantasy/bpMissionMaps';
+import { Z2_MISSION_EXTRAS } from './moderno/z2MissionMaps';
+import { WU_MISSION_EXTRAS } from './fantasy/wuMissionMaps';
+import { GH_MISSION_EXTRAS } from './fantasy/ghMissionMaps';
+import { MZ_MISSION_EXTRAS } from './marvel/marvelZombies';
+import { XM_MISSION_EXTRAS } from './marvel/xmenResistance';
+import { HR_MISSION_EXTRAS } from './marvel/heroesResistance';
+import { UO_MISSION_EXTRAS } from './western/undeadOrAlive';
+
+export const ALL_MISSION_EXTRAS: Record<string, MissionExtra> = {
+  ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...GH_MISSION_EXTRAS,
+  ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS,
+};
