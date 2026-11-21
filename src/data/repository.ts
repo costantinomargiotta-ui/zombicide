@@ -1,5 +1,5 @@
 import type {
-  Activity, ActivityKind, Campaign, Character, EquipmentCard, CampaignStatus, CollectionEntry, Product,
+  Activity, ActivityKind, Campaign, Character, EquipmentCard, CampaignStatus, CollectionEntry, GameSession, Product,
   RecordOrigin, UniverseId,
 } from '../domain/types';
 import { CAMPAIGN_STATUS_LABEL } from '../domain/types';
@@ -28,6 +28,20 @@ export function createRepository(database: HubDatabase = db) {
         await database.collection.put(entry);
         await log('collezione', `${product.name} ${owned ? 'aggiunto alla' : 'rimosso dalla'} collezione`, { universeId: product.universeId, refId: productId });
       });
+    },
+
+    /** «Segna come giocata»: registra una partita veloce, senza campagna né partecipanti. */
+    async recordQuickSession(input: { universeId: UniverseId; scenarioId: string; scenarioTitle: string; outcome: 'vittoria' | 'sconfitta'; playedOn?: string }) {
+      const now = nowIso();
+      const session: GameSession = {
+        id: newId('sess'), universeId: input.universeId, scenarioId: input.scenarioId, scenarioTitle: input.scenarioTitle,
+        playedOn: input.playedOn ?? now.slice(0, 10), outcome: input.outcome, origin: 'utente', createdAt: now, updatedAt: now,
+      };
+      await database.transaction('rw', database.sessions, database.activities, async () => {
+        await database.sessions.add(session);
+        await log('partita', `${input.outcome === 'vittoria' ? 'Vittoria' : 'Sconfitta'}: ${input.scenarioTitle}`, { universeId: input.universeId, refId: session.id });
+      });
+      return session.id;
     },
 
     async setCollectionNotes(productId: string, notes: string) {

@@ -40,7 +40,7 @@ describe('serie di missioni', () => {
   it('ogni serie ha id univoci e una difficoltà prevista', () => {
     for (const sr of MISSION_SERIES) {
       expect(new Set(sr.missions.map((m) => m.id)).size).toBe(sr.missions.length);
-      expect(sr.missions.every((m) => sr.difficulties.includes(m.difficulty))).toBe(true);
+      expect(sr.missions.filter((m) => !(m as { pending?: boolean }).pending).every((m) => sr.difficulties.includes(m.difficulty))).toBe(true);
     }
   });
   it('calcola lo stato senza ordine obbligato', () => {

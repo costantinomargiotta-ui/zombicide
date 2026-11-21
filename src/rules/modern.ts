@@ -1,6 +1,7 @@
 import type { UniverseRules } from './types';
 import { RIO_TEMPLATE_ID } from './moderno/rioZJaneiro';
 import { Z2_TEMPLATE_ID } from './moderno/zombicide2e';
+import { AND_TEMPLATE_ID, WEB_TEMPLATE_ID } from './moderno/webMissions';
 import { WZC_TEMPLATE_ID } from './moderno/washingtonZC';
 import { FH_TEMPLATE_ID } from './moderno/fortHendrix';
 
@@ -31,6 +32,8 @@ export const modernRules: UniverseRules = {
     { id: WZC_TEMPLATE_ID, name: 'Stato Infetto (Washington Z.C.)', productId: 'washington-zc', status: 'pronto', missingMaterials: [] },
     { id: FH_TEMPLATE_ID, name: 'Bandiera a Stelle e Strisce (Fort Hendrix)', productId: 'fort-hendrix', status: 'pronto', missingMaterials: [] },
     { id: Z2_TEMPLATE_ID, name: 'Missioni di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
+    { id: WEB_TEMPLATE_ID, name: 'Missioni web di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: ['Testi di The Squid Trials, Beer Run e No Kings, Only the Dead (solo pagina web)'] },
+    { id: AND_TEMPLATE_ID, name: 'A New Dawn (campagna web)', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
     'Regole di Fort Hendrix e di Zombicide 1ª edizione',

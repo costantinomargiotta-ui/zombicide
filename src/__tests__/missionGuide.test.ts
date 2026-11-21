@@ -5,7 +5,7 @@ import { ALL_MISSION_EXTRAS } from '../rules/missionExtras';
 import { missionGuide } from '../services/missionGuide';
 
 describe('Come si gioca', () => {
-  const ms = [...SHEET_CAMPAIGNS.flatMap((c) => c.missions), ...MISSION_SERIES.flatMap((s) => s.missions)];
+  const ms = [...SHEET_CAMPAIGNS.flatMap((c) => c.missions), ...MISSION_SERIES.flatMap((s) => s.missions)].filter((m) => !(m as { pending?: boolean }).pending);
   it('ogni Missione ha riassunto e almeno un passo', () => {
     for (const m of ms) {
       const g = missionGuide(m as never, ALL_MISSION_EXTRAS[m.id]);

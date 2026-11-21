@@ -19,15 +19,16 @@ export interface CoverageRow {
 export function coverage(products: Product[], characters: Character[]): CoverageRow[] {
   return products.map((product) => {
     const sheet = SHEET_CAMPAIGNS.find((c) => c.productId === product.id);
-    const series = MISSION_SERIES.find((s) => s.productId === product.id);
-    const missions = sheet?.missions ?? series?.missions ?? [];
+    const all = MISSION_SERIES.filter((s) => s.productId === product.id);
+    const series = all[0];
+    const missions = sheet?.missions ?? all.flatMap((s) => s.missions.filter((m) => !(m as { pending?: boolean }).pending));
     const chars = characters.filter((c) => c.productId === product.id);
     return {
       product,
       missions: missions.length,
       withMap: missions.filter((m) => ALL_MISSION_EXTRAS[m.id]).length,
       kind: sheet ? 'campagna' : series ? 'serie' : null,
-      source: sheet?.rulebook ?? series?.source,
+      source: sheet?.rulebook ?? (all.length ? all.map((s) => s.source).join(' · ') : undefined),
       survivors: chars.length,
       survivorsWithAbilities: chars.filter((c) => c.abilities.length > 0).length,
       skills: SKILL_SOURCES.filter((s) => s.productId === product.id).reduce((a, s) => a + s.skills.length, 0),
