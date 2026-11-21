@@ -98,6 +98,11 @@ export class HubDatabase extends Dexie {
       });
     });
     // Revisione 19: Fort Hendrix confermato dal regolamento (richiede la 2ª edizione).
+    // Revisione 20: Zombicide 1ª edizione confermata dal regolamento.
+    this.version(20).upgrade(async (tx) => {
+      const z = await tx.table('products').get('zombicide-1e');
+      if (z && z.dataStatus !== 'verificato') await tx.table('products').update('zombicide-1e', { dataStatus: 'verificato' });
+    });
     this.version(19).upgrade(async (tx) => {
       const f = await tx.table('products').get('fort-hendrix');
       if (f) await tx.table('products').update('fort-hendrix', { dataStatus: 'verificato', requires: f.requires?.length ? f.requires : ['zombicide-2e'] });

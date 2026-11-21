@@ -8,7 +8,7 @@ import { Badge } from '../ui/components/Badge';
 import { AND_MISSIONS, WEB_MISSIONS, WEB_PAGE_ONLY, type WebMission } from '../rules/moderno/webMissions';
 import { HowToPlay, MissionMapView } from './missionViews';
 
-const PRODUCT_NAME: Record<string, string> = { 'rio-z-janeiro': 'Rio Z Janeiro', 'washington-zc': 'Washington Z.C.', 'fort-hendrix': 'Fort Hendrix' };
+const PRODUCT_NAME: Record<string, string> = { 'rio-z-janeiro': 'Rio Z Janeiro', 'washington-zc': 'Washington Z.C.', 'fort-hendrix': 'Fort Hendrix', pariz: 'PariZ' };
 const ALL: WebMission[] = [...WEB_MISSIONS, ...WEB_PAGE_ONLY];
 const minutes = (m: WebMission) => Number.parseInt(m.duration, 10) || 0;
 const needs = (m: WebMission) => [...(m.requires ?? []).map((p) => PRODUCT_NAME[p] ?? p), ...(m.requiresOther ?? [])];
@@ -179,7 +179,7 @@ export function WebMissionsSection() {
         </label>
         <select value={mat} onChange={(e) => setMat(e.target.value)} aria-label="Materiale" className={sel}>
           <option value="">Materiale</option><option value="base">Solo scatola base</option>
-          {['Rio Z Janeiro', 'Washington Z.C.', 'Fort Hendrix', 'Pariz', 'Urban Legends Abomination Pack'].map((x) => <option key={x} value={x}>{x}</option>)}
+          {['Rio Z Janeiro', 'Washington Z.C.', 'Fort Hendrix', 'PariZ', 'Urban Legends Abomination Pack'].map((x) => <option key={x} value={x}>{x}</option>)}
         </select>
         <select value={diff} onChange={(e) => setDiff(e.target.value)} aria-label="Difficoltà" className={sel}>
           <option value="">Difficoltà</option>{['Medio', 'Difficile', 'Molto difficile', 'Speciale'].map((x) => <option key={x}>{x}</option>)}

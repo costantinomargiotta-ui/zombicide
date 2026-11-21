@@ -76,8 +76,8 @@ export function ScenariosPage() {
                   <button type="button" onClick={() => setOpen(isOpen ? null : m.id)} aria-expanded={isOpen} className="flex w-full flex-wrap items-center gap-3 px-3 py-2 text-left">
                     <span className="title-display min-w-12 text-2xl text-[var(--accent-2)]">{m.code}</span>
                     <span className="min-w-40 flex-1 font-semibold">{m.title}</span>
-                    <Badge tone={m.difficulty === 'Facile' ? 'ok' : m.difficulty === 'Medio' ? 'neutral' : 'warn'}>{m.difficulty}</Badge>
-                    <span className="text-xs text-[var(--muted)]">{m.survivors ? `${m.survivors} · ` : ''}{m.duration}</span>
+                    <Badge tone={m.difficulty === 'Facile' ? 'ok' : m.difficulty === 'Medio' || m.difficulty === 'Non indicata' ? 'neutral' : 'warn'}>{m.difficulty === 'Non indicata' ? 'Difficoltà non indicata' : m.difficulty}</Badge>
+                    {m.duration !== 'Non indicata' && <span className="text-xs text-[var(--muted)]">{m.survivors ? `${m.survivors} · ` : ''}{m.duration}</span>}
                     <span className="text-xs text-[var(--muted)]">{own.length ? `${own.length} partite · ${own.filter((s) => s.outcome === 'vittoria').length} vittorie` : 'mai giocata'}</span>
                     <ChevronDown className={`size-4 transition ${isOpen ? 'rotate-180' : ''}`} />
                   </button>

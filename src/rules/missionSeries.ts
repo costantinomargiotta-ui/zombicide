@@ -5,6 +5,7 @@
 import type { UniverseId } from '../domain/types';
 import { BP_MISSIONS, BP_TEMPLATE_ID } from './fantasy/blackPlague';
 import { Z2_MISSIONS, Z2_TEMPLATE_ID } from './moderno/zombicide2e';
+import { Z1_MISSIONS, Z1_TEMPLATE_ID } from './moderno/zombicide1e';
 import { WU_MISSIONS, WU_TEMPLATE_ID } from './fantasy/wulfsburg';
 import { GH_MISSIONS, GH_TEMPLATE_ID } from './fantasy/greenHorde';
 import { WD_MISSIONS, WD_TEMPLATE_ID } from './fantasy/whiteDeath';
@@ -52,6 +53,7 @@ export const MISSION_SERIES: MissionSeries[] = [
   { templateId: WD_TEMPLATE_ID, universeId: 'fantasy', productId: 'white-death', gameName: 'White Death', source: 'White Death – Regolamento, pag. 40–50', image: '/ui/universo-fantasy.webp', color: '#7dd3fc', difficulties: ['Facile', 'Medio', 'Difficile'], missions: WD_MISSIONS },
   { templateId: EE_TEMPLATE_ID, universeId: 'fantasy', productId: 'eternal-empire', gameName: 'The Eternal Empire', source: 'The Eternal Empire – Regolamento, pag. 16–26', image: '/ui/universo-fantasy.webp', color: '#0ea5a4', difficulties: ['Facile', 'Medio', 'Difficile'], missions: EE_MISSIONS },
   { templateId: Z2_TEMPLATE_ID, universeId: 'moderno', productId: 'zombicide-2e', gameName: 'Zombicide 2ª edizione', source: 'Zombicide 2ª edizione – Regole e Missioni, pag. 36–62', image: '/ui/universo-moderno.webp', color: '#57c02a', difficulties: ['Facile', 'Medio', 'Difficile'], missions: Z2_MISSIONS },
+  { templateId: Z1_TEMPLATE_ID, universeId: 'moderno', productId: 'zombicide-1e', gameName: 'Zombicide 1ª edizione', source: 'Zombicide 1ª edizione – Regolamento, pag. 20–30 (difficoltà e durata non indicate)', image: '/ui/universo-moderno.webp', color: '#9ca3af', difficulties: ['Non indicata'], missions: Z1_MISSIONS },
   { templateId: WEB_TEMPLATE_ID, universeId: 'moderno', productId: 'zombicide-2e', gameName: 'Missioni web', source: 'Missioni web ufficiali di zombicide.com (PDF in inglese, testi tradotti)', image: '/ui/universo-moderno.webp', color: '#f5c518', difficulties: ['Medio', 'Difficile', 'Molto difficile', 'Speciale'], missions: [...WEB_MISSIONS, ...WEB_PAGE_ONLY], web: true },
   { templateId: AND_TEMPLATE_ID, universeId: 'moderno', productId: 'zombicide-2e', gameName: 'A New Dawn', source: 'Campagna web ufficiale «A New Dawn», 6 capitoli (PDF in inglese, testi tradotti)', image: '/ui/universo-moderno.webp', color: '#f07d1a', difficulties: ['Medio', 'Difficile'], missions: AND_MISSIONS, web: true, inOrder: true },
   { templateId: MZ_TEMPLATE_ID, universeId: 'marvel', productId: 'marvel-zombies', gameName: 'Marvel Zombies', source: 'Marvel Zombies – Regolamento, pag. 23–42 (MZ: Modalità Zombie, MH: Modalità Eroe)', image: '/ui/universo-marvel.webp', color: '#3b82f6', difficulties: ['Facile', 'Medio', 'Difficile', 'Molto difficile'], missions: MZ_MISSIONS },

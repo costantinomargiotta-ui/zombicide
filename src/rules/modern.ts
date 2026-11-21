@@ -2,6 +2,8 @@ import type { UniverseRules } from './types';
 import { RIO_TEMPLATE_ID } from './moderno/rioZJaneiro';
 import { Z2_TEMPLATE_ID } from './moderno/zombicide2e';
 import { AND_TEMPLATE_ID, WEB_TEMPLATE_ID } from './moderno/webMissions';
+import { Z1_TEMPLATE_ID } from './moderno/zombicide1e';
+import { PZ_TEMPLATE_ID } from './moderno/pariz';
 import { WZC_TEMPLATE_ID } from './moderno/washingtonZC';
 import { FH_TEMPLATE_ID } from './moderno/fortHendrix';
 
@@ -31,14 +33,15 @@ export const modernRules: UniverseRules = {
     },
     { id: WZC_TEMPLATE_ID, name: 'Stato Infetto (Washington Z.C.)', productId: 'washington-zc', status: 'pronto', missingMaterials: [] },
     { id: FH_TEMPLATE_ID, name: 'Bandiera a Stelle e Strisce (Fort Hendrix)', productId: 'fort-hendrix', status: 'pronto', missingMaterials: [] },
+    { id: PZ_TEMPLATE_ID, name: 'Catacombe dei Non Morti (PariZ)', productId: 'pariz', status: 'pronto', missingMaterials: ['Elenco delle Abilità della Campagna (foto della Scheda Campagna)'] },
+    { id: Z1_TEMPLATE_ID, name: 'Missioni di Zombicide 1ª edizione', productId: 'zombicide-1e', status: 'pronto', missingMaterials: [] },
     { id: Z2_TEMPLATE_ID, name: 'Missioni di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
     { id: WEB_TEMPLATE_ID, name: 'Missioni web di Zombicide 2ª edizione', productId: 'zombicide-2e', status: 'pronto', missingMaterials: ['Testi di The Squid Trials, Beer Run e No Kings, Only the Dead (solo pagina web)'] },
     { id: AND_TEMPLATE_ID, name: 'A New Dawn (campagna web)', productId: 'zombicide-2e', status: 'pronto', missingMaterials: [] },
   ],
   missingMaterials: [
-    'Regole di Fort Hendrix e di Zombicide 1ª edizione',
     'Carte Equipaggiamento Avanzato di Rio Z Janeiro (per collegare l\'equipaggiamento conservato al catalogo)',
     'Fotografie delle carte Equipaggiamento di Washington Z.C. (95 carte, di cui 33 dei Servizi Segreti)',
   ],
-  sources: [{ document: Z2 }, { document: 'Zombicide: Rio Z Janeiro – Regole e Missioni (ITA)' }, { document: 'Zombicide: Washington Z.C. – Regole e Missioni (ITA)' }],
+  sources: [{ document: Z2 }, { document: 'Zombicide: Rio Z Janeiro – Regole e Missioni (ITA)' }, { document: 'Zombicide: Washington Z.C. – Regole e Missioni (ITA)' }, { document: 'Zombicide 1ª edizione – Regolamento (ITA)' }, { document: 'Zombicide: PariZ – Regole e Missioni (ITA)' }],
 };

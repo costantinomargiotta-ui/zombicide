@@ -44,7 +44,13 @@ export function missionGuide(m: GuideMission, extra?: MissionExtra): MissionGuid
   const n = m.objectives.length;
   const order = n <= 1 ? 'Un solo obiettivo' : m.objectivesInOrder ? `${n} obiettivi da completare in questo ordine` : `${n} obiettivi da completare in qualsiasi ordine`;
   const LEVEL: Record<string, string> = { Facile: 'facile', Medio: 'media', Media: 'media', Difficile: 'difficile', 'Molto Difficile': 'molto difficile', 'Molto difficile': 'molto difficile', Speciale: 'di difficoltà speciale' };
-  const summary = `${order}. Missione ${LEVEL[m.difficulty] ?? m.difficulty.toLowerCase()}, durata ${m.duration.replace(/^durata /, '')}${m.startTime ? `, si parte alle ${m.startTime}` : ''}.`;
+  const known = (v: string) => !/^(non indicata|–)$/i.test(v.trim());
+  const facts = [
+    known(m.difficulty) ? `Missione ${LEVEL[m.difficulty] ?? m.difficulty.toLowerCase()}` : '',
+    known(m.duration) ? `durata ${m.duration.replace(/^durata /, '')}` : '',
+    m.startTime ? `si parte alle ${m.startTime}` : '',
+  ].filter(Boolean).join(', ');
+  const summary = `${order}.${facts ? ` ${facts.charAt(0).toUpperCase()}${facts.slice(1)}.` : ''}`;
 
   const setup: string[] = [];
   const watchOut: string[] = [];
@@ -55,7 +61,7 @@ export function missionGuide(m: GuideMission, extra?: MissionExtra): MissionGuid
     const body = (detail ?? '').trim();
     if (/^Preparazione/i.test(title)) { setup.push(body || r); continue; }
     if (/elimina(re|ti)? tutti i Personaggi|eliminat[oi]? .*\(nessun tiro Armatura\)/i.test(r)) watchOut.push(`${title}: ${body}`);
-    else if (/partita è persa|Missione fallisce|perdono( immediatamente)? la partita|giocatori perdono/i.test(r)) watchOut.push(`${title}: ${body}`);
+    else if (/partita è persa|Missione è persa|Missione fallisce|perdono( immediatamente)? la partita|giocatori perdono/i.test(r)) watchOut.push(`${title}: ${body}`);
     else if (/non (può|possono) essere (apert[ae]|pres[oa]|distrutt[ae]|rimoss[ae])|non può essere aperta|perdono|non (può|possono) muoversi|blocca la Zona/i.test(r) && !/Fintanto che su una (Zona|tessera)/i.test(r)) watchOut.push(`${title}: ${body}`);
   }
   // Condizioni di sconfitta scritte negli obiettivi.

@@ -6,6 +6,7 @@
 import { CAMPAIGN_ABILITIES, KNOWN_MILESTONES, RIO_MISSIONS, RIO_TEMPLATE_ID, type CampaignAbility, type RioMission } from './rioZJaneiro';
 import { WZC_ABILITIES, WZC_KNOWN_MILESTONES, WZC_MISSIONS, WZC_TEMPLATE_ID } from './washingtonZC';
 import { FH_KNOWN_MILESTONES, FH_MISSIONS, FH_TEMPLATE_ID } from './fortHendrix';
+import { PZ_ABILITIES, PZ_KNOWN_MILESTONES, PZ_MISSIONS, PZ_TEMPLATE_ID } from './pariz';
 
 export interface SheetCampaign {
   templateId: string;
@@ -40,6 +41,12 @@ export const SHEET_CAMPAIGNS: SheetCampaign[] = [
     rulebook: 'Zombicide: Fort Hendrix – Regolamento (ITA)', sheetPages: '14–18',
     abilities: WZC_ABILITIES, missions: FH_MISSIONS, knownMilestones: FH_KNOWN_MILESTONES,
     image: '/scatole/fort-hendrix.webp', scenarioImage: '/scatole/fort-hendrix.webp', survivorsAdvice: 'Bandiera a Stelle e Strisce è una campagna per 6 Sopravvissuti, con Penny come Compagno della campagna (pag. 19).',
+  },
+  {
+    templateId: PZ_TEMPLATE_ID, productId: 'pariz', gameName: 'PariZ', campaignName: 'Catacombe dei Non Morti',
+    rulebook: 'Zombicide: PariZ – Regole e Missioni (ITA)', sheetPages: '17–18',
+    abilities: PZ_ABILITIES, missions: PZ_MISSIONS, knownMilestones: PZ_KNOWN_MILESTONES,
+    image: '/scatole/pariz.webp', scenarioImage: '/scatole/pariz.webp', survivorsAdvice: 'Catacombe dei Non Morti è una campagna per 6 Sopravvissuti, con Lorànt Béarn come Compagno della campagna: se muore, la campagna è persa (pag. 20). Dopo la Missione 3 si sceglie tra la Missione 4 e la Missione 5. L’elenco delle Abilità della Campagna è sulla Scheda Campagna e non è ancora inserito.',
   },
 ];
 

@@ -16,8 +16,8 @@ export interface SkillMatch { skill: SkillEntry; source: SkillSource }
 export function findSkill(universeId: UniverseId, name: string): SkillMatch | undefined {
   let n = norm(name);
   for (const [re, to] of ALIASES) n = n.replace(re, to);
-  // Moderno: prima le espansioni (Abilità nuove), poi la 2ª edizione. Fantasy: Black Plague ha la precedenza su Green Horde.
-  const rank = (id: string) => (id === 'zombicide-2e' ? 2 : id === 'green-horde' || id === 'white-death' ? 1 : 0);
+  // Moderno: prima le espansioni (Abilità nuove), poi la 2ª edizione, per ultima la 1ª (testi diversi). Fantasy: Black Plague ha la precedenza su Green Horde.
+  const rank = (id: string) => (id === 'zombicide-1e' ? 3 : id === 'zombicide-2e' ? 2 : id === 'green-horde' || id === 'white-death' ? 1 : 0);
   const sources = SKILL_SOURCES.filter((s) => s.universeId === universeId).sort((a, b) => rank(a.productId) - rank(b.productId));
   for (const source of sources) {
     const skill = source.skills.find((k) => norm(k.name) === n);

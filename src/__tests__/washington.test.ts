@@ -15,7 +15,7 @@ describe('Washington Z.C. – Stato Infetto', () => {
     ]);
     expect(WZC_MISSIONS.map((m) => m.code)).toEqual(['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8', 'M9', 'M10']);
     expect(WZC_MISSIONS.filter((m) => m.difficulty === 'Molto Difficile').map((m) => m.code)).toEqual(['M9', 'M10']);
-    expect(SHEET_CAMPAIGNS.map((c) => c.templateId)).toEqual(['rio-z-janeiro', 'washington-zc', 'fort-hendrix']);
+    expect(SHEET_CAMPAIGNS.map((c) => c.templateId)).toEqual(['rio-z-janeiro', 'washington-zc', 'fort-hendrix', 'pariz']);
   });
 
   it('le missioni si sbloccano in ordine', () => {

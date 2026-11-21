@@ -494,7 +494,7 @@ export const WEB_MISSIONS: WebMission[] = [
 export const WEB_PAGE_ONLY: WebMission[] = [
   { id: 'web-squid-trials', code: 'WEB', title: 'The Squid Trials', web: 'https://www.zombicide.com/the-squid-trials/' },
   { id: 'web-beer-run', code: 'WEB', title: 'Beer Run', web: 'https://www.zombicide.com/beer-run/' },
-  { id: 'web-no-kings', code: 'WEB', title: 'No Kings, Only the Dead', web: 'https://www.zombicide.com/no-kings-only-the-dead/', requiresOther: ['Pariz'] },
+  { id: 'web-no-kings', code: 'WEB', title: 'No Kings, Only the Dead', web: 'https://www.zombicide.com/no-kings-only-the-dead/', requires: ['pariz'] },
 ].map((m): WebMission => ({ difficulty: '–', duration: '–', page: 1, tiles: [], objectivesInOrder: true, objectives: [], rules: [], pending: true, ...m }));
 
 /** Campagna «A New Dawn»: 6 capitoli da giocare in ordine, dal diario di un sopravvissuto solitario. */

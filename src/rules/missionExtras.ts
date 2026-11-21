@@ -12,6 +12,8 @@ import { WD_MISSION_EXTRAS } from './fantasy/whiteDeath';
 import { FH_MISSION_EXTRAS } from './moderno/fortHendrix';
 import { EE_MISSION_EXTRAS } from './fantasy/eternalEmpire';
 import { WEB_MAPS } from './moderno/webMissionMaps';
+import { Z1_MISSION_EXTRAS } from './moderno/zombicide1e';
+import { PZ_MISSION_EXTRAS } from './moderno/pariz';
 import { AND_MISSIONS, WEB_MISSIONS } from './moderno/webMissions';
 
 const WEB_EXTRAS: Record<string, MissionExtra> = Object.fromEntries(
@@ -20,5 +22,5 @@ const WEB_EXTRAS: Record<string, MissionExtra> = Object.fromEntries(
 
 export const ALL_MISSION_EXTRAS: Record<string, MissionExtra> = {
   ...MODERN_EXTRAS, ...BP_MISSION_EXTRAS, ...Z2_MISSION_EXTRAS, ...WU_MISSION_EXTRAS, ...GH_MISSION_EXTRAS,
-  ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS, ...WD_MISSION_EXTRAS, ...FH_MISSION_EXTRAS, ...EE_MISSION_EXTRAS, ...WEB_EXTRAS,
+  ...MZ_MISSION_EXTRAS, ...XM_MISSION_EXTRAS, ...HR_MISSION_EXTRAS, ...UO_MISSION_EXTRAS, ...WD_MISSION_EXTRAS, ...FH_MISSION_EXTRAS, ...EE_MISSION_EXTRAS, ...WEB_EXTRAS, ...Z1_MISSION_EXTRAS, ...PZ_MISSION_EXTRAS,
 };
