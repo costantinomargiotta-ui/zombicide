@@ -13,6 +13,9 @@ import { seedModernAbilities, seedModernSurvivors } from './seed/survivorsModern
  * Database locale (IndexedDB). Le tabelle rispecchiano lo schema SQL in
  * supabase/migrations: il passaggio a Supabase sostituirà solo l'adattatore.
  */
+export interface RulebookFile { id: string; blob: Blob; size: number; source: 'ufficiale' | 'caricato'; fileName?: string; savedAt: string }
+export interface RulebookText { id: string; pages: string[] }
+
 export class HubDatabase extends Dexie {
   products!: EntityTable<Product, 'id'>;
   collection!: EntityTable<CollectionEntry, 'productId'>;
@@ -33,6 +36,10 @@ export class HubDatabase extends Dexie {
   images!: EntityTable<StoredImage, 'id'>;
   syncQueue!: EntityTable<QueueEntry, 'key'>;
   syncMeta!: EntityTable<{ key: string; value: unknown }, 'key'>;
+  /** PDF dei regolamenti salvati solo su questo dispositivo: esclusi da sincronizzazione e backup. */
+  rulebookFiles!: EntityTable<RulebookFile, 'id'>;
+  /** Testo delle pagine dei regolamenti salvati, per la ricerca. */
+  rulebookText!: EntityTable<RulebookText, 'id'>;
 
   constructor(name = 'zombicide-hub') {
     super(name);
@@ -99,6 +106,8 @@ export class HubDatabase extends Dexie {
     });
     // Revisione 19: Fort Hendrix confermato dal regolamento (richiede la 2ª edizione).
     // Revisione 20: Zombicide 1ª edizione confermata dal regolamento.
+    // Revisione 21: copie locali dei regolamenti (solo su questo dispositivo).
+    this.version(21).stores({ rulebookFiles: 'id', rulebookText: 'id' });
     this.version(20).upgrade(async (tx) => {
       const z = await tx.table('products').get('zombicide-1e');
       if (z && z.dataStatus !== 'verificato') await tx.table('products').update('zombicide-1e', { dataStatus: 'verificato' });

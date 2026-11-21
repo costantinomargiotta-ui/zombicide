@@ -6,6 +6,7 @@ import { SKILL_SOURCES } from '../rules/skillGlossary';
 import { useScope } from '../lib/scope';
 import { Panel } from '../ui/components/Panel';
 import { EmptyState } from '../ui/components/EmptyState';
+import { RulebookPageLink } from '../ui/components/RulebookPageLink';
 
 /** Perché un universo non ha ancora un glossario. */
 const MISSING: Partial<Record<UniverseId, string>> = {
@@ -52,7 +53,7 @@ export function AbilitiesPage() {
         <Panel><EmptyState icon={Search} title="Nessuna abilità trovata">Prova con un'altra parola.</EmptyState></Panel>
       ) : sources.filter((s) => s.skills.length).map((s) => (
         <Panel key={s.productId} title={`${s.source.split(' – ')[0]} (${s.skills.length})`} icon={BookOpen}>
-          <p className="mb-3 text-xs text-[var(--muted)]">Fonte: {s.source}. Nomi tra parentesi quadre: Abilità generiche, valide per il tipo indicato.</p>
+          <p className="mb-3 text-xs text-[var(--muted)]">Fonte: {s.source}{/pag\. (\d+)/.test(s.source) && <> · <RulebookPageLink productId={s.productId} page={Number(/pag\. (\d+)/.exec(s.source)![1])} /></>}. Nomi tra parentesi quadre: Abilità generiche, valide per il tipo indicato.</p>
           <dl className="grid grid-cols-1 gap-2 xl:grid-cols-2">
             {s.skills.map((k) => (
               <div key={k.name} className="rounded-lg border border-[var(--line)] bg-black/30 px-3 py-2">

@@ -20,6 +20,7 @@ import { KillCounter } from './KillCounter';
 import { killsOf } from '../../domain/kills';
 import { defaultPortraitUrl } from '../../domain/portraits';
 import { CAMPAIGN_STATUS_LABEL } from '../../domain/types';
+import { RulebookPageLink } from '../../ui/components/RulebookPageLink';
 
 /** Tutti i dati di una campagna Rio, letti in modo reattivo. */
 export function useRioData(campaignId: string) {
@@ -190,7 +191,7 @@ export function RioCampaign({ campaign }: { campaign: Campaign }) {
                   <div className="flex flex-1 flex-col gap-1.5">
                     <h3 className="text-xl font-semibold">{current.mission.code.replace('M', '')}. {current.mission.title}</h3>
                     <p className="text-sm">{current.mission.objectives[0]}</p>
-                    <p className="text-xs text-[var(--muted)]">{current.mission.difficulty} · {current.mission.duration}{'startTime' in current.mission ? ` · partenza ${(current.mission as { startTime: string }).startTime}` : ''} · pag. {current.mission.page}{current.attempts > 0 ? ` · tentativi: ${current.attempts}` : ''}</p>
+                    <p className="text-xs text-[var(--muted)]">{current.mission.difficulty} · {current.mission.duration}{'startTime' in current.mission ? ` · partenza ${(current.mission as { startTime: string }).startTime}` : ''} · <RulebookPageLink productId={cfg.productId} page={current.mission.page} short />{current.attempts > 0 ? ` · tentativi: ${current.attempts}` : ''}</p>
                     <div className="mt-1">
                       <button type="button" onClick={() => setForm({})} disabled={!alive.length}
                         className="flex items-center gap-2 rounded-md border-2 border-[#8a4a00] bg-gradient-to-b from-[#ffb21e] to-[#e88a00] px-4 py-1.5 font-semibold text-black shadow hover:brightness-110 disabled:opacity-50">

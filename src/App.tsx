@@ -16,6 +16,8 @@ import { SearchPage } from './pages/SearchPage';
 import { NotesPage } from './pages/NotesPage';
 import { ProgressPage } from './pages/ProgressPage';
 import { AbilitiesPage } from './pages/AbilitiesPage';
+import { RulebooksPage } from './pages/RulebooksPage';
+import { RulebookViewer } from './pages/RulebookViewer';
 import { CoveragePage } from './pages/CoveragePage';
 import { isUniverseId } from './domain/universes';
 import { AuthGate } from './ui/auth/AuthGate';
@@ -37,6 +39,7 @@ const sections: RouteObject[] = [
   { path: 'abilita', element: <AbilitiesPage /> },
   { path: 'copertura', element: <CoveragePage /> },
   { path: 'scenari', element: <ScenariosPage /> },
+  { path: 'regolamenti', element: <RulebooksPage /> },
   { path: 'partite', element: <SessionsPage /> },
   { path: 'equipaggiamento', element: <EquipmentPage onlyEquipment /> },
   { path: 'carte', element: <EquipmentPage /> },
@@ -49,6 +52,7 @@ const routes: RouteObject[] = [
     children: [
       { path: '/', element: <GlobalDashboard /> },
       ...sections.map((r) => ({ ...r, path: `/${r.path}` })),
+      { path: '/regolamenti/:rulebookId', element: <RulebookViewer /> },
       { path: '/campagne/:campaignId', element: <CampaignDashboard /> },
       { path: '/campagne/:campaignId/scheda/:participantId', element: <RioSheet /> },
       { path: '/u/:universeId', element: <UniverseIndex /> },

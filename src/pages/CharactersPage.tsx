@@ -15,6 +15,7 @@ import { EmptyState } from '../ui/components/EmptyState';
 import { Badge } from '../ui/components/Badge';
 import { defaultPortraitUrl } from '../domain/portraits';
 import { SurvivorList } from '../ui/components/SurvivorList';
+import { RulebookPageLink } from '../ui/components/RulebookPageLink';
 
 /** Colori dei livelli di pericolo stampati sulle schede. */
 export const LEVEL_STYLE: Record<string, { color: string; label: string }> = {
@@ -196,13 +197,16 @@ function CharacterSheet({ c, abilities, products }: { c: Character; abilities: M
           {tab === 'originale' && (
             <>
               <OriginalAbilities c={c} abilities={abilities} />
-              {(transcriptionNotes || c.traits?.capIcon === true) && (
+              {c.traits?.capIcon === true && (
+                <div className="flex gap-2 rounded-md border border-sky-700 bg-sky-900/20 p-3 text-sm text-sky-100">
+                  <Info className="size-5 shrink-0" aria-hidden />
+                  <span><strong>Ragazzino.</strong> L'icona della faccina col cappellino indica un Sopravvissuto Ragazzino: viene eliminato con 2 Ferite invece di 3 e può usare l'Abilità Inafferrabile una volta per Turno, con una singola Azione di Movimento (Zombicide 2ª edizione, <RulebookPageLink productId="zombicide-2e" page={7} short />, 19).</span>
+                </div>
+              )}
+              {transcriptionNotes && (
                 <div className="flex gap-2 rounded-md border border-amber-700 bg-amber-900/20 p-3 text-sm text-amber-200">
                   <AlertTriangle className="size-5 shrink-0" aria-hidden />
-                  <div className="flex flex-col gap-1">
-                    {transcriptionNotes && <span>{transcriptionNotes}</span>}
-                    {c.traits?.capIcon === true && <span>La scheda mostra l'icona della faccina col cappellino: il suo effetto verrà gestito quando avrò il regolamento.</span>}
-                  </div>
+                  <span>{transcriptionNotes}</span>
                 </div>
               )}
               <p className="text-xs text-[var(--muted)]">

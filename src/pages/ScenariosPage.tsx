@@ -10,6 +10,7 @@ import { Panel } from '../ui/components/Panel';
 import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
 import { HowToPlay, MissionMapView } from './missionViews';
+import { RulebookPageLink as PageLink } from '../ui/components/RulebookPageLink';
 import { WebMissionsSection } from './WebMissions';
 
 /** Catalogo degli scenari dai moduli regole, con mappe e regole speciali dove trascritte. */
@@ -41,7 +42,7 @@ export function ScenariosPage() {
                   </button>
                   {isOpen && (
                     <div className="flex flex-col gap-2 border-t border-[var(--line)] px-3 py-3 text-sm">
-                      <p className="flex items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · pag. {m.page}</p>
+                      <p className="flex flex-wrap items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · <PageLink productId={sc.productId} page={m.page} /></p>
                       <div>
                         <h4 className="font-semibold">Obiettivi {m.objectivesInOrder ? '(in questo ordine)' : '(in qualsiasi ordine)'}</h4>
                         <ol className="list-decimal pl-5">{m.objectives.map((o) => <li key={o}>{o}</li>)}</ol>
@@ -83,7 +84,7 @@ export function ScenariosPage() {
                   </button>
                   {isOpen && (
                     <div className="flex flex-col gap-2 border-t border-[var(--line)] px-3 py-3 text-sm">
-                      {m.tiles.length > 0 && <p className="flex items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · pag. {m.page}</p>}
+                      {m.tiles.length > 0 && <p className="flex flex-wrap items-center gap-2 text-[var(--muted)]"><Map className="size-4" /> Tessere: {m.tiles.join(', ')} · <PageLink productId={sr.productId} page={m.page} /></p>}
                       <div><h4 className="font-semibold">Obiettivi {m.objectivesInOrder ? '' : '(in qualsiasi ordine)'}</h4><ol className="list-decimal pl-5">{m.objectives.map((o) => <li key={o}>{o}</li>)}</ol></div>
                       <HowToPlay m={m} />
                       <MissionMapView m={m} />

@@ -7,8 +7,8 @@ import { slugify } from '../../lib/ids';
  * 1 blu, 1 gialla, 2 arancioni, 3 rosse.
  *
  * - woundTrack: valore più alto del tracciato ferite stampato (3-2-1 o 2-1).
- * - capIcon: la scheda mostra l'icona della faccina col cappellino. Il suo
- *   significato regolamentare non è ancora documentato.
+ * - capIcon: la scheda mostra l'icona della faccina col cappellino: Sopravvissuto Ragazzino
+ *   (2 Ferite, Inafferrabile una volta per Turno; Zombicide 2ª edizione, pag. 7 e 19).
  * - productId assente = scatola di provenienza da indicare.
  * Trascrizione verificata dall'utente il 07/11/2026 (unica correzione: Ney, abilità gialla).
  */

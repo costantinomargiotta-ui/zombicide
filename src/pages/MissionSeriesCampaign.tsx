@@ -13,6 +13,7 @@ import { Panel } from '../ui/components/Panel';
 import { Badge } from '../ui/components/Badge';
 import { EmptyState } from '../ui/components/EmptyState';
 import { Field, Modal } from '../ui/components/Modal';
+import { RulebookPageLink } from '../ui/components/RulebookPageLink';
 
 const DIFF_CLS: Record<string, string> = { Facile: 'bg-[#57c02a] text-black', Medio: 'bg-[#f5a218] text-black', Difficile: 'bg-[#d8232a] text-white', 'Molto Difficile': 'bg-black text-white' };
 const today = () => new Date().toISOString().slice(0, 10);
@@ -165,7 +166,7 @@ export function MissionSeriesCampaign({ campaign }: { campaign: Campaign }) {
               <div className="flex flex-col gap-1.5">
                 <h3 className="text-xl font-semibold">{next.mission.code}. {next.mission.title}</h3>
                 <p className="text-sm">{next.mission.objectives[0]}</p>
-                <p className="text-xs text-[var(--muted)]">{next.mission.difficulty} · {next.mission.survivors ? `${next.mission.survivors} sopravvissuti · ` : ''}{next.mission.duration} · pag. {next.mission.page}</p>
+                <p className="text-xs text-[var(--muted)]">{next.mission.difficulty} · {next.mission.survivors ? `${next.mission.survivors} sopravvissuti · ` : ''}{next.mission.duration} · <RulebookPageLink productId={series.web ? undefined : series.productId} page={next.mission.page} short /></p>
                 <div className="mt-1">
                   <button type="button" onClick={() => setForm({ mission: next.mission })} className="flex items-center gap-2 rounded-md border-2 border-[#8a4a00] bg-gradient-to-b from-[#ffb21e] to-[#e88a00] px-4 py-1.5 font-semibold text-black shadow hover:brightness-110">
                     <Play className="size-4 fill-black" /> Gioca missione
@@ -186,7 +187,7 @@ export function MissionSeriesCampaign({ campaign }: { campaign: Campaign }) {
                 <span className="title-display text-3xl text-[var(--accent-2)]">{mission.code.replace('M', '')}</span>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-lg leading-tight font-semibold">{mission.title}</h3>
-                  <p className="text-xs text-[var(--muted)]">{mission.survivors ? `${mission.survivors} sopravvissuti · ` : ''}{mission.duration} · pag. {mission.page}</p>
+                  <p className="text-xs text-[var(--muted)]">{mission.survivors ? `${mission.survivors} sopravvissuti · ` : ''}{mission.duration} · <RulebookPageLink productId={series.web ? undefined : series.productId} page={mission.page} short /></p>
                 </div>
                 <span className={`rounded px-2 py-0.5 text-xs font-semibold ${DIFF_CLS[mission.difficulty]}`}>{mission.difficulty}</span>
               </div>
