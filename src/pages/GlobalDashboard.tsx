@@ -22,7 +22,7 @@ export const QUICK_ACTIONS = [
   { sub: '#universi', label: 'Scegli Universo', icon: Layers },
   { sub: 'campagne', label: 'Scegli Campagna', icon: Flag },
   { sub: 'personaggi', label: 'Archivio Sopravvissuti', icon: Users },
-  { sub: 'equipaggiamento', label: 'Inventario Globale', icon: Package },
+  { sub: 'carte?vista=conservato', label: 'Equipaggiamento conservato', icon: Package },
   { sub: 'scenari', label: 'Scenari e mappe', icon: MapIcon },
   { sub: 'regolamenti', label: 'Regolamenti', icon: BookMarked },
   { sub: 'carte', label: 'Cerca Carte', icon: Library },

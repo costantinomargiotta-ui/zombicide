@@ -88,22 +88,23 @@ const inDeck = (c: EquipmentCard) => !c.outsideDeck;
 
 type Cat = { id: string; label: string; icon: typeof Swords; match: (c: EquipmentCard) => boolean };
 
-const EQUIP_CATS: Cat[] = [
-  { id: 'tutti', label: 'Tutti', icon: Package, match: () => true },
-  { id: 'distanza', label: 'Armi a distanza', icon: Crosshair, match: (c) => !!c.profiles?.some((p) => p.kind === 'distanza') },
-  { id: 'mischia', label: 'Corpo a corpo', icon: Swords, match: (c) => !!c.profiles?.some((p) => p.kind === 'mischia') },
-  { id: 'veicoli', label: 'Veicoli', icon: Car, match: (c) => !!c.profiles?.some((p) => p.kind === 'auto') },
-  { id: 'oggetti', label: 'Oggetti e consumabili', icon: Sparkles, match: (c) => c.category === 'oggetto' && !c.profiles?.some((p) => p.kind === 'auto') },
-  { id: 'conservabili', label: 'Conservabili', icon: Lock, match: (c) => c.conservation !== undefined },
+/** Categorie della pagina Carte: per mazzo, per tipo e le carte Aaahh!!. */
+const CATS: { group: string; items: Cat[] }[] = [
+  { group: 'Mazzi', items: [
+    { id: 'tutti', label: 'Tutte le carte', icon: Library, match: () => true },
+    { id: 'partenza', label: 'Equipaggiamento di Partenza', icon: Package, match: (c) => c.deck === 'partenza' && inDeck(c) },
+    { id: 'arma-pimpata', label: 'Armi Pimpate', icon: Flame, match: (c) => c.deck === 'arma-pimpata' && inDeck(c) },
+    { id: 'avanzato', label: 'Equipaggiamento Avanzato', icon: Swords, match: (c) => c.deck === 'avanzato' && inDeck(c) },
+  ] },
+  { group: 'Tipo', items: [
+    { id: 'distanza', label: 'Armi a distanza', icon: Crosshair, match: (c) => !!c.profiles?.some((p) => p.kind === 'distanza') },
+    { id: 'mischia', label: 'Corpo a corpo', icon: Swords, match: (c) => !!c.profiles?.some((p) => p.kind === 'mischia') },
+    { id: 'veicoli', label: 'Veicoli', icon: Car, match: (c) => !!c.profiles?.some((p) => p.kind === 'auto') },
+    { id: 'oggetti', label: 'Oggetti e consumabili', icon: Sparkles, match: (c) => c.category === 'oggetto' && !c.profiles?.some((p) => p.kind === 'auto') },
+    { id: 'aaahh', label: 'Aaahh!!', icon: AlertTriangle, match: (c) => c.category === 'aaahh' },
+  ] },
 ];
-
-const CARD_CATS: Cat[] = [
-  { id: 'tutti', label: 'Tutte le carte', icon: Library, match: () => true },
-  { id: 'partenza', label: 'Equipaggiamento di Partenza', icon: Package, match: (c) => c.deck === 'partenza' && inDeck(c) },
-  { id: 'arma-pimpata', label: 'Armi Pimpate', icon: Flame, match: (c) => c.deck === 'arma-pimpata' && inDeck(c) },
-  { id: 'avanzato', label: 'Equipaggiamento Avanzato', icon: Swords, match: (c) => c.deck === 'avanzato' && inDeck(c) },
-  { id: 'veicoli', label: 'Veicoli', icon: Car, match: (c) => !!c.profiles?.some((p) => p.kind === 'auto') },
-];
+const ALL_CATS = CATS.flatMap((g) => g.items);
 
 const copies = (list: EquipmentCard[]) => list.reduce((a, c) => a + c.quantity, 0);
 
@@ -129,7 +130,8 @@ function GridTile({ card, onOpen }: { card: EquipmentCard; onOpen: () => void })
 }
 
 /** Pagine Equipaggiamento e Carte, come nei mockup: categorie a sinistra, griglia a destra. */
-export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boolean }) {
+/** Carte ed equipaggiamento: catalogo per mazzo o per tipo, e oggetti conservati nelle campagne. */
+export function EquipmentPage() {
   const { universeId } = useScope();
   const cards = useLiveQuery(() => db.cards.toArray());
   const products = useLiveQuery(() => db.products.toArray());
@@ -140,7 +142,7 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
     const chars = await db.characters.bulkGet(parts.map((p) => p?.characterId ?? ''));
     return items.map((i, k) => ({ item: i, campaign: camps[k], character: chars[k] }));
   });
-  const [tab, setTab] = useState<'catalogo' | 'conservato'>('catalogo');
+  const [tab, setTab] = useState<'catalogo' | 'conservato'>(() => (new URLSearchParams(window.location.search).get('vista') === 'conservato' ? 'conservato' : 'catalogo'));
   const [cat, setCat] = useState('tutti');
   const [productId, setProductId] = useState('');
   const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '');
@@ -148,9 +150,8 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
   const [open, setOpen] = useState<EquipmentCard | null>(null);
   if (!cards || !products) return <p className="text-[var(--muted)]">Caricamento…</p>;
 
-  const cats = onlyEquipment ? EQUIP_CATS : CARD_CATS;
-  const base = cards.filter((c) => (!universeId || c.universeId === universeId) && (!onlyEquipment || c.category !== 'aaahh') && (!productId || c.productId === productId));
-  const active = cats.find((c) => c.id === cat) ?? cats[0];
+  const base = cards.filter((c) => (!universeId || c.universeId === universeId) && (!productId || c.productId === productId));
+  const active = ALL_CATS.find((c) => c.id === cat) ?? ALL_CATS[0];
   const list = base.filter((c) => active.match(c) && (!onlyKeepable || c.conservation !== undefined) && c.name.toLowerCase().includes(query.trim().toLowerCase()));
   const cardProducts = products.filter((p) => cards.some((c) => c.productId === p.id));
   const catalogued = copies(cards.filter((c) => c.productId === 'rio-z-janeiro' && inDeck(c)));
@@ -159,14 +160,9 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
   return (
     <div className="flex flex-col gap-4">
       <div className="panel flex flex-wrap items-center gap-3 px-4 py-2.5">
-        {onlyEquipment ? <Package className="size-8 text-[var(--accent-2)]" aria-hidden /> : <Library className="size-8 text-[var(--accent-2)]" aria-hidden />}
-        <h1 className="title-display flex-1 text-3xl">{onlyEquipment ? 'Equipaggiamento' : 'Collezione Carte'}</h1>
-        {onlyEquipment ? (
-          <div className="flex gap-2" role="group" aria-label="Vista">
-            <button type="button" onClick={() => setTab('catalogo')} aria-pressed={tab === 'catalogo'} className={`btn text-sm ${tab === 'catalogo' ? 'btn-accent' : ''}`}><Package className="size-4" /> Catalogo</button>
-            <button type="button" onClick={() => setTab('conservato')} aria-pressed={tab === 'conservato'} className={`btn text-sm ${tab === 'conservato' ? 'btn-accent' : ''}`}><Lock className="size-4" /> Conservato</button>
-          </div>
-        ) : (
+        <Library className="size-8 text-[var(--accent-2)]" aria-hidden />
+        <h1 className="title-display flex-1 text-3xl">Carte ed equipaggiamento</h1>
+        {tab === 'catalogo' && (
           <div className="flex flex-wrap items-center gap-4">
             <span className="text-lg">Totale carte: <strong>{copies(base)}</strong></span>
             <div className="w-56" title="Copie catalogate rispetto al contenuto della scatola indicato dal regolamento di Rio Z Janeiro">
@@ -175,9 +171,13 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
             </div>
           </div>
         )}
+        <div className="flex gap-2" role="group" aria-label="Vista">
+          <button type="button" onClick={() => setTab('catalogo')} aria-pressed={tab === 'catalogo'} className={`btn text-sm ${tab === 'catalogo' ? 'btn-accent' : ''}`}><Package className="size-4" /> Catalogo</button>
+          <button type="button" onClick={() => setTab('conservato')} aria-pressed={tab === 'conservato'} className={`btn text-sm ${tab === 'conservato' ? 'btn-accent' : ''}`}><Lock className="size-4" /> Conservato nelle campagne</button>
+        </div>
       </div>
 
-      {onlyEquipment && tab === 'conservato' ? (
+      {tab === 'conservato' ? (
         <Panel title="Equipaggiamento conservato nelle campagne" icon={Lock}>
           {kept?.length ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6">
@@ -201,20 +201,26 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[250px_1fr]">
           <div className="flex flex-col gap-4">
             <Panel title="Categorie" bodyClassName="p-2">
-              <ul className="flex flex-col gap-1">
-                {cats.map((c) => {
-                  const n = copies(base.filter(c.match));
-                  const Icon = c.icon;
-                  return (
-                    <li key={c.id}>
-                      <button type="button" onClick={() => setCat(c.id)} aria-pressed={cat === c.id}
-                        className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left transition ${cat === c.id ? 'bg-gradient-to-b from-[#ffb21e] to-[#e88a00] font-semibold text-black' : 'hover:bg-white/5'}`}>
-                        <Icon className="size-5 shrink-0" aria-hidden /><span className="flex-1">{c.label}</span><span>({n})</span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+              {CATS.map((g) => (
+                <div key={g.group} className="mb-1">
+                  <p className="px-2.5 pt-1 pb-0.5 text-xs tracking-widest text-[var(--muted)] uppercase">{g.group}</p>
+                  <ul className="flex flex-col gap-1">
+                    {g.items.map((c) => {
+                      const n = copies(base.filter(c.match));
+                      if (!n && c.id !== 'tutti') return null;
+                      const Icon = c.icon;
+                      return (
+                        <li key={c.id}>
+                          <button type="button" onClick={() => setCat(c.id)} aria-pressed={cat === c.id}
+                            className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left transition ${cat === c.id ? 'bg-gradient-to-b from-[#ffb21e] to-[#e88a00] font-semibold text-black' : 'hover:bg-white/5'}`}>
+                            <Icon className="size-5 shrink-0" aria-hidden /><span className="flex-1">{c.label}</span><span>({n})</span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
             </Panel>
             <Panel title="Filtri" bodyClassName="flex flex-col gap-2 p-3">
               <select className="input text-sm" value={productId} onChange={(e) => setProductId(e.target.value)} aria-label="Gioco">
@@ -223,7 +229,7 @@ export function EquipmentPage({ onlyEquipment = false }: { onlyEquipment?: boole
               </select>
               <label className="relative">
                 <Search className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-[var(--muted)]" aria-hidden />
-                <input className="input pl-8 text-sm" placeholder={onlyEquipment ? 'Cerca equipaggiamento…' : 'Cerca carta…'} value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Cerca" />
+                <input className="input pl-8 text-sm" placeholder="Cerca carta…" value={query} onChange={(e) => setQuery(e.target.value)} aria-label="Cerca" />
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" className="peer sr-only" checked={onlyKeepable} onChange={(e) => setOnlyKeepable(e.target.checked)} />

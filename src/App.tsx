@@ -20,7 +20,14 @@ import { RulebooksPage } from './pages/RulebooksPage';
 import { RulebookViewer } from './pages/RulebookViewer';
 import { CoveragePage } from './pages/CoveragePage';
 import { isUniverseId } from './domain/universes';
+import { useScope } from './lib/scope';
 import { AuthGate } from './ui/auth/AuthGate';
+
+/** Indirizzo di una sezione accorpata: porta alla nuova, nello stesso universo. */
+function SectionRedirect({ to }: { to: string }) {
+  const { path } = useScope();
+  return <Navigate to={path(to) + window.location.search} replace />;
+}
 
 function UniverseIndex() {
   const { universeId } = useParams();
@@ -41,7 +48,7 @@ const sections: RouteObject[] = [
   { path: 'scenari', element: <ScenariosPage /> },
   { path: 'regolamenti', element: <RulebooksPage /> },
   { path: 'partite', element: <SessionsPage /> },
-  { path: 'equipaggiamento', element: <EquipmentPage onlyEquipment /> },
+  { path: 'equipaggiamento', element: <SectionRedirect to="carte" /> },
   { path: 'carte', element: <EquipmentPage /> },
   { path: 'statistiche', element: <StatisticsPage /> },
 ];

@@ -158,7 +158,7 @@ export function StatisticsPage() {
     <div className="flex flex-col gap-5">
       <div className="panel flex flex-wrap items-center gap-3 px-4 py-2.5">
         <Users className="size-6 text-[var(--accent-2)]" aria-hidden />
-        <h1 className="title-display flex-1 text-2xl sm:text-3xl">{universeId ? `Statistiche ${UNIVERSES[universeId].name}` : 'Statistiche sopravvissuti'}</h1>
+        <h1 className="title-display flex-1 text-2xl sm:text-3xl">{universeId ? `Statistiche ${UNIVERSES[universeId].name}` : 'Statistiche'}</h1>
         <div className="flex gap-2" role="group" aria-label="Vista">{tabBtn('generali', 'Generali')}{tabBtn('giocatori', 'Giocatori')}{tabBtn('grafici', 'Grafici')}</div>
       </div>
 

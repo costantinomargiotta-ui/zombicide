@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { BarChart3, Bell as Bell_, BookOpen, Box, LayoutDashboard, CircleUserRound, ClipboardList, Globe, Library, Menu, NotebookPen, Package, Search, Target, Trophy, Users, X, BookMarked } from 'lucide-react';
+import { Bell as Bell_, CircleUserRound, Globe, Menu, Search, Users, X } from 'lucide-react';
 import { useRecentActivities } from '../../data/hooks';
 import { useSyncStatus } from '../../data/syncController';
 import { relativeTime } from '../../lib/format';
@@ -8,7 +8,7 @@ import { UNIVERSES } from '../../domain/universes';
 import { UNIVERSE_IDS } from '../../domain/types';
 import { scopedPath, useScope } from '../../lib/scope';
 import { UniverseEmblem } from '../components/UniverseEmblem';
-import { NAV_ITEMS } from './navigation';
+import { NAV_ITEMS, SECTION_TABS, SIDE_ITEMS, navOwner, sectionOf } from './navigation';
 import { BloodEdge, HeaderScenery, PaintSplatter } from './Scenery';
 
 function Logo() {
@@ -62,8 +62,28 @@ function Profile() {
   );
 }
 
+/** Schede interne della sezione (es. Campagne · Registro partite · Progressi). */
+function SectionTabsBar() {
+  const { path } = useScope();
+  const location = useLocation();
+  const section = sectionOf(location.pathname);
+  const rest = location.pathname.replace(/^\/u\/[^/]+/, '').split('/').filter(Boolean);
+  const tabs = SECTION_TABS[navOwner(section)];
+  if (!tabs || rest.length > 1) return null;
+  return (
+    <nav aria-label="Schede della sezione" className="mb-4 flex gap-1.5 overflow-x-auto pb-1">
+      {tabs.map(({ sub, label, icon: Icon }) => (
+        <NavLink key={sub} to={path(sub)} className={`btn shrink-0 text-sm ${section === sub ? 'btn-accent' : ''}`} aria-current={section === sub ? 'page' : undefined}>
+          <Icon className="size-4" aria-hidden /> {label}
+        </NavLink>
+      ))}
+    </nav>
+  );
+}
+
 function TopNav({ onNavigate }: { onNavigate?: () => void }) {
   const { path } = useScope();
+  const owner = navOwner(sectionOf(useLocation().pathname));
   return (
     <>
       {NAV_ITEMS.map(({ sub, label, icon: Icon }) => (
@@ -72,9 +92,10 @@ function TopNav({ onNavigate }: { onNavigate?: () => void }) {
           to={path(sub)}
           end={sub === ''}
           onClick={onNavigate}
-          className={({ isActive }) =>
-            `btn focus-ring justify-start whitespace-nowrap px-3.5 py-2 text-base ${isActive ? 'border-2 !border-[#ff9a1a] text-[#ffc21a] shadow-[0_0_14px_rgba(255,154,26,0.55)]' : ''}`
+          className={() =>
+            `btn focus-ring justify-start whitespace-nowrap px-3.5 py-2 text-base ${owner === sub ? 'border-2 !border-[#ff9a1a] text-[#ffc21a] shadow-[0_0_14px_rgba(255,154,26,0.55)]' : ''}`
           }
+          aria-current={owner === sub ? 'page' : undefined}
         >
           <Icon className="size-5" aria-hidden />
           {label}
@@ -126,20 +147,7 @@ function UniverseSwitcher({ onNavigate }: { onNavigate?: () => void }) {
 /** Collegamenti rapidi sotto gli universi, come nel mockup. */
 function SideLinks({ onNavigate }: { onNavigate?: () => void }) {
   const { path } = useScope();
-  const links = [
-    { sub: 'collezione', label: 'La mia Collezione', icon: Box },
-    { sub: 'copertura', label: 'Copertura', icon: LayoutDashboard },
-    { sub: 'campagne', label: 'Le mie Campagne', icon: Target },
-    { sub: 'partite', label: 'Registro Partite', icon: ClipboardList },
-    { sub: 'progressi', label: 'Progressi', icon: BarChart3 },
-    { sub: 'statistiche', label: 'Statistiche Globali', icon: Trophy },
-    { sub: 'personaggi', label: 'Sopravvissuti (tutti)', icon: Users },
-    { sub: 'abilita', label: 'Abilità', icon: BookOpen },
-    { sub: 'regolamenti', label: 'Regolamenti', icon: BookMarked },
-    { sub: 'equipaggiamento', label: 'Equipaggiamento (tutto)', icon: Package },
-    { sub: 'carte', label: 'Carte (tutte)', icon: Library },
-    { sub: 'note', label: 'Note', icon: NotebookPen },
-  ];
+  const links = SIDE_ITEMS;
   return (
     <nav aria-label="Collegamenti" className="flex flex-col">
       {links.map(({ sub, label, icon: Icon }) => (
@@ -205,7 +213,6 @@ export function AppShell() {
             <nav aria-label="Sezioni" className="grid grid-cols-2 gap-1.5">
               <TopNav onNavigate={() => setDrawer(false)} />
             </nav>
-            <UniverseSwitcher onNavigate={() => setDrawer(false)} />
             <SideLinks onNavigate={() => setDrawer(false)} />
           </div>
         </div>
@@ -232,6 +239,7 @@ export function AppShell() {
               </Link>
             ))}
           </div>
+          <SectionTabsBar />
           <Outlet />
         </main>
       </div>

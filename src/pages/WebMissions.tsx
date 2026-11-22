@@ -1,3 +1,4 @@
+import type React from 'react';
 import { useMemo, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { CheckCircle2, ChevronDown, ExternalLink, FileText, Globe, Layers, Map, Search, Target } from 'lucide-react';
@@ -138,8 +139,13 @@ function NewDawn({ sessions, open, setOpen }: { sessions?: Session[]; open: stri
   );
 }
 
+/** Con «bare» il contenuto va dentro un contenitore esterno (la scatola richiudibile di Scenari). */
+function Frame({ bare, children }: { bare: boolean; children: React.ReactNode }) {
+  return bare ? <>{children}</> : <Panel title="Missioni web · Zombicide 2ª edizione" icon={Globe}>{children}</Panel>;
+}
+
 /** Sezione «Missioni web»: missioni gratuite ufficiali di Zombicide 2ª edizione e la campagna A New Dawn. */
-export function WebMissionsSection() {
+export function WebMissionsSection({ bare = false }: { bare?: boolean }) {
   const sessions = useLiveQuery(() => db.sessions.toArray());
   const linked = new URLSearchParams(window.location.search).get('m');
   const [open, setOpen] = useState<string | null>(linked);
@@ -171,7 +177,7 @@ export function WebMissionsSection() {
 
   const sel = 'focus-ring rounded-md border border-[var(--line)] bg-black/40 px-2 py-1.5 text-sm';
   return (
-    <Panel title="Missioni web · Zombicide 2ª edizione" icon={Globe}>
+    <Frame bare={bare}>
       <p className="mb-3 text-sm text-[var(--muted)]">Missioni gratuite ufficiali pubblicate su zombicide.com. I PDF sono in inglese: qui trovi mappa, legenda e regole tradotte, con il link al PDF originale.</p>
       <div className="mb-3 flex flex-wrap gap-2">
         <label className="flex min-w-48 flex-1 items-center gap-2 rounded-md border border-[var(--line)] bg-black/40 px-2">
@@ -214,6 +220,6 @@ export function WebMissionsSection() {
           </div>
         </>
       )}
-    </Panel>
+    </Frame>
   );
 }
