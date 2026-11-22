@@ -15,6 +15,7 @@ import {
 import { sheetCampaignFor } from '../../rules/moderno/sheetCampaigns';
 import { EmptyState } from '../../ui/components/EmptyState';
 import { LevelChip } from '../CharactersPage';
+import { findSkill } from '../../services/skills';
 import { Portrait, useRioData } from './RioCampaign';
 
 const REWARD_TEXT = '+1 Azione Bonus OPPURE +1 Abilità della Campagna';
@@ -63,7 +64,7 @@ export function RioSheet() {
   const data = useRioData(campaignId);
   const products = useLiveQuery(() => db.products.toArray());
   const abilities = useLiveQuery(() => db.abilities.toArray());
-  const abilityName = useMemo(() => new Map(abilities?.map((a) => [a.id, a.name])), [abilities]);
+  const abilityById = useMemo(() => new Map(abilities?.map((a) => [a.id, a])), [abilities]);
   const [newItem, setNewItem] = useState('');
   const [newCardId, setNewCardId] = useState('');
   const [addingItem, setAddingItem] = useState(false);
@@ -148,13 +149,33 @@ export function RioSheet() {
           </dl>
           <div className="panel p-3 text-sm">
             <h3 className="title-display mb-1 text-lg">Abilità originali</h3>
-            <ul className="flex flex-col gap-1">
-              {c?.abilities.flatMap((g) => g.abilityIds.map((id) => (
-                <li key={`${g.level}-${id}`} className="flex items-center gap-2"><LevelChip level={g.level} /><span>{abilityName.get(id) ?? id}</span></li>
-              )))}
-              {s.campaignAbilityIds.map((id) => (
-                <li key={id} className="flex items-center gap-2"><LevelChip level="blu" /><span className="font-semibold text-[var(--accent-2)]">{cfg.abilities.find((a) => a.id === id)?.name}</span><span className="text-xs text-[var(--muted)]">(campagna)</span></li>
-              ))}
+            <ul className="flex flex-col gap-2.5">
+              {c?.abilities.flatMap((g) => g.abilityIds.map((id) => {
+                const name = abilityById.get(id)?.name ?? id;
+                const match = findSkill(c.universeId, name);
+                const text = match?.skill.description ?? abilityById.get(id)?.description;
+                return (
+                  <li key={`${g.level}-${id}`} className="flex gap-2">
+                    <LevelChip level={g.level} />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold">{name}</span>
+                      {text ? <span className="block text-xs leading-snug text-[var(--muted)]">{text}</span> : <span className="block text-xs text-[var(--muted)] italic">Descrizione non presente nel glossario.</span>}
+                    </span>
+                  </li>
+                );
+              }))}
+              {s.campaignAbilityIds.map((id) => {
+                const a = cfg.abilities.find((x) => x.id === id);
+                return (
+                  <li key={id} className="flex gap-2">
+                    <LevelChip level="blu" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-semibold text-[var(--accent-2)]">{a?.name} <span className="text-xs font-normal text-[var(--muted)]">(campagna)</span></span>
+                      {a?.description && <span className="block text-xs leading-snug text-[var(--muted)]">{a.description}</span>}
+                    </span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
@@ -187,9 +208,13 @@ export function RioSheet() {
                 {cfg.abilities.map((a) => {
                   const owned = s.campaignAbilityIds.includes(a.id);
                   return (
-                    <li key={a.id} className="flex items-center gap-3 border-b border-black/10 px-3 py-1.5" title={a.description}>
+                    <li key={a.id} className={`flex items-start gap-3 border-b border-black/10 px-3 py-2 ${owned ? 'bg-green-600/10' : ''}`}>
                       <LevelChip level="blu" />
-                      <span className={`flex-1 text-base ${owned ? 'font-bold' : ''}`}>{a.name}{a.note && <span className="block text-[10px] text-black/60">{a.note}</span>}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className={`block text-base ${owned ? 'font-bold' : 'font-medium'}`}>{a.name}</span>
+                        <span className="block text-xs leading-snug text-black/70">{a.description}</span>
+                        {a.note && <span className="block text-[10px] text-black/55 italic">{a.note}</span>}
+                      </span>
                       <span className="grid size-6 shrink-0 place-items-center border-2 border-black bg-white" aria-label={owned ? 'Acquisita' : 'Non acquisita'}>{owned && <Check className="size-5 text-green-700" strokeWidth={4} />}</span>
                     </li>
                   );
