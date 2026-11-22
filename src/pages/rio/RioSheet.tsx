@@ -206,22 +206,30 @@ export function RioSheet() {
             </SheetBox>
 
             <SheetBox title="Abilità della Campagna" subtitle="(Livello Blu)">
-              <ul className="flex flex-col">
-                {cfg.abilities.map((a) => {
-                  const owned = s.campaignAbilityIds.includes(a.id);
-                  return (
-                    <li key={a.id} className={`flex items-start gap-3 border-b border-black/10 px-3 py-2 ${owned ? 'bg-green-600/10' : ''}`}>
-                      <LevelChip level="blu" />
-                      <span className="min-w-0 flex-1">
-                        <span className={`block text-base ${owned ? 'font-bold' : 'font-medium'}`}>{a.name}</span>
-                        <span className="block text-xs leading-snug text-black/70">{a.description}</span>
-                        {a.note && <span className="block text-[10px] text-black/55 italic">{a.note}</span>}
-                      </span>
-                      <span className="grid size-6 shrink-0 place-items-center border-2 border-black bg-white" aria-label={owned ? 'Acquisita' : 'Non acquisita'}>{owned && <Check className="size-5 text-green-700" strokeWidth={4} />}</span>
-                    </li>
-                  );
-                })}
-              </ul>
+              {(() => {
+                const row = (a: CampaignAbility, owned: boolean) => (
+                  <li key={a.id} className={`flex items-start gap-3 border-b border-black/10 px-3 py-2 ${owned ? 'bg-green-600/15' : ''}`}>
+                    <LevelChip level="blu" />
+                    <span className="min-w-0 flex-1">
+                      <span className={`block text-base ${owned ? 'font-bold' : 'font-medium'}`}>{a.name}</span>
+                      <span className="block text-xs leading-snug text-black/75">{a.description}</span>
+                      {a.note && <span className="block text-[10px] text-black/55 italic">{a.note}</span>}
+                    </span>
+                    <span className="grid size-6 shrink-0 place-items-center border-2 border-black bg-white" aria-label={owned ? 'Acquisita' : 'Non acquisita'}>{owned && <Check className="size-5 text-green-700" strokeWidth={4} />}</span>
+                  </li>
+                );
+                const owned = cfg.abilities.filter((a) => s.campaignAbilityIds.includes(a.id));
+                const free = cfg.abilities.filter((a) => !s.campaignAbilityIds.includes(a.id));
+                return (
+                  <>
+                    <p className="border-b border-black/15 bg-green-700/20 px-3 py-1 text-xs font-bold tracking-widest uppercase">Acquisite ({owned.length})</p>
+                    {owned.length ? <ul className="flex flex-col">{owned.map((a) => row(a, true))}</ul>
+                      : <p className="border-b border-black/10 px-3 py-2 text-sm text-black/60 italic">Nessuna ancora: si sceglie ai PEC speciali ({PEC_MILESTONES.join(', ')}).</p>}
+                    <p className="border-b border-black/15 bg-black/10 px-3 py-1 text-xs font-bold tracking-widest uppercase">Da scegliere ({free.length})</p>
+                    <ul className="flex flex-col">{free.map((a) => row(a, false))}</ul>
+                  </>
+                );
+              })()}
             </SheetBox>
           </div>
 
