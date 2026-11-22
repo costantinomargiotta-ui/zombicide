@@ -30,3 +30,12 @@ describe('Zombicide 1ª edizione e PariZ', () => {
     expect(findSkill('moderno', 'Colpo in parata')?.source.productId).toBe('pariz');
   });
 });
+
+import { referencedSkill } from '../services/skills';
+describe('Abilità richiamate', () => {
+  it('«Al massimo: …» trova la descrizione dell’abilità richiamata', () => {
+    for (const n of ['Al massimo: +1 Dado: Combattimento', 'Al massimo: +1 al risultato dei dadi: Combattimento', 'Al massimo: Sete di sangue: Mischia', 'Al massimo: +1 Danno: Distanza', 'Al massimo: +1 Azione di Combattimento gratuita'])
+      expect(referencedSkill('moderno', n)?.skill.description, n).toBeTruthy();
+    expect(referencedSkill('moderno', 'Fortunato')).toBeUndefined();
+  });
+});

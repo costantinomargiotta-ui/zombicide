@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { findSkill } from '../services/skills';
+import { findSkill, referencedSkill } from '../services/skills';
 import { AlertTriangle, BarChart3, BookOpen, CheckCircle2, Dices, Heart, ImagePlus, Info, NotebookPen, Package, ShieldQuestion, UserRound, Users } from 'lucide-react';
 import { db } from '../data/db';
 import { repo } from '../data/repository';
@@ -62,6 +62,7 @@ function Portrait({ c, className = '' }: { c: Character; className?: string }) {
 function AbilityRow({ c, level, name, description }: { c: Character; level: string; name: string; description?: string }) {
   const match = findSkill(c.universeId, name);
   const text = match?.skill.description ?? description;
+  const ref = referencedSkill(c.universeId, name);
   return (
     <li className="flex gap-3 px-3 py-2">
       <LevelChip level={level} />
@@ -73,6 +74,7 @@ function AbilityRow({ c, level, name, description }: { c: Character; level: stri
             {match && match.skill.name.toLowerCase() !== name.toLowerCase() && <span className="block text-xs text-black/55 italic">Abilità generica: {match.skill.name}</span>}
           </p>
         ) : <p className="text-xs text-black/55 italic">Descrizione non presente nel glossario.</p>}
+        {ref && <p className="mt-1 border-l-2 border-black/25 pl-2 text-sm leading-snug text-black/75"><strong className="font-semibold">{ref.name}:</strong> {ref.skill.description}</p>}
       </div>
     </li>
   );

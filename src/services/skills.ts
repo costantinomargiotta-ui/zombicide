@@ -32,3 +32,17 @@ export function findSkill(universeId: UniverseId, name: string): SkillMatch | un
   }
   return undefined;
 }
+
+/** Abilità «contenitore» che richiamano un'altra Abilità (es. «Al Massimo: +1 Dado: Mischia»). */
+const WRAPPERS = [/^al massimo:\s*/i];
+
+/** Per un'Abilità che ne richiama un'altra, restituisce l'Abilità richiamata con la sua descrizione. */
+export function referencedSkill(universeId: UniverseId, name: string): (SkillMatch & { name: string }) | undefined {
+  for (const re of WRAPPERS) {
+    if (!re.test(name)) continue;
+    const inner = name.replace(re, '').trim();
+    const match = findSkill(universeId, inner);
+    return match ? { ...match, name: inner } : undefined;
+  }
+  return undefined;
+}

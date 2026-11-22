@@ -15,7 +15,7 @@ import {
 import { sheetCampaignFor } from '../../rules/moderno/sheetCampaigns';
 import { EmptyState } from '../../ui/components/EmptyState';
 import { LevelChip } from '../CharactersPage';
-import { findSkill } from '../../services/skills';
+import { findSkill, referencedSkill } from '../../services/skills';
 import { Portrait, useRioData } from './RioCampaign';
 
 const REWARD_TEXT = '+1 Azione Bonus OPPURE +1 Abilità della Campagna';
@@ -154,12 +154,14 @@ export function RioSheet() {
                 const name = abilityById.get(id)?.name ?? id;
                 const match = findSkill(c.universeId, name);
                 const text = match?.skill.description ?? abilityById.get(id)?.description;
+                const ref = referencedSkill(c.universeId, name);
                 return (
                   <li key={`${g.level}-${id}`} className="flex gap-2">
                     <LevelChip level={g.level} />
                     <span className="min-w-0 flex-1">
                       <span className="block font-semibold">{name}</span>
                       {text ? <span className="block text-xs leading-snug text-[var(--muted)]">{text}</span> : <span className="block text-xs text-[var(--muted)] italic">Descrizione non presente nel glossario.</span>}
+                      {ref && <span className="mt-0.5 block border-l-2 border-white/25 pl-2 text-xs leading-snug text-[var(--muted)]"><strong className="font-semibold text-[var(--text)]">{ref.name}:</strong> {ref.skill.description}</span>}
                     </span>
                   </li>
                 );
