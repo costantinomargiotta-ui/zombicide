@@ -29,7 +29,8 @@ export const fantasyRules: UniverseRules = {
   ],
   missingMaterials: [
     'Fotografie delle carte Equipaggiamento di Black Plague (71 carte)',
-    'Pagine delle Missioni di Friends and Foes (pag. 12–23, assenti nel PDF fornito)',
+    'Pagine delle Missioni di Friends and Foes (pag. 12–23, assenti nel PDF ufficiale)',
+    'Scheda Campagna di The Eternal Empire (PEC, Abilità della Campagna, Azioni Bonus)',
   ],
   sources: [{ document: BLACK_PLAGUE }],
 };

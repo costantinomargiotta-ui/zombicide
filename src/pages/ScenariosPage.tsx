@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { AlertTriangle, ChevronDown, Map, Target } from 'lucide-react';
 import { db } from '../data/db';
@@ -16,7 +17,16 @@ import { WebMissionsSection } from './WebMissions';
 /** Catalogo degli scenari dai moduli regole, con mappe e regole speciali dove trascritte. */
 export function ScenariosPage() {
   const { universeId } = useScope();
-  const [open, setOpen] = useState<string | null>(null);
+  const [params] = useSearchParams();
+  const [open, setOpen] = useState<string | null>(() => params.get('m'));
+  // Arrivo da ricerca o link diretto (?m=id): apre la missione e la porta in vista.
+  useEffect(() => {
+    const id = params.get('m');
+    if (!id) return;
+    setOpen(id);
+    const t = setTimeout(() => document.getElementById(`missione-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+    return () => clearTimeout(t);
+  }, [params]);
   const sessions = useLiveQuery(() => db.sessions.toArray());
   const show = !universeId || universeId === 'moderno';
 
@@ -24,14 +34,14 @@ export function ScenariosPage() {
     <div className="flex flex-col gap-5">
       {show && SHEET_CAMPAIGNS.map((sc) => (
         <Panel key={sc.templateId} title={`${sc.gameName} · ${sc.campaignName}`} icon={Target}>
-          <p className="mb-3 text-sm text-[var(--muted)]">Campagna di {sc.missions.length} Missioni da giocare in ordine ({sc.rulebook}). Mappe, carte Obiettivo e Note restano sul libretto e nelle carte: qui trovi il riepilogo.</p>
+          <p className="mb-3 text-sm text-[var(--muted)]">Campagna di {sc.missions.length} Missioni da giocare in ordine ({sc.rulebook}). Le carte Obiettivo e le Note restano nelle carte, da leggere solo quando le prendete.</p>
           <ol className="flex flex-col gap-2">
             {sc.missions.map((m) => {
               const own = (sessions ?? []).filter((s) => s.scenarioId === m.id);
               const wins = own.filter((s) => s.outcome === 'vittoria').length;
               const isOpen = open === m.id;
               return (
-                <li key={m.id} className="rounded-lg border border-[var(--line)] bg-black/30">
+                <li key={m.id} id={`missione-${m.id}`} className="scroll-mt-28 rounded-lg border border-[var(--line)] bg-black/30">
                   <button type="button" onClick={() => setOpen(isOpen ? null : m.id)} aria-expanded={isOpen} className="flex w-full flex-wrap items-center gap-3 px-3 py-2 text-left">
                     <span className="title-display min-w-12 text-2xl text-[var(--accent-2)]">{m.code}</span>
                     <span className="min-w-40 flex-1 font-semibold">{m.title}</span>
@@ -73,7 +83,7 @@ export function ScenariosPage() {
               const own = (sessions ?? []).filter((s) => s.scenarioId === m.id);
               const isOpen = open === m.id;
               return (
-                <li key={m.id} className="rounded-lg border border-[var(--line)] bg-black/30">
+                <li key={m.id} id={`missione-${m.id}`} className="scroll-mt-28 rounded-lg border border-[var(--line)] bg-black/30">
                   <button type="button" onClick={() => setOpen(isOpen ? null : m.id)} aria-expanded={isOpen} className="flex w-full flex-wrap items-center gap-3 px-3 py-2 text-left">
                     <span className="title-display min-w-12 text-2xl text-[var(--accent-2)]">{m.code}</span>
                     <span className="min-w-40 flex-1 font-semibold">{m.title}</span>

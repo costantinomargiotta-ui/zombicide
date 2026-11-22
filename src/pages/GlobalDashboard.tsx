@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   Activity as ActivityIcon, ArrowRight, BarChart3, Box, CheckCircle2, CheckSquare, ClipboardList, Dices, Flag, FlaskConical,
-  Layers, Library, Package, Skull, Star, Target, Trophy, Users, Zap,
+  Layers, Library, Package, Skull, Star, Target, Trophy, Users, Zap, Map as MapIcon, BookMarked,
 } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../data/db';
@@ -23,6 +23,8 @@ export const QUICK_ACTIONS = [
   { sub: 'campagne', label: 'Scegli Campagna', icon: Flag },
   { sub: 'personaggi', label: 'Archivio Sopravvissuti', icon: Users },
   { sub: 'equipaggiamento', label: 'Inventario Globale', icon: Package },
+  { sub: 'scenari', label: 'Scenari e mappe', icon: MapIcon },
+  { sub: 'regolamenti', label: 'Regolamenti', icon: BookMarked },
   { sub: 'carte', label: 'Cerca Carte', icon: Library },
   { sub: 'statistiche', label: 'Vedi Statistiche', icon: BarChart3 },
 ];

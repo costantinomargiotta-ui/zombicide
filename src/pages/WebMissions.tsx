@@ -85,7 +85,7 @@ function MissionRow({ m, sessions, open, onToggle, num, state }: { m: WebMission
   const st = played(sessions, m.id);
   const extra = needs(m);
   return (
-    <li className={`rounded-lg border bg-black/30 ${state === 'prossimo' ? 'border-[var(--accent-2)]' : 'border-[var(--line)]'}`}>
+    <li id={`missione-${m.id}`} className={`scroll-mt-28 rounded-lg border bg-black/30 ${state === 'prossimo' ? 'border-[var(--accent-2)]' : 'border-[var(--line)]'}`}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2">
         <button type="button" onClick={onToggle} aria-expanded={open} className="focus-ring flex min-w-0 basis-full items-center gap-3 text-left sm:basis-0 sm:flex-1">
           {num ? (
@@ -141,13 +141,14 @@ function NewDawn({ sessions, open, setOpen }: { sessions?: Session[]; open: stri
 /** Sezione «Missioni web»: missioni gratuite ufficiali di Zombicide 2ª edizione e la campagna A New Dawn. */
 export function WebMissionsSection() {
   const sessions = useLiveQuery(() => db.sessions.toArray());
-  const [open, setOpen] = useState<string | null>(null);
+  const linked = new URLSearchParams(window.location.search).get('m');
+  const [open, setOpen] = useState<string | null>(linked);
   const [q, setQ] = useState('');
   const [mat, setMat] = useState('');
   const [diff, setDiff] = useState('');
   const [dur, setDur] = useState('');
   const [tab, setTab] = useState<Tab>('tutte');
-  const [campaign, setCampaign] = useState(false);
+  const [campaign, setCampaign] = useState(() => AND_MISSIONS.some((m) => m.id === linked));
 
   const counts = { tutte: ALL.length, base: ALL.filter((m) => !needs(m).length).length, espansioni: ALL.filter((m) => needs(m).length).length };
   const list = useMemo(() => {

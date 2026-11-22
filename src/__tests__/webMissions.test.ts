@@ -29,3 +29,14 @@ describe('Missioni web', () => {
     expect(MISSION_SERIES.filter((s) => s.web).map((s) => s.gameName)).toEqual(['Missioni web', 'A New Dawn']);
   });
 });
+
+import { search } from '../services/search';
+describe('Ricerca generale', () => {
+  const idx = { campaigns: [], characters: [], cards: [], products: [], notes: [], abilityNames: new Map() };
+  it('le missioni aprono la scheda giusta e le abilità del glossario compaiono', () => {
+    expect(search(idx, 'Zombie Police').find((r) => r.kind === 'scenario')?.to).toBe('/u/moderno/scenari?m=z1-m8');
+    const medico = search(idx, 'Medico').filter((r) => r.kind === 'abilita' && r.title === 'Medico' && r.to.startsWith('/u/moderno'));
+    expect(medico).toHaveLength(1);
+    expect(medico[0].subtitle).toMatch(/2ª edizione/);
+  });
+});

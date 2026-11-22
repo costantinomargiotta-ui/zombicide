@@ -20,7 +20,7 @@ const bySkillName = (a: { name: string }, b: { name: string }) => Number(/^[A-Za
 export function AbilitiesPage() {
   const { universeId: scoped } = useScope();
   const [universe, setUniverse] = useState<UniverseId>(scoped ?? 'moderno');
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => new URLSearchParams(window.location.search).get('q') ?? '');
   const current = scoped ?? universe;
   const q = query.trim().toLowerCase();
   const sources = useMemo(() => SKILL_SOURCES.filter((s) => s.universeId === current).map((s) => ({

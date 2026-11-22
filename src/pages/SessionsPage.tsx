@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Dices, Play } from 'lucide-react';
+import { Dices, Play, Trash2 } from 'lucide-react';
+import { rioRepo } from '../data/rioRepository';
 import { db } from '../data/db';
 import { SESSION_OUTCOME_LABEL, type SessionOutcome } from '../domain/types';
 import { UNIVERSES } from '../domain/universes';
@@ -21,6 +22,7 @@ export function SessionsPage() {
   const navigate = useNavigate();
   const [outcome, setOutcome] = useState<SessionOutcome | ''>('');
   const [campaignId, setCampaignId] = useState('');
+  const [deleting, setDeleting] = useState<{ id: string; title: string } | null>(null);
   const data = useLiveQuery(async () => ({
     sessions: await db.sessions.toArray(),
     campaigns: await db.campaigns.toArray(),
@@ -59,6 +61,7 @@ export function SessionsPage() {
                   {s.durationMinutes && <span className="text-xs text-[var(--muted)]">{formatDuration(s.durationMinutes)}</span>}
                   <Badge tone={s.outcome === 'vittoria' ? 'ok' : s.outcome === 'sconfitta' ? 'danger' : 'neutral'}>{SESSION_OUTCOME_LABEL[s.outcome]}</Badge>
                   {s.origin === 'demo' && <Badge tone="demo">DEMO</Badge>}
+                  <button type="button" className="btn px-2 py-1" onClick={() => setDeleting({ id: s.id, title: s.scenarioTitle ?? 'Partita' })} aria-label={`Elimina la partita ${s.scenarioTitle ?? ''}`} title="Elimina partita"><Trash2 className="size-4" /></button>
                 </li>
               );
             })}
@@ -66,13 +69,22 @@ export function SessionsPage() {
         ) : <EmptyState icon={Dices} title="Nessuna partita registrata" />}
       </Panel>
 
+      {deleting && (
+        <Modal open onClose={() => setDeleting(null)} title="Eliminare la partita?" footer={<>
+          <button type="button" className="btn" onClick={() => setDeleting(null)}>Annulla</button>
+          <button type="button" className="btn btn-danger" onClick={async () => { await rioRepo.deleteSession(deleting.id); setDeleting(null); }}><Trash2 className="size-4" /> Elimina</button>
+        </>}>
+          <p>«{deleting.title}» verrà tolta dal registro, dalle statistiche e dall'avanzamento della campagna. L'operazione resta nelle attività recenti.</p>
+        </Modal>
+      )}
+
       {params.get('nuova') === '1' && (
         <Modal open onClose={() => setParams({})} title="Nuova partita" footer={<>
           <button type="button" className="btn" onClick={() => setParams({})}>Annulla</button>
           <button type="button" className="btn btn-accent" disabled={!campaignId} onClick={() => navigate(`/campagne/${campaignId}?registra=1`)}>Continua</button>
         </>}>
           {playable.length ? (
-            <Field label="In quale campagna?" hint="Per ora le partite si registrano nelle campagne con un modulo regole completo (Rio Z Janeiro).">
+            <Field label="In quale campagna?" hint="La partita si registra nella campagna scelta, con la sua missione. Le Missioni web si segnano dalla loro scheda in Scenari, con «Segna come giocata».">
               <select className="input" value={campaignId} onChange={(e) => setCampaignId(e.target.value)}>
                 <option value="">Seleziona…</option>
                 {playable.map((c) => <option key={c.id} value={c.id}>{c.name} · {UNIVERSES[c.universeId].name}</option>)}
@@ -80,7 +92,7 @@ export function SessionsPage() {
             </Field>
           ) : (
             <EmptyState icon={Dices} title="Nessuna campagna disponibile" action={<Link to={path('campagne?nuova=1')} className="btn btn-accent">Crea una campagna</Link>}>
-              Crea prima una campagna Rio Z Janeiro: le partite libere arriveranno insieme ai moduli regole degli altri giochi.
+              Crea prima una campagna, per esempio le Missioni di Black Plague o Rio Z Janeiro: le partite si registrano lì.
             </EmptyState>
           )}
         </Modal>

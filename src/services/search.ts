@@ -1,6 +1,7 @@
 import type { Campaign, Character, EquipmentCard, FreeNote, Product } from '../domain/types';
 import { SHEET_CAMPAIGNS, allCampaignAbilities } from '../rules/moderno/sheetCampaigns';
 import { MISSION_SERIES } from '../rules/missionSeries';
+import { SKILL_SOURCES } from '../rules/skillGlossary';
 
 export type ResultKind = 'campagna' | 'sopravvissuto' | 'carta' | 'scenario' | 'prodotto' | 'abilita' | 'nota';
 
@@ -39,13 +40,22 @@ export function search(index: SearchIndex, query: string, limit = 60): SearchRes
   for (const c of index.cards) if (hit(c.name, c.text))
     out.push({ kind: 'carta', id: c.id, title: c.name, subtitle: productName(c.productId), to: `/u/${c.universeId}/carte?q=${encodeURIComponent(c.name)}` });
   for (const sc of SHEET_CAMPAIGNS) for (const m of sc.missions) if (hit(m.code, m.title, ...m.objectives))
-    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: sc.gameName, to: '/u/moderno/scenari' });
+    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: sc.gameName, to: `/u/moderno/scenari?m=${m.id}` });
   for (const sr of MISSION_SERIES) for (const m of sr.missions) if (hit(m.code, m.title, ...m.objectives))
-    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: sr.gameName, to: `/u/${sr.universeId}/scenari` });
+    out.push({ kind: 'scenario', id: m.id, title: `${m.code} – ${m.title}`, subtitle: sr.gameName, to: `/u/${sr.universeId}/scenari?m=${m.id}` });
   for (const p of index.products) if (hit(p.name, p.description))
     out.push({ kind: 'prodotto', id: p.id, title: p.name, subtitle: 'Collezione', to: `/u/${p.universeId}/collezione` });
   for (const a of allCampaignAbilities()) if (hit(a.name, a.description))
     out.push({ kind: 'abilita', id: a.id, title: a.name, subtitle: `Abilità della Campagna (${SHEET_CAMPAIGNS.filter((c) => c.abilities.some((x) => x.id === a.id)).map((c) => c.gameName).join(', ')})`, to: '/u/moderno/personaggi' });
+  const seenSkill = new Set<string>();
+  // La 1ª edizione per ultima: a parità di nome vale il testo delle edizioni correnti.
+  const skillSources = [...SKILL_SOURCES].sort((a, b) => Number(a.productId === 'zombicide-1e') - Number(b.productId === 'zombicide-1e'));
+  for (const src of skillSources) for (const k of src.skills) {
+    const key = `${src.universeId}|${normalize(k.name)}`;
+    if (seenSkill.has(key) || !hit(k.name, k.description)) continue;
+    seenSkill.add(key);
+    out.push({ kind: 'abilita', id: `${src.productId}-${k.name}`, title: k.name, subtitle: `Abilità · ${src.source.split(' – ')[0]}`, to: `/u/${src.universeId}/abilita?q=${encodeURIComponent(k.name)}` });
+  }
   for (const n of index.notes) if (hit(n.title, n.body))
     out.push({ kind: 'nota', id: n.id, title: n.title || 'Nota senza titolo', subtitle: n.body.slice(0, 80), to: `/note?n=${n.id}` });
 

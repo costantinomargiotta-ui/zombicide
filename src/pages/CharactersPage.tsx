@@ -302,7 +302,7 @@ export function CharactersPage() {
       {selected ? (
         <CharacterSheet key={selected.id} c={selected} abilities={abilities} products={products} />
       ) : (
-        <EmptyState icon={Users} title="Nessun personaggio">I personaggi di questo universo verranno importati quando avrò le fotografie delle loro schede.</EmptyState>
+        <EmptyState icon={Users} title="Nessun personaggio">Per questo universo non ci sono ancora personaggi a catalogo: servono le fotografie delle schede identità.</EmptyState>
       )}
     </div>
   );

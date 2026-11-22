@@ -42,6 +42,8 @@ export const modernRules: UniverseRules = {
   missingMaterials: [
     'Carte Equipaggiamento Avanzato di Rio Z Janeiro (per collegare l\'equipaggiamento conservato al catalogo)',
     'Fotografie delle carte Equipaggiamento di Washington Z.C. (95 carte, di cui 33 dei Servizi Segreti)',
+    'Scheda Campagna di PariZ (elenco delle Abilità della Campagna)',
+    'Testi delle Missioni web solo online: The Squid Trials, Beer Run, No Kings, Only the Dead',
   ],
   sources: [{ document: Z2 }, { document: 'Zombicide: Rio Z Janeiro – Regole e Missioni (ITA)' }, { document: 'Zombicide: Washington Z.C. – Regole e Missioni (ITA)' }, { document: 'Zombicide 1ª edizione – Regolamento (ITA)' }, { document: 'Zombicide: PariZ – Regole e Missioni (ITA)' }],
 };
