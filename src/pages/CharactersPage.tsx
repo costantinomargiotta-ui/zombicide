@@ -58,24 +58,22 @@ function Portrait({ c, className = '' }: { c: Character; className?: string }) {
   );
 }
 
-/** Riga abilità: un clic mostra la descrizione dal glossario del regolamento. */
-function AbilityRow({ c, level, name }: { c: Character; level: string; name: string }) {
-  const [open, setOpen] = useState(false);
+/** Riga abilità: nome e descrizione dal glossario del regolamento, sempre visibili. */
+function AbilityRow({ c, level, name, description }: { c: Character; level: string; name: string; description?: string }) {
   const match = findSkill(c.universeId, name);
+  const text = match?.skill.description ?? description;
   return (
-    <li className="px-3 py-1.5">
-      <button type="button" disabled={!match} onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-center gap-3 text-left disabled:cursor-default">
-        <LevelChip level={level} />
-        <span className="flex-1 font-medium">{name}</span>
-        {match && <Info className="size-4 shrink-0 text-black/50" aria-label="Mostra descrizione" />}
-      </button>
-      {open && match && (
-        <p className="mt-1 ml-9 text-sm text-black/80">
-          {match.skill.description}
-          {match.skill.name.toLowerCase() !== name.toLowerCase() && <span className="block text-xs text-black/60 italic">Abilità generica: {match.skill.name}</span>}
-          <span className="block text-xs text-black/50">{match.source.source}</span>
-        </p>
-      )}
+    <li className="flex gap-3 px-3 py-2">
+      <LevelChip level={level} />
+      <div className="min-w-0 flex-1">
+        <p className="font-medium">{name}</p>
+        {text ? (
+          <p className="text-sm leading-snug text-black/75">
+            {text}
+            {match && match.skill.name.toLowerCase() !== name.toLowerCase() && <span className="block text-xs text-black/55 italic">Abilità generica: {match.skill.name}</span>}
+          </p>
+        ) : <p className="text-xs text-black/55 italic">Descrizione non presente nel glossario.</p>}
+      </div>
     </li>
   );
 }
@@ -91,7 +89,7 @@ function OriginalAbilities({ c, abilities }: { c: Character; abilities: Map<stri
         <ol className="divide-y divide-black/15">
           {c.abilities.flatMap((group) =>
             group.abilityIds.map((id) => (
-              <AbilityRow key={`${group.level}-${id}`} c={c} level={group.level} name={abilities.get(id)?.name ?? id} />
+              <AbilityRow key={`${group.level}-${id}`} c={c} level={group.level} name={abilities.get(id)?.name ?? id} description={abilities.get(id)?.description} />
             )),
           )}
         </ol>
